@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+export ASDF_DIR="$HOME/.asdf"
+. "$ASDF_DIR/asdf.sh"
+
+export PATH="$ASDF_DIR/shims:$PATH"
+
 npx --no -- commitlint --edit ${1}
