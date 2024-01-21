@@ -8,6 +8,9 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "lint": "eslint \"**/*.{ts,tsx,vue,js}\" --fix",
+    "lint-eslint": "eslint --ignore-path .gitignore **/*{ts,tsx,vue,js,json} --fix",
+    "lint-prettier": "prettier --write \"**/*.(ts|tsx|vue|js|json)\"",
     "prepare": "cd .. && yarn husky install frontend/.husky"
   },
   "devDependencies": {
@@ -24,6 +27,7 @@
     "eslint-plugin-tailwindcss": "^3.14.0",
     "eslint-plugin-vue": "^9.20.1",
     "husky": "^8.0.0",
+    "lint-staged": "^15.2.0",
     "nuxt": "^3.9.3",
     "prettier": "^3.2.4",
     "typescript": "*",
