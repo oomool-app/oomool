@@ -3,18 +3,35 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true,
-  },
-  parser: "vue-eslint-parser",
-  parserOptions: {
-    parser: "@typescript-eslint/parser",
   },
   extends: [
-    "plugin:vue/vue3-recommended",
-    "plugin:nuxt/recommended",
-    "@nuxt/eslint-config",
+    'standard-with-typescript',
+    'plugin:vue/vue3-recommended',
+    'plugin:nuxt/recommended',
+    '@nuxt/eslint-config',
+    'prettier',
   ],
-  rules: {
-    "vue/no-multiple-template-root": "off",
+  overrides: [
+    {
+      env: {
+        node: true,
+      },
+      files: ['.eslintrc.{js,cjs}'],
+      parserOptions: {
+        sourceType: 'script',
+      },
+    },
+  ],
+  parser: 'vue-eslint-parser',
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
+  plugins: ['vue'],
+  rules: {
+    'vue/no-multiple-template-root': 'off',
+    'max-depth': ['error', 2],
+  },
+  ignorePatterns: ['.eslintrc.cjs', '**.config.ts'],
 };
