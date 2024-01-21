@@ -1,0 +1,66 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cleanup() {
+    # Reset the trap handler so it's not called twice
+    trap - EXIT
+}
+
+trap cleanup EXIT
+
+####
+## Main Body
+
+CHECKSTYLE_URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.7/checkstyle-10.12.7-all.jar"
+CHECKSTYLE_JAR=".checkstyle.jar"
+CHECKSTYLE_CONFIG="./backend/config/checkstyle/naver-checkstyle-rules.xml"
+SUPPRESSION_FILE_PATH="./backend/config/checkstyle/naver-checkstyle-suppressions.xml"
+JAVA_PATH="$(find ~/.asdf/installs/java -type d -name 'zulu-17*' -print -quit)/bin/java"
+
+get_checkstyle_jar() {
+    curl_path=$(command -v curl)
+    wget_path=$(command -v wget)
+    if [ -n "${curl_path}" ]; then
+        "${curl_path}" \
+            -sL \
+            -o "${CHECKSTYLE_JAR}" \
+            "${CHECKSTYLE_URL}"
+    elif [ -n "${wget_path}" ]; then 
+        "${wget_path}" \
+            -O "${CHECKSTYLE_JAR}" \
+            "${CHECKSTYLE_URL}"
+    else
+        echo "error: unable to find wget or curl"
+        return 1
+    fi
+}
+
+if [ ! -f "${CHECKSTYLE_JAR}" ]; then
+    echo "checkstyle not found- fetching"
+    get_checkstyle_jar
+fi
+
+command="git diff-index --cached HEAD 2>&1 | sed 's/^:.*     //' | uniq"
+FILES=$(eval $command)
+
+CHECKSTYLE_COMMAND="${JAVA_PATH} -DsuppressionFile=${SUPPRESSION_FILE_PATH} -jar ${CHECKSTYLE_JAR} -c ${CHECKSTYLE_CONFIG}"
+
+java_files=""
+checkstyle_command="$CHECKSTYLE_COMMAND"
+for file in $FILES; do
+    case "$file" in
+        *.java)
+            java_files="$java_files $file"
+            checkstyle_command="$checkstyle_command $file"
+            ;;
+    esac
+done
+
+if [ -n "$java_files" ]; then
+    if ! $checkstyle_command; then
+        echo "Commit aborted."
+        exit 1
+    fi
+fi
+
+exit 0
