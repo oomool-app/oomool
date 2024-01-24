@@ -9,26 +9,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.domain.user.service.UserService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Api(tags = {"유저 컨트롤러 API V1"})
+@Tag(name = "User", description = "유저 관련 API를 명세합니다.")
 public class UserController {
 
     private final UserService userService;
 
-    // @GetMapping
-    // public ResponseEntity<User> findUser(){
-    //
-    // }
-
-    @ApiOperation(value = "명소 검색 기능", notes = "명소 검색 기능")
+    @Operation(summary = "회원 등록 기능", description = "회원을 등록합니다.")
     @PostMapping
-    public ResponseEntity regist(UserDto userDto) {
+    public ResponseEntity<String> regist(UserDto userDto) {
         String result = "회원이 등록되었습니다";
 
         userDto.setEmail("pilmo@naver.com");
@@ -36,6 +31,6 @@ public class UserController {
 
         userService.regist(userDto);
 
-        return new ResponseEntity<String>(result, HttpStatus.CREATED);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }
