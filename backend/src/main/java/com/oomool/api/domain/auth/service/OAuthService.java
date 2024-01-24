@@ -8,16 +8,24 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.oomool.api.domain.user.dto.UserSocialDto;
+
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 넘겨받은 Authorization_code를 이용하여 Access Token을 발급받는다.
  */
 @Service
+@Log4j2
 public class OAuthService {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     // 넘겨 받은 code를 파라미터로 받는다.
     public String getKakaoAccessToken(String code) {
@@ -70,9 +78,11 @@ public class OAuthService {
         return accessToken;
     }
 
-    public void createKakaoUser(String token) throws Exception {
+    public UserSocialDto createKakaoUser(String token) throws Exception {
 
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
+
+        UserSocialDto userSocialDto1 = new UserSocialDto();
 
         //access_token을 이용하여 사용자 정보 조회
         try {
@@ -98,6 +108,11 @@ public class OAuthService {
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
             JsonElement element = JsonParser.parseString(result);
 
+
+            // kakao 고유 ID 가져오기 (provider_id)
+            String kakaoId = element.getAsJsonObject().get("id").getAsString();
+
+
             String nickname = element.getAsJsonObject()
                 .get("properties")
                 .getAsJsonObject()
@@ -115,10 +130,21 @@ public class OAuthService {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
 
+            UserSocialDto userSocialDto2 = UserSocialDto.builder()
+                .providerId(kakaoId)
+                .provider("kakao")
+                .email(email)
+                .nickname(nickname)
+                .build();
+
+
             br.close();
 
+            return userSocialDto2;
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return userSocialDto1;
     }
 }
