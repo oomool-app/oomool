@@ -11,18 +11,6 @@ java {
     sourceCompatibility = '17'
 }
 
-//swagger 사용하기 위한 설정
-configurations.all {
-    resolutionStrategy {
-        eachDependency { details ->
-            if (details.requested.group == 'io.swagger.core.v3') {
-                details.useVersion("2.2.8")
-                details.because('Swagger ui and Kafka Avro serializer incoptable dependency io.swagger.core.v3:swagger-annotations')
-            }
-        }
-    }
-}
-
 configurations {
 
     compileOnly {
@@ -35,10 +23,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.1'
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.2'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
