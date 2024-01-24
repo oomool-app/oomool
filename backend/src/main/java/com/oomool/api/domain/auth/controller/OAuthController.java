@@ -24,7 +24,12 @@ public class OAuthController {
     @GetMapping("/kakao")
     @ResponseBody
     public void kakaoCallback(@RequestParam String code) {
-        System.out.println(code);
-        System.out.println("access token : " + oAuthService.getKakaoAccessToken(code));
+        String accessToken = oAuthService.getKakaoAccessToken(code);
+
+        try {
+            oAuthService.createKakaoUser(accessToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
