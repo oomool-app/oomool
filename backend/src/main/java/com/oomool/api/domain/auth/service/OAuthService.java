@@ -11,7 +11,6 @@ import java.net.URL;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
@@ -46,7 +45,6 @@ public class OAuthService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -56,17 +54,12 @@ public class OAuthService {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("response body : " + result);
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonObject parser = new JsonObject();
             JsonElement element = JsonParser.parseString(result);
 
             accessToken = element.getAsJsonObject().get("access_token").getAsString();
             refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
-
-            System.out.println("accessToken : " + accessToken);
-            System.out.println("refreshToken : " + refreshToken);
 
             br.close();
             bw.close();
@@ -92,7 +85,6 @@ public class OAuthService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -102,14 +94,26 @@ public class OAuthService {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("response body : " + result);
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonObject parser = new JsonObject();
             JsonElement element = JsonParser.parseString(result);
 
-            System.out.println("element : " + element);
+            String nickname = element.getAsJsonObject()
+                .get("properties")
+                .getAsJsonObject()
+                .get("nickname")
+                .getAsString();
 
+            boolean hasEmail = element.getAsJsonObject()
+                .get("kakao_account")
+                .getAsJsonObject()
+                .get("has_email")
+                .getAsBoolean();
+
+            String email = "";
+            if (hasEmail) {
+                email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            }
 
             br.close();
 
