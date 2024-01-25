@@ -2,14 +2,19 @@ package com.oomool.api.domain.auth.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oomool.api.domain.auth.dto.SocialDto;
 import com.oomool.api.domain.auth.service.OAuthService;
 import com.oomool.api.domain.user.dto.UserSocialDto;
+import com.oomool.api.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 public class OAuthController {
 
     private final OAuthService oAuthService;
+    private final UserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -29,7 +35,6 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    @ResponseBody
     public void kakaoCallback(@RequestParam String code) {
         String accessToken = oAuthService.getKakaoAccessToken(code);
         UserSocialDto userSocialDto = new UserSocialDto();
@@ -39,5 +44,11 @@ public class OAuthController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<Integer> regist(@RequestBody SocialDto socialDto) {
+        int result = oAuthService.socialRegist(socialDto);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }

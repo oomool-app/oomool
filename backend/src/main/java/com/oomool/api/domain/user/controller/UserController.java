@@ -26,7 +26,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Integer> regist(@RequestBody UserDto userDto) {
 
-
         int result = userService.regist(userDto);
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
