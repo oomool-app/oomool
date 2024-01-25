@@ -91,9 +91,10 @@ public class OAuthService {
 
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
 
-        UserSocialDto userSocialDto1 = new UserSocialDto();
+        UserSocialDto userSocialDto = new UserSocialDto();
 
         //access_token을 이용하여 사용자 정보 조회
+        UserSocialDto userSocialDto = new UserSocialDto();
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -140,6 +141,7 @@ public class OAuthService {
             }
 
             UserSocialDto userSocialDto2 = UserSocialDto.builder()
+            userSocialDto = UserSocialDto.builder()
                 .providerId(kakaoId)
                 .provider("kakao")
                 .email(email)
@@ -149,12 +151,12 @@ public class OAuthService {
 
             br.close();
 
-            return userSocialDto2;
+            return userSocialDto;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return userSocialDto1;
+        return userSocialDto;
     }
 
     // 소셜 로그인 회원가입
