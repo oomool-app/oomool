@@ -61,7 +61,6 @@ public class OAuthService {
                 + "&code=" + code;
             bw.write(kakaoUri);
             bw.flush();
-
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
 
@@ -76,7 +75,6 @@ public class OAuthService {
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
             JsonElement element = JsonParser.parseString(result.toString());
-
 
             accessToken = element.getAsJsonObject().get("access_token").getAsString();
             refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
@@ -119,10 +117,8 @@ public class OAuthService {
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
             JsonElement element = JsonParser.parseString(result);
 
-
             // kakao 고유 ID 가져오기 (provider_id)
             String kakaoId = element.getAsJsonObject().get("id").getAsString();
-
 
             String nickname = element.getAsJsonObject()
                 .get("properties")
@@ -147,7 +143,6 @@ public class OAuthService {
                 .email(email)
                 .nickname(nickname)
                 .build();
-
 
             br.close();
 
