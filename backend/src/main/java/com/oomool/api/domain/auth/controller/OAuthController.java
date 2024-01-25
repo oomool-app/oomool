@@ -35,20 +35,24 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public void kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<UserSocialDto> kakaoCallback(@RequestParam String code) {
         String accessToken = oAuthService.getKakaoAccessToken(code);
+
         UserSocialDto userSocialDto = new UserSocialDto();
 
         try {
             userSocialDto = oAuthService.createKakaoUser(accessToken);
+            return new ResponseEntity<>(userSocialDto, HttpStatus.ACCEPTED);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return new ResponseEntity<>(userSocialDto, HttpStatus.ACCEPTED);
     }
 
     @PostMapping
-    public ResponseEntity<Integer> regist(@RequestBody SocialDto socialDto) {
-        int result = oAuthService.socialRegist(socialDto);
+    public ResponseEntity<Integer> kakaoRegist(@RequestBody SocialDto socialDto) {
+        int result = oAuthService.socialKakaoRegist(socialDto);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }

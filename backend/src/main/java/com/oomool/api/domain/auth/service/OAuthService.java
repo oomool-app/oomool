@@ -158,7 +158,7 @@ public class OAuthService {
     }
 
     // 소셜 로그인 회원가입
-    public int socialRegist(SocialDto socialDto) {
+    public int socialKakaoRegist(SocialDto socialDto) {
 
         User user = new User();
         user.setId(socialDto.getUserId());
