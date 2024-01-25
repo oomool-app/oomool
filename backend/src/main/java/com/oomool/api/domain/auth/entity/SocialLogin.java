@@ -21,7 +21,6 @@ import lombok.Setter;
 public class SocialLogin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "social_id")
     private int id;
 
     @Column(nullable = false)
