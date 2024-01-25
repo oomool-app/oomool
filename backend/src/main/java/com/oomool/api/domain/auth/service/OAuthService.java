@@ -8,16 +8,32 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.oomool.api.domain.auth.dto.SocialDto;
+import com.oomool.api.domain.auth.entity.SocialLogin;
+import com.oomool.api.domain.auth.repository.OAuthRepository;
+import com.oomool.api.domain.user.dto.UserSocialDto;
+import com.oomool.api.domain.user.entity.User;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 넘겨받은 Authorization_code를 이용하여 Access Token을 발급받는다.
  */
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class OAuthService {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final OAuthRepository oAuthRepository;
 
     // 넘겨 받은 code를 파라미터로 받는다.
     public String getKakaoAccessToken(String code) {
@@ -58,6 +74,7 @@ public class OAuthService {
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
             JsonElement element = JsonParser.parseString(result);
 
+
             accessToken = element.getAsJsonObject().get("access_token").getAsString();
             refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
 
@@ -70,11 +87,14 @@ public class OAuthService {
         return accessToken;
     }
 
-    public void createKakaoUser(String token) throws Exception {
+    public UserSocialDto createKakaoUser(String token) throws Exception {
 
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
 
+        UserSocialDto userSocialDto = new UserSocialDto();
+
         //access_token을 이용하여 사용자 정보 조회
+        UserSocialDto userSocialDto = new UserSocialDto();
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -98,6 +118,11 @@ public class OAuthService {
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
             JsonElement element = JsonParser.parseString(result);
 
+
+            // kakao 고유 ID 가져오기 (provider_id)
+            String kakaoId = element.getAsJsonObject().get("id").getAsString();
+
+
             String nickname = element.getAsJsonObject()
                 .get("properties")
                 .getAsJsonObject()
@@ -115,10 +140,38 @@ public class OAuthService {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
 
+            UserSocialDto userSocialDto2 = UserSocialDto.builder()
+            userSocialDto = UserSocialDto.builder()
+                .providerId(kakaoId)
+                .provider("kakao")
+                .email(email)
+                .nickname(nickname)
+                .build();
+
+
             br.close();
 
+            return userSocialDto;
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return userSocialDto;
+    }
+
+    // 소셜 로그인 회원가입
+    public int socialKakaoRegist(SocialDto socialDto) {
+
+        User user = new User();
+        user.setId(socialDto.getUserId());
+
+        SocialLogin socialLogin = SocialLogin.builder()
+            .providerId(socialDto.getProviderId())
+            .provider(socialDto.getProvider())
+            .user(user)
+            .build();
+
+        oAuthRepository.save(socialLogin);
+        return socialLogin.getId();
     }
 }

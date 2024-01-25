@@ -3,6 +3,7 @@ package com.oomool.api.domain.user.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,13 +24,9 @@ public class UserController {
 
     @Operation(summary = "회원 등록 기능", description = "회원을 등록합니다.")
     @PostMapping
-    public ResponseEntity<String> regist(UserDto userDto) {
-        String result = "회원이 등록되었습니다";
+    public ResponseEntity<Integer> regist(@RequestBody UserDto userDto) {
 
-        userDto.setEmail("pilmo@naver.com");
-        userDto.setUserName("pilmo");
-
-        userService.regist(userDto);
+        int result = userService.regist(userDto);
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
