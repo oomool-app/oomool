@@ -140,7 +140,6 @@ public class OAuthService {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
 
-            UserSocialDto userSocialDto2 = UserSocialDto.builder()
             userSocialDto = UserSocialDto.builder()
                 .providerId(kakaoId)
                 .provider("kakao")
