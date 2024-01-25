@@ -91,8 +91,6 @@ public class OAuthService {
 
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
 
-        UserSocialDto userSocialDto = new UserSocialDto();
-
         //access_token을 이용하여 사용자 정보 조회
         UserSocialDto userSocialDto = new UserSocialDto();
         try {
