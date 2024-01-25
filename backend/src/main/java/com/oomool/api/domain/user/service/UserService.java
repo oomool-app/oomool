@@ -14,10 +14,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public void regist(UserDto userDto) {
+    public int regist(UserDto userDto) {
         User user = new User();
         user.setEmail(userDto.getEmail());
-        user.setUsername(userDto.getUserName());
+        user.setUsername(userDto.getUsername());
         userRepository.save(user);
+        return user.getId();
     }
 }
