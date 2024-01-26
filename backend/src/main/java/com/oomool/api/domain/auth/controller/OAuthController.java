@@ -35,7 +35,7 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public ResponseEntity<UserSocialDto> kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<UserSocialDto> kakaoCallback(@RequestParam(name = "code") String code) {
         String accessToken = oAuthService.getKakaoAccessToken(code);
 
         UserSocialDto userSocialDto = new UserSocialDto();
