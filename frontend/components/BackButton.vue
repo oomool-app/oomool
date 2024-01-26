@@ -1,18 +1,18 @@
 <template>
   <div>
-    <button class="absolute" @click="back">
+    <button @click="back">
       <svg
-        class="w-6 h-6"
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
         viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
+        fill="currentColor"
+        class="w-6 h-6"
       >
         <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15.75 19.5 8.25 12l7.5-7.5"
+          :stroke="props.color"
+          stroke-width="2"
+          fill-rule="evenodd"
+          d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+          clip-rule="evenodd"
         />
       </svg>
     </button>
@@ -23,4 +23,8 @@
 const back = (): void => {
   window.history.go(-1);
 };
+// 화살표 색상
+const props = defineProps<{
+  color: string;
+}>();
 </script>

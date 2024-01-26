@@ -1,5 +1,5 @@
 <template>
-  <div class="text-2xl font-bold">
+  <div id="header" class="header text-xl font-black">
     {{ headerName }}
   </div>
 </template>
@@ -12,3 +12,8 @@ defineProps({
   },
 });
 </script>
+<style scope>
+#header {
+  color: #61339b;
+}
+</style>
