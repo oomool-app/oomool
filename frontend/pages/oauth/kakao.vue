@@ -1,23 +1,20 @@
 <template>
-  <div> hi<!--로그인 코드 처리 빈 화면--></div>
+  <div>hi<!--로그인 코드 처리 빈 화면--></div>
 </template>
 
 <script setup lang="ts">
+const route = useRoute();
+const config = useRuntimeConfig();
 
 const handleKakaoCallback = async (): Promise<void> => {
-  const route = useRoute();
   const code = route.query.code;
 
   if (code != null) {
     // 추출된 코드를 API로 전송
-    const apiEndpoint = `https://dev.oomool.site/oauth/kakao?code=${code as string}`;
+    const apiEndpoint = `${config.public.oomoolApiUrl}/oauth/kakao?code=${code as string}`;
 
     const response = await fetch(apiEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code }),
+      method: 'GET',
     });
 
     if (response.ok) {
