@@ -3,13 +3,15 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute();
+const config = useRuntimeConfig();
+
 const handleKakaoCallback = async (): Promise<void> => {
-  const route = useRoute();
   const code = route.query.code;
 
   if (code != null) {
     // 추출된 코드를 API로 전송
-    const apiEndpoint = `${process.env.OOMOOL_API_URL}/oauth/kakao?code=${code as string}`;
+    const apiEndpoint = `${config.public.oomoolApiUrl}/oauth/kakao?code=${code as string}`;
 
     const response = await fetch(apiEndpoint, {
       method: 'GET',
