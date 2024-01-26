@@ -1,39 +1,33 @@
 <template>
-  <div class="bg-background">
-    <div class="mb-6 text-center">
-      <h1 class="text-2xl font-bold">메인 페이지</h1>
-      <!--알림-->
-      <div class="flex justify-end">
-        <Nuxt-link to="/message">알림</Nuxt-link>
-      </div>
+  <div class="bg-primary">
+    <h1 class="text-2xl font-bold text-left pl-4 pt-4 text-white">OooMool</h1>
+
+    <!--알림-->
+    <div class="flex justify-end text-white pr-4">
+      <Nuxt-link to="/message">알림</Nuxt-link>
     </div>
     <!--방 만들기, 방 참여하기 버튼-->
-    <div class="grid grid-cols-2 pt-2 pb-4 pr-2 pl-2 space-x-4 text-center">
-      <Card class="bg-primary text-white"
-        ><Nuxt-link to="/makeroom/name">방 만들기</Nuxt-link></Card
-      >
+    <div class="flex flex-row justify-center pt-8 pb-4 pr-2 pl-4 space-x-4 text-center">
+      <Button class="bg-white text-black w-40 h-40"><Nuxt-link to="/makeroom/name">방 만들기</Nuxt-link></Button>
 
-      <Card class="bg-primary text-white">방 참여하기</Card>
-      <!--클릭하면 방 코드 입력 모달창 component 오픈-->
+      <InputCodeModal></InputCodeModal>
     </div>
 
     <!-- 방 목록-->
-    <div class="flex justify-start pt-4 pb-4">
-      <h1 class="text-xl font-bold">방 목록</h1>
-    </div>
+    <div class="bg-white rounded-t-lg">
+      <h1 class="text-xl font-bold p-4">나의 방 목록</h1>
 
-    <!--방 개수대로 for문-->
-    <!--Card component 이용-->
-    <Card>
-      <CardHeader>
-        <CardTitle>방 이름</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <CardDescription>오늘의 질문</CardDescription>
-      </CardContent>
-      <CardFooter> 진행중여부 </CardFooter>
-    </Card>
+      <div class="flex flex-col justify-center p-6 space-y-4">
+        <!--방 개수대로 for문-->
+        <RoomCard></RoomCard>
+        <RoomCard></RoomCard>
+        <RoomCard></RoomCard>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+
+
+</script>
