@@ -10,7 +10,7 @@ const handleKakaoCallback = async (): Promise<void> => {
 
   if (code != null) {
     // 추출된 코드를 API로 전송
-    const apiEndpoint = `http://dev.oomool.site/oauth/kakao?code=${code as string}`;
+    const apiEndpoint = `https://dev.oomool.site/oauth/kakao?code=${code as string}`;
 
     const response = await fetch(apiEndpoint, {
       method: 'POST',
