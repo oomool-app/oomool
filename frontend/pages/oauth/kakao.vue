@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onErrorCaptured } from 'vue';
 import { useRoute } from 'vue-router';
 
 const handleKakaoCallback = async (): Promise<void> => {
