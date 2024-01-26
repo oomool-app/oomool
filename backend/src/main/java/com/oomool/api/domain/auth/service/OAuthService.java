@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonElement;
@@ -35,6 +36,9 @@ public class OAuthService {
 
     private final OAuthRepository oAuthRepository;
 
+    @Value("${frontend.redirect.uri}")
+    private String redirectUri;
+
     // 넘겨 받은 code를 파라미터로 받는다.
     public String getKakaoAccessToken(String code) {
         String accessToken = "";
@@ -51,12 +55,11 @@ public class OAuthService {
 
             //POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=d63ba3628c4ea2cff1e3eb9f0955f47f"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:8080/oauth/kakao"); // TODO 인가코드 받은 redirect_uri 입력
-            sb.append("&code=" + code);
-            bw.write(sb.toString());
+            String kakaoUri = "grant_type=authorization_code"
+                + "&client_id=d63ba3628c4ea2cff1e3eb9f0955f47f"
+                + "&redirect_uri=" + redirectUri + "/oauth/kakao"
+                + "&code=" + code;
+            bw.write(kakaoUri);
             bw.flush();
 
             //결과 코드가 200이라면 성공
@@ -65,14 +68,14 @@ public class OAuthService {
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = "";
-            String result = "";
+            StringBuilder result = new StringBuilder();
 
             while ((line = br.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonElement element = JsonParser.parseString(result);
+            JsonElement element = JsonParser.parseString(result.toString());
 
 
             accessToken = element.getAsJsonObject().get("access_token").getAsString();
