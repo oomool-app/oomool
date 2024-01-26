@@ -3,12 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 
 const handleKakaoCallback = async (): Promise<void> => {
   const route = useRoute();
   const code = route.query.code;
-  console.log(code);
 
   if (code != null) {
     // 추출된 코드를 API로 전송
