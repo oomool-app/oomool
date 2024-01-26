@@ -21,9 +21,11 @@
 
 <script setup lang="ts">
 const route = useRoute();
+const config = useRuntimeConfig();
+
 const handleKakaoLogin = (): void => {
   // 카카오 로그인 URL로 리다이렉트
-  const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=d63ba3628c4ea2cff1e3eb9f0955f47f&redirect_uri=${process.env.OOMOOL_SITE_URL}/oauth/kakao&response_type=code`;
+  const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=d63ba3628c4ea2cff1e3eb9f0955f47f&redirect_uri=${config.public.oomoolSiteUrl}/oauth/kakao&response_type=code`;
   window.location.href = kakaoLoginURL;
 };
 </script>

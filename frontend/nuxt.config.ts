@@ -19,4 +19,10 @@ export default defineNuxtConfig({
      */
     componentDir: './components/ui',
   },
+  runtimeConfig: {
+    public: {
+      oomoolApiUrl: process.env.NUXT_PUBLIC_OOMOOL_API_URL,
+      oomoolSiteUrl: process.env.NUXT_PUBLIC_OOMOOL_SITE_URL,
+    },
+  },
 });
