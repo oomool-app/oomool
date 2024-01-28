@@ -25,27 +25,27 @@ const feeds = [
     content: '게시글1',
   },
   {
-    name: '마니띠 이름2',
+    name: '전은평',
     uploadImage: imgUrl,
     content: '게시글2',
   },
   {
-    name: '마니띠 이름3',
+    name: '김병현',
     uploadImage: '',
     content: '게시글3',
   },
   {
-    name: '마니띠 이름4',
+    name: '김현지',
     uploadImage: imgUrl,
     content: '게시글4',
   },
   {
-    name: '마니띠 이름5',
+    name: '김성수',
     uploadImage: imgUrl,
     content: '게시글5',
   },
   {
-    name: '마니띠 이름6',
+    name: '정필모',
     uploadImage: imgUrl,
     content: '게시글6',
   },
