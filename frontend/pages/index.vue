@@ -1,20 +1,15 @@
 <template>
   <div class="bg-primary">
-    <h1 class="text-2xl font-bold text-left pl-6 pt-4 text-white">OooMool</h1>
+    <div class="flex justify-between pt-4 ">
+      <!--로고-->
+      <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
+      <!--알림-->
+      <MessageButton class="absolute right-7"></MessageButton>
+    </div>
 
-    <!--알림-->
-    <MessageButton class="absolute right-7"></MessageButton>
-
-    <!--방 만들기, 방 참여하기 버튼-->
+    <!--방 만들기, 방 참여하기 버튼 -->
     <div class="flex flex-row justify-center pt-20 pb-5 gap-2 self-stretch space-x-4 text-center">
-
-        <Nuxt-link to="/makeroom/name">
-          <Button class="bg-white w-40 h-40 flex flex-col items-end"> <!-- items-end 클래스 추가 -->
-            <div class="mb-auto w-20 h-20"><img src="../assets/images/방만들기유령.png"/></div>
-            <div class="text-black font-bold mt-auto">방 만들기</div>
-          </Button>
-        </Nuxt-link>
-
+      <MakeRoomButton></MakeRoomButton>
       <InputCodeModal></InputCodeModal>
     </div>
 
