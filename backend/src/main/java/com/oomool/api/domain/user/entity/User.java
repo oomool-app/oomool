@@ -8,6 +8,8 @@ import com.oomool.api.domain.player.entity.Player;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -26,13 +28,15 @@ import lombok.ToString;
 @NoArgsConstructor
 public class User {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
     private String email;
+
 
     @OneToMany(mappedBy = "user")
     @JsonBackReference // 순환참조 방지

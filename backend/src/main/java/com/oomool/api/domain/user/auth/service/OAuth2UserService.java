@@ -6,12 +6,25 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.oomool.api.domain.auth.entity.SocialLogin;
+import com.oomool.api.domain.auth.repository.OAuthRepository;
 import com.oomool.api.domain.user.auth.user.OAuth2UserInfo;
 import com.oomool.api.domain.user.auth.user.OAuth2UserInfoFactory;
+import com.oomool.api.domain.user.entity.User;
+import com.oomool.api.domain.user.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
+    private final UserRepository userRepository;
+    private final OAuthRepository oAuthRepository;
+
+    /**
+     * 사용자 정보를 반환하고, 반환받은 사용자 정보를 저장하는 메서드
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // System.out.println("userRequest registrationID :" + userRequest.getClientRegistration().getRegistrationId());
@@ -27,6 +40,26 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             accessToken,
             oAuth2User.getAttributes());
 
+
+        // 사용자 정보가 DB에 이미 저장되어 있는지 확인
+        User existingUser = userRepository.findByEmailAndProvider(oAuth2UserInfo.getEmail(), registrationId);
+
+        if (existingUser == null) {
+            User newUser = new User();
+            newUser.setUsername(oAuth2UserInfo.getNickname());
+            newUser.setEmail(oAuth2UserInfo.getEmail());
+            newUser.setProvider(registrationId);
+
+            userRepository.save(newUser);
+
+            // social_login 정보 저장
+            SocialLogin newSocial = new SocialLogin();
+            newSocial.setUser(newUser);
+            newSocial.setProviderId(oAuth2UserInfo.getId());
+            newSocial.setProvider(registrationId);
+
+            oAuthRepository.save(newSocial);
+        }
 
         return new OAuth2UserPrincipal(oAuth2UserInfo);
     }
