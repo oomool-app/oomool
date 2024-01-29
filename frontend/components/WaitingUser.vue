@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-start items-center m-2">
     <div class="flex justify-center items-center border rounded-full w-8 h-8">
-      <img src="../assets/images/정답 유령.png" alt="프로필 이미지" />
+      <img src="/img/정답 유령.png" alt="프로필 이미지" />
     </div>
     <div class="m-1">
       {{ props.user.player_nickname }}

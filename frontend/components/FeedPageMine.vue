@@ -11,7 +11,7 @@
     </div>
     <img
       class="w-10 h-10 rounded-full border"
-      src="../assets/images/정답 유령.png"
+      src="/img/정답 유령.png"
       alt="프로필 이미지"
     />
   </div>
