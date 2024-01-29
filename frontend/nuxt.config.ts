@@ -25,4 +25,15 @@ export default defineNuxtConfig({
       oomoolSiteUrl: process.env.NUXT_PUBLIC_OOMOOL_SITE_URL,
     },
   },
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css',
+        },
+      ],
+    },
+  },
 });

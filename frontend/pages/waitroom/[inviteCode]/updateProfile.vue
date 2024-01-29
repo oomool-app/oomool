@@ -1,13 +1,19 @@
 <template>
-  <div class="flex flex-col items-center bg-background justify-center ">
+  <div class="flex flex-col items-center bg-background justify-center">
     <div class="mb-6 text-center">
       <h1 class="text-2xl pt-5 font-bold">프로필 설정하기</h1>
 
       <!--프로필 이미지 미리보기-->
       <div class="flex pb-10 pt-10 justify-center items-start gap-2.5">
-        <div class="relative flex h-32 w-32 px-0 py-2.5 justify-center rounded-full border-solid border-2 border-[#6D6D6D]" :style="{ backgroundColor: randomColor }">
-          <img :src ="randomAvatar" alt="프로필 아바타" />
-          <RandomButton class="absolute right-0 bottom-0" @click="changeRandom"></RandomButton>
+        <div
+          class="relative flex h-32 w-32 px-0 py-2.5 justify-center rounded-full border-solid border-2 border-[#6D6D6D]"
+          :style="{ backgroundColor: randomColor }"
+        >
+          <img :src="randomAvatar" alt="프로필 아바타" />
+          <RandomButton
+            class="absolute right-0 bottom-0"
+            @click="changeRandom"
+          ></RandomButton>
         </div>
       </div>
 
@@ -30,26 +36,43 @@
           그룹 내 멤버들이 식별 가능한 닉네임을 입력해주세요
         </h1>
       </div>
-
     </div>
     <!--설정하기 버튼-->
-    <Button class="mx-auto" @click="$router.push({ path: `/waitroom/${inviteCode}`})">프로필 설정하기</Button>
+    <Button
+      class="mx-auto"
+      @click="$router.push({ path: `/waitroom/${inviteCode}` })"
+      >프로필 설정하기</Button
+    >
   </div>
 </template>
 
 <script setup lang="ts">
-
 const route = useRoute();
 
 const colors: string[] = [
-"#FFD8CC", "#CCFFD8", "#D8CCFF", "#FFD8F2", "#D8F2FF",
-  "#FFF3CC", "#CCE3FF", "#FFEAC4", "#C4B5A5",
-  "#F8C4D6", "#D8A5CC", "#B2E8EB", "#A4B5C3"
+  '#FFD8CC',
+  '#CCFFD8',
+  '#D8CCFF',
+  '#FFD8F2',
+  '#D8F2FF',
+  '#FFF3CC',
+  '#CCE3FF',
+  '#FFEAC4',
+  '#C4B5A5',
+  '#F8C4D6',
+  '#D8A5CC',
+  '#B2E8EB',
+  '#A4B5C3',
 ];
 
-const avatarurls : string[] = [
-  "/img/곰유령.png", "/img/고양이유령.png", "/img/기본유령.png", "/img/기본유령2.png",
-  "/img/소라게유령.png", "/img/토끼유령.png", "/img/헤드셋유령.png"
+const avatarurls: string[] = [
+  '/img/곰유령.png',
+  '/img/고양이유령.png',
+  '/img/기본유령.png',
+  '/img/기본유령2.png',
+  '/img/소라게유령.png',
+  '/img/토끼유령.png',
+  '/img/헤드셋유령.png',
 ];
 
 // 인덱스 랜덤 생성
@@ -74,7 +97,9 @@ function getRandomColor(): string {
 
 // 랜덤 아바타 반환
 function getRandomAvatar(): string {
-  const randomAvatarIndex: number = Math.floor(Math.random() * avatarurls.length);
+  const randomAvatarIndex: number = Math.floor(
+    Math.random() * avatarurls.length,
+  );
   return avatarurls[randomAvatarIndex];
 }
 
