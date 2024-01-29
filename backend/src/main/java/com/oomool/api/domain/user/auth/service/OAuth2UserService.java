@@ -10,6 +10,7 @@ import com.oomool.api.domain.auth.entity.SocialLogin;
 import com.oomool.api.domain.auth.repository.OAuthRepository;
 import com.oomool.api.domain.user.auth.user.OAuth2UserInfo;
 import com.oomool.api.domain.user.auth.user.OAuth2UserInfoFactory;
+import com.oomool.api.domain.user.dto.Role;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
 
@@ -24,12 +25,14 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     /**
      * 사용자 정보를 반환하고, 반환받은 사용자 정보를 저장하는 메서드
+     *
+     * 인증된 사용자에 대한 정보는 SecurityContext 객체에 저장되며, 이 객체는 현재 스레드와 연결됩니다.
      */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // System.out.println("userRequest registrationID :" + userRequest.getClientRegistration().getRegistrationId());
 
-        OAuth2User oAuth2User = super.loadUser(userRequest); // access token을 이용해 서드파티 서버로부터 사용자 정보를 받아온다
+        OAuth2User oAuth2User = super.loadUser(userRequest); // access token을 이용해 서드파티 서버로부터 사용자 정보를 받아온다.
 
         String registrationId = userRequest.getClientRegistration()
             .getRegistrationId();
@@ -49,6 +52,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             newUser.setUsername(oAuth2UserInfo.getNickname());
             newUser.setEmail(oAuth2UserInfo.getEmail());
             newUser.setProvider(registrationId);
+            newUser.setRole(Role.USER);
 
             userRepository.save(newUser);
 

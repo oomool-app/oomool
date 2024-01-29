@@ -7,5 +7,7 @@ import com.oomool.api.domain.user.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+    User findByEmailAndProvider(String email, String registrationId);
+
     User findByEmail(String email);
 }
