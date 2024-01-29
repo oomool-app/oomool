@@ -1,6 +1,6 @@
 <template>
   <div class="flex-col m-4">
-    <BackButton></BackButton>
+    <BackButton color="black"></BackButton>
     <h1 class="flex justify-center text-xl m-4 font-bold">방 만들기</h1>
     <MakeRoomProgress :cur-page="'2'"></MakeRoomProgress>
     <div class="font-bold mb-4">우리들, 어떤 사이예요?</div>
