@@ -1,49 +1,54 @@
 <template>
   <div>
-    <div class="mb-6 text-center">
+    <div class="mb-6 text-center flex justify-between">
+      <BackButton color="black" />
       <h1 class="text-2xl font-bold">전체 멤버 조회</h1>
     </div>
-    <!--멤버 수대로 for문 처리-->
-
-    <div class="flow-root">
-      <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-shrink-0">
-              <img
-                class="w-8 h-8 rounded-full"
-                src="https://flowbite.com/docs/images/people/profile-picture-1.jpg"
-                alt="Neil image"
-              />
-            </div>
-            <div class="flex-1 min-w-0">
-              <p
-                class="text-sm font-medium text-gray-900 truncate dark:text-white"
-              >
-                Neil Sims
-              </p>
-            </div>
-          </div>
-        </li>
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-shrink-0">
-              <img
-                class="w-8 h-8 rounded-full"
-                src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
-                alt="Bonnie image"
-              />
-            </div>
-            <div class="flex-1 min-w-0">
-              <p
-                class="text-sm font-medium text-gray-900 truncate dark:text-white"
-              >
-                Bonnie Green
-              </p>
-            </div>
-          </div>
-        </li>
-      </ul>
+    <div v-for="member in members" :key="member.userid" class="grid gap-4 m-3 grid-cols-2">
+      <MemberCard :members="member"></MemberCard>
     </div>
+
+
   </div>
 </template>
+
+<script setup lang="ts">
+  const members= [
+    {
+      userid:1,
+      nickname:'현지',
+      background : '#FF33A1',
+      avatarurl : '/img/곰유령.png' ,
+    },
+    {
+      userid:2,
+      nickname:'세정',
+      background : '#FF5733',
+      avatarurl : '/img/토끼유령.png' ,
+    },
+    {
+      userid:3,
+      nickname:'은평',
+      background : '#FFD700',
+      avatarurl : '/img/고양이유령.png' ,
+    },
+    {
+      userid:4,
+      nickname:'필모',
+      background : '#33A1FF',
+      avatarurl : '/img/기본유령2.png' ,
+    },
+    {
+      userid:5,
+      nickname:'병현',
+      background : '#607D8B',
+      avatarurl : '/img/헤드셋유령.png' ,
+    },
+    {
+      userid:6,
+      nickname:'성수',
+      background : '#795548',
+      avatarurl : '/img/정답 유령.png' ,
+    },
+  ]
+</script>

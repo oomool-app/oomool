@@ -3,7 +3,7 @@
     <Dialog>
         <DialogTrigger as-child class="bg-white text-black w-40 h-40">
           <Button class="bg-white w-40 h-40 flex flex-col items-end"> <!-- items-end 클래스 추가 -->
-            <div class="mb-auto w-20 h-20"><img src="../assets/images/입장 유령.png"/></div>
+            <div class="mb-auto w-20 h-20"><img src="/img/입장 유령.png"/></div>
             <div class="text-black font-bold items-start mt-auto">방 참여하기</div>
           </Button>
         </DialogTrigger>
@@ -20,7 +20,7 @@
               />
             </DialogDescription>
           </DialogHeader>
-          <Button @click="$router.push({ path: `waitroom/${inviteCode}` })">
+          <Button @click="$router.push({ path: `waitroom/${inviteCode}/updateProfile` })">
               방 입장하기
             </Button>
         </DialogContent>
