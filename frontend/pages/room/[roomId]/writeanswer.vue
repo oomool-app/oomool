@@ -1,6 +1,14 @@
 <template>
   <div>
-    <FeedHeader header-name="답변 등록하기"></FeedHeader>
+    <div class="flex justify-between p-4 pt-6 pb-6">
+      <BackButton color="#61339B"></BackButton>
+      <FeedHeader
+        header-name="답변 작성하기"
+        class="text-[#61339B]"
+      ></FeedHeader>
+      <div></div>
+    </div>
+
     <TodayQuestion :question="question"></TodayQuestion>
     <textarea
       class="w-80"
