@@ -34,6 +34,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+    /**
+     * 이 메서드를 이용하면 필터를 거치지 않을 URL 패턴일경우, 필터를 건너 뛰게된다.
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getRequestURI().contains("token/refresh");
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
@@ -41,8 +49,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // 클라이언트로부터 JWT 액세스 토큰 전달 받는다.
         final String token = resolveToken(request);
 
-        // 토큰이 넘어오지 않았다면 다음 필터로 요청을 전달하는 역할
         if (!StringUtils.hasText(token)) {
+
             doFilter(request, response, filterChain);
             return;
         }
@@ -53,7 +61,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         // 토큰이 유효하다면
-
         log.info("호출되는지 체크");
 
         // AccessToken의 값이 있고, 유효한 경우에 진행한다.
@@ -61,7 +68,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         User findUser = userRepository.findByEmail(jwtService.getEmail(token))
             .orElseThrow(IllegalStateException::new);
 
-        System.out.println("findUser" + findUser.getUsername());
 
         // SecurityContext에 등록할 User 객체를 만들어준다.
         SecurityUserDto userDto = SecurityUserDto.builder()
@@ -100,4 +106,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return new UsernamePasswordAuthenticationToken(user, "",
             List.of(new SimpleGrantedAuthority(user.getRole())));
     }
+
 }
