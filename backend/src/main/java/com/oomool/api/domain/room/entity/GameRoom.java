@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "game_room")
-public class Room {
+public class GameRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.oomool.api.domain.feed.entity.Feed;
-import com.oomool.api.domain.room.entity.Room;
+import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -33,7 +33,7 @@ public class Player {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "room_id")
-    private Room room;
+    private GameRoom room;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")

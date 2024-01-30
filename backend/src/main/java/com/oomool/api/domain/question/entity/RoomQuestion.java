@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.oomool.api.domain.feed.entity.Feed;
-import com.oomool.api.domain.room.entity.Room;
+import com.oomool.api.domain.room.entity.GameRoom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +31,7 @@ public class RoomQuestion {
     // 질문방 & 방질문 -> 질문방에서 방질문을 참조
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "room_id")
-    private Room room; // 단방향 연관관계
+    private GameRoom room; // 단방향 연관관계
 
     // 방 질문 & 전체 질문의 관계
     @ManyToOne(fetch = LAZY)
