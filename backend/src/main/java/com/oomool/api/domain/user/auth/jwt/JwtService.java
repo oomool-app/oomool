@@ -1,19 +1,14 @@
 package com.oomool.api.domain.user.auth.jwt;
 
 import java.security.Key;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -37,14 +32,43 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
+    /**
+     * 사용자 email 추출
+     */
+    public String getEmail(String token) {
+        return Jwts
+            .parserBuilder()
+            .setSigningKey(getSignInKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject();
+    }
 
     /**
-     * 토큰 생성
+     * 사용자 권한 추출
      */
-    public String generateToken(Authentication authentication) {
+    public String getRole(String token) {
+        return Jwts
+            .parserBuilder()
+            .setSigningKey(getSignInKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .get("role", String.class);
+    }
+
+    /**
+     * 액세스 토큰 생성
+     */
+    public String generateToken(String email, String role) {
+
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("role", role);
+
         return Jwts
             .builder()
-            .setSubject(authentication.getName())
+            .setClaims(claims)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
             .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -52,24 +76,45 @@ public class JwtService {
     }
 
     /**
-     * 특정 클레임을 추출하는 메서드
-     * 토큰을 파싱하고 클레임을 반환한다.
+     * RefreshToken 생성
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public String generateRefreshToken(String email, String role) {
+        // 토큰의 유효 기간을 밀리초 단위로 설정.
+        long refreshPeriod = 1000L * 60L * 60L * 24L * 14; // 2주
+
+        // 새로운 클레임 객체를 생성하고, 이메일과 역할(권한)을 셋팅
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("role", role);
+
+        // 현재 시간과 날짜를 가져온다.
+        Date now = new Date();
+
+        return Jwts.builder()
+            // Payload를 구성하는 속성들을 정의한다.
+            .setClaims(claims)
+            // 발행일자를 넣는다.
+            .setIssuedAt(now)
+            // 토큰의 만료일시를 설정한다.
+            .setExpiration(new Date(now.getTime() + refreshPeriod))
+            // 지정된 서명 알고리즘과 비밀 키를 사용하여 토큰을 서명한다.
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact();
     }
 
-
-
+    // 토큰 유효성 검증
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
+            Jws<Claims> claims = Jwts
+                .parserBuilder()
+                .setSigningKey(getSignInKey()) // 비밀키를 설정하여 파싱
                 .build()
-                .parseClaimsJws(token);
+                .parseClaimsJws(token); // 주어진 토큰을 파싱하여 Claims 객체를 얻는다.
 
-            return true;
+            // 토큰의 만료 시간과 현재 시간 비교
+            return claims.getBody()
+                .getExpiration()
+                .after(new Date()); // 만료 시간이 현재 시간 이후인지 확인하여 유효성 검사
+
         } catch (UnsupportedJwtException | MalformedJwtException exception) {
             log.error("JWT is not valid");
         } catch (SignatureException exception) {
@@ -93,19 +138,4 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities =
-            Collections.singleton(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
-
-        return new UsernamePasswordAuthenticationToken(claims.get("id"), "gd", authorities);
-    }
-
-    private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(getSignInKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-    }
 }
