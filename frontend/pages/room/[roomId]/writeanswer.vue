@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="flex justify-between p-4 pt-6 pb-6">
+  <div class="pl-6 pr-6">
+    <div class="flex justify-between pt-6 pb-6">
       <BackButton color="#61339B"></BackButton>
       <FeedHeader
         header-name="답변 작성하기"
@@ -8,12 +8,6 @@
       ></FeedHeader>
       <div></div>
     </div>
-
-    <TodayQuestion :question="question"></TodayQuestion>
-    <textarea
-      class="w-80"
-      placeholder="마니띠를 떠올리며 오늘의 질문에 답변해 주세요"
-    ></textarea>
     <div>
       <input
         id="upload-image"
@@ -22,30 +16,32 @@
         class="h-10 px-4 py-2"
         @change="previewImage"
       />
-      <label for="upload-image">
-        <img id="preview" class="w-80" />
-        <div v-if="!isUploaded">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-80 h-80"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
-              clip-rule="evenodd"
+      <div class="flex justify-center mt-4">
+        <label for="upload-image">
+          <img id="preview" class="w-56" />
+          <div v-if="!isUploaded" class="flex justify-center items-center">
+            <img
+              class="w-56 h-56 inline-block"
+              src="/img/사진등록유령.png"
+              alt="사진 등록 이미지"
             />
-          </svg>
-        </div>
-      </label>
+          </div>
+        </label>
+      </div>
     </div>
-    <Button>답변 등록</Button>
+    <TodayQuestion
+      class="mt-4 text-xl font-extrabold"
+      :question="question"
+    ></TodayQuestion>
+    <textarea
+      class="w-80 h-40 mt-4 rounded-md outline-primary"
+      placeholder=" 마니띠를 떠올리며 오늘의 질문에 답변해 주세요!"
+    ></textarea>
   </div>
 </template>
 
 <script setup lang="ts">
-const question = ref('오늘의 질문입니다');
+const question = ref('내 친구가 좋아할만한 음악이나 장르가 어떻게 되나요?');
 const isUploaded = ref(false);
 const previewImage = (): void => {
   const input = document.getElementById(
