@@ -1,10 +1,11 @@
 package com.oomool.api.domain.user.auth.service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -27,7 +28,7 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return userInfo.getNickname();
+        return userInfo.getEmail();
     }
 
     @Override
@@ -57,17 +58,12 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collectors = new ArrayList<>();
-        collectors.add(() -> {
-            return "ROLE_" + user.getRole();
-        }); //add에 들어올 파라미터는 GrantedAuthority밖에 없으니
-
-        return collectors;
+        return Arrays.asList(new SimpleGrantedAuthority("USER")); // 권한 세팅
     }
 
     @Override
     public String getName() {
-        return userInfo.getEmail();
+        return userInfo.getNickname();
     }
 
     public OAuth2UserInfo getUserInfo() {

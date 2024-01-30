@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.oomool.api.domain.user.auth.jwt.JwtService;
+import com.oomool.api.domain.user.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import lombok.extern.log4j.Log4j2;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     /**
      * 인증이 성공했을 때 호출되는 메서드로, 실제로 어떤 동작을 할지를 결정
@@ -30,9 +32,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException {
-        String url = makeRedirectUrl(jwtService.generateToken(authentication));
-        String token = jwtService.generateToken(authentication);
 
+        String email = authentication.getName();
+        String role = authentication.getAuthorities().toString();
+
+        String url = makeRedirectUrl(jwtService.generateToken(email, role));
+        String token = jwtService.generateToken(email, role); // 액세스 토큰
+        String refreshToken = jwtService.generateRefreshToken(email, role); // 리프레시 토큰
+
+
+        // 응답 헤더에 액세스 토큰 반환
         addTokenToHeader(response, token);
 
         if (response.isCommitted()) {
@@ -40,9 +49,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
+        // 지정한 url로 redirect
         getRedirectStrategy().sendRedirect(request, response, url);
     }
 
+    // 응답 헤더에 'Authorization' 이름으로 액세스 토큰 전달
     private void addTokenToHeader(HttpServletResponse response, String token) {
         response.addHeader("Authorization", "Bearer " + token);
     }
@@ -52,8 +63,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      */
     private String makeRedirectUrl(String token) {
         return UriComponentsBuilder.fromUriString("http://localhost:8080/oauth2/redirect")
-            // .queryParam("token", token)
-            .build().toUriString();
+            .build()
+            .toUriString();
     }
-
 }

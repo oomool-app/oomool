@@ -14,6 +14,13 @@ import lombok.extern.log4j.Log4j2;
 public class AuthController {
 
 
+    // 시큐리티 인증 / 인가 테스트 하기 위한 API
+    @GetMapping("/access-token")
+    public String tokenTest() {
+        return "로그인 성공!";
+    }
+
+    // 로그인 성공 시 redirect api
     @GetMapping("/redirect")
     public String createRedirect() {
         return "로그인 성공!";

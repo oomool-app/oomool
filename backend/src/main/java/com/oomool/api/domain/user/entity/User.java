@@ -41,6 +41,9 @@ public class User {
 
     private String provider;
 
+    // 일단 임의로 리프레시 토큰 컬럼 만듦, 나중에 redis에 저장할 수 있도록 확장할 듯.
+    private String refreshToken;
+
     @Enumerated
     private Role role;
 

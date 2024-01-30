@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainController {
 
-    @GetMapping
-    public String hello() {
-        return "hello world";
+    @GetMapping("login")
+    public String login() {
+        return "로그인 화면";
     }
 }
