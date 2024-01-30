@@ -5,9 +5,20 @@
     <MakeRoomProgress :cur-page="'2'"></MakeRoomProgress>
     <div class="font-bold mb-4">우리들, 어떤 사이예요?</div>
     <div>매일 제공되는 질문의 유형이 결정돼요!</div>
-    <MakeRoomTypeButton></MakeRoomTypeButton>
+    <MakeRoomTypeButton
+      :game-type="gameType"
+      @update-type="handleUpdateType"
+    ></MakeRoomTypeButton>
     <div>
       <NuxtLink to="number"><Button>다음</Button></NuxtLink>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const gameType = ref<string>('');
+
+function handleUpdateType(title: string): void {
+  gameType.value = title;
+}
+</script>
