@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.oomool.api.domain.user.auth.jwt.JwtService;
-import com.oomool.api.domain.user.repository.UserRepository;
+import com.oomool.api.domain.user.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +24,7 @@ import lombok.extern.log4j.Log4j2;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 인증이 성공했을 때 호출되는 메서드로, 실제로 어떤 동작을 할지를 결정
@@ -38,8 +38,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String url = makeRedirectUrl(jwtService.generateToken(email, role));
         String token = jwtService.generateToken(email, role); // 액세스 토큰
-        String refreshToken = jwtService.generateRefreshToken(email, role); // 리프레시 토큰
 
+        // DB에 refreshToken을 저장해두었다가 기간이 만료되면 새로 발급하도록 해야할 듯
+
+        String refreshToken = jwtService.generateRefreshToken(email, role); // 리프레시 토큰 생성
+
+        refreshTokenService.saveTokenInfo(email, refreshToken, token);
 
         // 응답 헤더에 액세스 토큰 반환
         addTokenToHeader(response, token);
