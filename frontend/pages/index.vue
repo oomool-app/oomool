@@ -4,7 +4,7 @@
       <!--로고-->
       <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
       <!--알림-->
-      <MessageButton class="absolute right-7"></MessageButton>
+      <MessageButton as-child class="absolute right-7"></MessageButton>
     </div>
 
     <!--방 만들기, 방 참여하기 버튼 -->
@@ -19,10 +19,11 @@
     <div
       class="flex flex-col gap-5 w-375 h-803 pt-5 pr-15 bg-white rounded-t-lg"
     >
+
       <h1 class="text-2xl font-bold p-4">나의 방 목록</h1>
 
       <div
-        class="flex flex-col self-end justify-center pl-6 pr-6 gap-5 space-y-4"
+        class="flex flex-col justify-center pl-6 pr-6 gap-5 space-y-4"
       >
         <div v-for="room in rooms" :key="room.title">
           <RoomCard :rooms="room"></RoomCard>
@@ -33,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+
 const rooms = [
   {
     roomid: 1,
@@ -53,18 +55,20 @@ const rooms = [
   {
     roomid: 3,
     sequence: 7,
-    question: ' ',
+    question: '내 마니또의 첫인상은?',
     title: '소문난 칠공주',
     startdate: '2024-01-01',
-    enddate: '2024-01-07',
+    enddate: '2024-01-31',
   },
   {
     roomid: 4,
     sequence: 2,
     question: '내 마니또에게 배울 점이 있다면?',
     title: '싸피초등학교 16기',
-    startdate: '2024-01-30',
+    startdate: '2024-02-07',
     enddate: '2024-02-08',
   },
 ];
+
+
 </script>
