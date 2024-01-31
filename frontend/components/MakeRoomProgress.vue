@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex justify-center">
     <progress
       id="create-progress"
       :value="props.curPage"

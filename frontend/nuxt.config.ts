@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/stylelint-module',
     'shadcn-nuxt',
+    '@pinia/nuxt',
   ],
   shadcn: {
     /**

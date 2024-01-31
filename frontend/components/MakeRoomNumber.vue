@@ -1,6 +1,5 @@
 <template>
-  <div class="con">
-    <div id="member-count">{{ members }}</div>
+  <div class="flex flex-col items-center">
     <input
       v-model="members"
       :style="{ background: inputStyle }"
@@ -12,8 +11,20 @@
 </template>
 
 <script setup lang="ts">
-const members = ref(3);
-
+const props = defineProps({
+  peopleNumber: {
+    type: Number,
+    default: 3,
+  },
+});
+const members: Ref<number> = ref(props.peopleNumber);
+const emit = defineEmits<(e: 'update-number', number: number) => void>();
+watch(
+  () => members.value,
+  () => {
+    emit('update-number', Number(members.value));
+  },
+);
 const inputStyle = computed(() => {
   return `linear-gradient(to right, #4e297c 0%, #4e297c ${(members.value - 3) * (100 / 27)}%, #d5d4d3 ${(members.value - 3) * (100 / 27)}%, #d5d4d3 100%)`;
 });
@@ -37,17 +48,5 @@ input::-webkit-slider-thumb {
   border: 1px solid #4e297c;
   border-radius: 50%;
   cursor: pointer;
-}
-
-#member-count {
-  color: #4e297c;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.con {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 </style>
