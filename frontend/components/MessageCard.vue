@@ -4,16 +4,17 @@
       'flex',
       'flex-row',
       'items-stretch',
-      'grid',
-      'grid-cols-9',
+      'justify-between',
       'ph-3',
       'pb-3',
       'pl-3',
+      'relative',
       { 'bg-[#F1EBFC]': isReadtimePast },
     ]"
     @click="$router.push({ path: `room/${messages.roomid}` })"
   >
-    <div class="col-span-1 self-center">
+    <!--아이콘-->
+    <div class="self-center pl-3 pr-3">
       <div
         v-if="props.messages.type == '생성' || props.messages.type == '종료'"
       >
@@ -70,9 +71,10 @@
         </svg>
       </div>
     </div>
+
     <div class="col-span-6">
       <div class="text-lg font-semibold">{{ props.messages.roomtitle }}</div>
-      <div class="mb-1 text-gray-500 md:text-lg w-50 dark:text-gray-400">
+      <div class="mb-1 text-gray-500 md:text-lg w-64 dark:text-gray-400">
         {{ props.messages.title }}
       </div>
     </div>
@@ -99,9 +101,8 @@ const props = defineProps<{
   messages: Message;
 }>();
 
-const nowtime = new Date();
-
-const isReadtimePast = new Date(props.messages.readtime as string) < nowtime;
+const isReadtimePast =
+  new Date(props.messages.readtime as string).getTime() < new Date().getTime();
 const timeFromCreate =
   new Date().getTime() -
   new Date(props.messages.createdtime as string).getTime();
