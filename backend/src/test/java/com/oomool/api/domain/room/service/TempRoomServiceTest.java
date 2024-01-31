@@ -2,6 +2,7 @@ package com.oomool.api.domain.room.service;
 
 import java.text.SimpleDateFormat;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.question.entity.QuestionType;
 import com.oomool.api.domain.room.dto.SettingRoomDto;
+import com.oomool.api.domain.room.dto.TempRoomDto;
 
 @SpringBootTest
 class TempRoomServiceTest {
@@ -17,7 +19,7 @@ class TempRoomServiceTest {
     @Autowired
     private TempRoomService tempRoomService;
     @Autowired
-    private RedisService redisService;
+    private TempRoomRedisService redisService;
 
     @Test
     @Rollback(false)
@@ -34,15 +36,19 @@ class TempRoomServiceTest {
             .build();
 
         PlayerDto master = PlayerDto.builder()
-            .userId(1)
+            .userId(10)
             .userEmail("test@test.com")
             .playerNickname("바보")
             .playerBackgroundColor("#FFFFF")
             .playerAvatarUrl("https://test.com/image")
             .build();
         // when
-        String inviteCode = tempRoomService.createTempRoom(setting, master);
-        System.out.println(inviteCode);
+        TempRoomDto tempRoom = tempRoomService.createTempRoom(setting, master);
+
+        // Then
+        // 플레이어 저장 테스트
+        Assertions.assertEquals(master.getUserId(),
+            redisService.getTempRoomPlayer(tempRoom.getInviteCode()).get(0).getUserId());
     }
 
 }
