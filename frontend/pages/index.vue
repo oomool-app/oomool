@@ -1,10 +1,10 @@
 <template>
   <div class="bg-primary">
-    <div class="flex justify-between pt-4">
+    <div class="flex justify-between pt-6">
       <!--로고-->
       <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
       <!--알림-->
-      <MessageButton as-child class="absolute right-7"></MessageButton>
+      <MessageButton as-child class="absolute right-5"></MessageButton>
     </div>
 
     <!--방 만들기, 방 참여하기 버튼 -->
@@ -19,9 +19,13 @@
     <div
       class="flex flex-col gap-5 w-375 h-803 pt-5 pr-15 bg-white rounded-t-lg"
     >
-      <h1 class="text-2xl font-bold p-4">나의 방 목록</h1>
+      <h1
+        class="text-2xl font-bold p-4 sticky top-0 bg-white h-16 rounded-t-lg z-40"
+      >
+        나의 방 목록
+      </h1>
 
-      <div class="flex flex-col justify-center pl-6 pr-6 gap-5 space-y-4">
+      <div class="flex flex-col justify-center pl-6 pr-6 gap-5 space-y-4 z-0">
         <div v-for="room in rooms" :key="room.title">
           <RoomCard :rooms="room"></RoomCard>
         </div>
