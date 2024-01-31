@@ -1,5 +1,6 @@
 package com.oomool.api.domain.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.oomool.api.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -27,6 +28,7 @@ public class SocialLogin {
     private String providerId;
 
     @ManyToOne
+    @JsonManagedReference // 순환참조 방지
     @JoinColumn(name = "user_id")
     private User user;
 
