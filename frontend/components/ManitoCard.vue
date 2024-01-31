@@ -3,6 +3,7 @@
     class="flex flex-col border-2 rounded-lg border-primary w-36 h-52 justify-center items-center"
   >
     <svg
+      v-if="see"
       xmlns="http://www.w3.org/2000/svg"
       fill="white"
       viewBox="0 0 24 24"
@@ -41,5 +42,6 @@ interface User {
 
 const props = defineProps<{
   user: User;
+  see: boolean;
 }>();
 </script>
