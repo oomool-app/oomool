@@ -1,56 +1,58 @@
 <template>
   <div>
-    <div class="mb-6 text-center flex justify-between">
-      <BackButton color="black" />
-      <h1 class="text-2xl font-bold">전체 멤버 조회</h1>
-    </div>
     <div
-      v-for="member in members"
-      :key="member.userid"
-      class="grid gap-4 m-3 grid-cols-2"
+      class="mb-6 text-center flex justify-center self-stretch relative pt-7 pb-7 font-bold"
     >
-      <MemberCard :members="member"></MemberCard>
+      <BackButton color="primary" class="absolute left-1 pt-1" />
+      <h1 class="text-2xl font-bold text-primary">멤버 목록</h1>
+    </div>
+    <div class="flex flex-wrap justify-center">
+      <div v-for="user in users" :key="user.id" class="m-2 rounded-lg">
+        <ManitoCard :user="user" :see="see" class="text-primary"> </ManitoCard>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const members = [
+const users = ref([
   {
-    userid: 1,
-    nickname: '현지',
+    id: 1,
+    name: '박세정',
     background: '#FF33A1',
-    avatarurl: '/img/곰유령.png',
+    profileUrl: '/img/곰유령.png',
   },
   {
-    userid: 2,
-    nickname: '세정',
+    id: 2,
+    name: '김성수',
     background: '#FF5733',
-    avatarurl: '/img/토끼유령.png',
+    profileUrl: '/img/소라게유령.png',
   },
   {
-    userid: 3,
-    nickname: '은평',
+    id: 3,
+    name: '김현지',
     background: '#FFD700',
-    avatarurl: '/img/고양이유령.png',
+    profileUrl: '/img/토끼유령.png',
   },
   {
-    userid: 4,
-    nickname: '필모',
+    id: 4,
+    name: '전은평',
     background: '#33A1FF',
-    avatarurl: '/img/기본유령2.png',
+    profileUrl: '/img/헤드셋유령.png',
   },
   {
-    userid: 5,
-    nickname: '병현',
+    id: 5,
+    name: '김병현',
     background: '#607D8B',
-    avatarurl: '/img/헤드셋유령.png',
+    profileUrl: '/img/고양이유령.png',
   },
   {
-    userid: 6,
-    nickname: '성수',
+    id: 6,
+    name: '정필모',
     background: '#795548',
-    avatarurl: '/img/정답 유령.png',
+    profileUrl: '/img/소라게유령.png',
   },
-];
+]);
+
+const see = ref(false);
 </script>
