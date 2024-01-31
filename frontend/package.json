@@ -20,6 +20,7 @@
     "@nuxtjs/stylelint-module": "^5.1.0",
     "@nuxtjs/tailwindcss": "^6.11.0",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@vite-pwa/nuxt": "^0.4.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
