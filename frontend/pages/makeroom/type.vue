@@ -6,7 +6,7 @@
     <div class="font-bold mb-4">우리들, 어떤 사이예요?</div>
     <div>매일 제공되는 질문의 유형이 결정돼요!</div>
     <MakeRoomTypeButton
-      :game-type="gameType"
+      :game-type="store.type"
       @update-type="handleUpdateType"
     ></MakeRoomTypeButton>
     <div>
@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-const gameType = ref<string>('');
+const store = useMakeRoomStore();
 
 function handleUpdateType(title: string): void {
-  gameType.value = title;
+  store.type = title;
 }
 </script>
