@@ -30,8 +30,9 @@ public class TempRoomController {
     @Operation(summary = "대기방 생성 기능", description = "대기방을 생성합니다.")
     @PostMapping
     public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws JsonProcessingException {
-        return ResponseEntity.ok(tempRoomService.createTempRoom(request.getSetting(),
-            request.getPlayers().get(0)));
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            tempRoomService.createTempRoom(request.getSetting(), request.getPlayers()
+                .get(0)));
     }
 
     @Operation(summary = "대기방 조회 기능")
@@ -45,8 +46,7 @@ public class TempRoomController {
     public ResponseEntity<?> joinTempRoom(@PathVariable("inviteCode") String inviteCode,
         @RequestBody PlayerDto player) throws
         JsonProcessingException {
-        // 입장 로직
-        return ResponseEntity.ok(tempRoomService.joinTempRoom(inviteCode, player));
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.joinTempRoom(inviteCode, player));
     }
 
 }
