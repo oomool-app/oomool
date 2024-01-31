@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+useBodyColor('#61339B');
+
 const rooms = [
   {
     roomid: 1,
@@ -70,3 +72,9 @@ const rooms = [
   },
 ];
 </script>
+
+<style scoped lang="scss">
+body {
+  background-color: #61339b;
+}
+</style>
