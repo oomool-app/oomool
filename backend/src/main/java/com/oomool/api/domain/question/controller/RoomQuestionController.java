@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,13 @@ import lombok.RequiredArgsConstructor;
 public class RoomQuestionController {
 
     private final RoomQuestionService roomQuestionService;
+
+    @Operation(summary = "방에 대한 질문 생성 기능", description = "문답방에 대한 질문을 생성합니다.")
+    @PostMapping("/{roomUID}")
+    public ResponseEntity<?> createRoomQuestion(@PathVariable("roomUID") String roomUid) {
+        roomQuestionService.publishRoomQuestionList(roomUid);
+        return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
+    }
 
     @Operation(summary = "데일리 질문 조회 기능", description = "데일리 질문에 대해 조회합니다.")
     @GetMapping("/{roomUID}/{sequence}")
