@@ -4,7 +4,7 @@
       <input
         id="select1"
         v-model="selected"
-        value="awkward"
+        value="AW"
         type="radio"
         name="shop"
       />
@@ -17,7 +17,7 @@
       <input
         id="select2"
         v-model="selected"
-        value="friendly"
+        value="BF"
         type="radio"
         name="shop"
       />
