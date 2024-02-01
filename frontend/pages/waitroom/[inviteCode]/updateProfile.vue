@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center bg-background justify-center">
     <div class="mb-6 text-center">
-      <h1 class="text-2xl pt-5 font-bold">프로필 설정하기</h1>
+      <h1 class="text-2xl pt-8 font-bold">프로필 설정하기</h1>
 
       <!--프로필 이미지 미리보기-->
       <div class="flex pb-10 pt-10 justify-center items-start gap-2.5">
@@ -18,22 +18,22 @@
       </div>
 
       <!--입력 창-->
-      <div class="pl-5">
-        <h1 class="pt-15 pb-1 text-xl font-bold flex justify-start">
+      <div class="pl-5 pb-20">
+        <h1 class="pt-15 pb-1 text-xl font-extrabold flex justify-start">
           사용자 이름을 입력해주세요
         </h1>
-        <h1 class="text-sm pb-8 font-bold text-gray-500 flex justify-start">
+        <h1 class="text-s pb-8 font-normal text-gray-500 flex justify-start">
           다른 친구들이 구분할 수 있는 이름을 사용해주세요.
         </h1>
         <input
           id="username"
           type="text"
-          class="flex bg-[#F9FAFB] rounded-md border-2 border-solid border-[#6D6D6D] items-center w-80 h-16 justify-center"
-          placeholder="userkakaonickname"
+          class="flex bg-[#F9FAFB] rounded-md border-2 border-[#6D6D6D] items-center w-80 h-12 justify-center text-s pl-2"
+          placeholder="kakao nickname"
           required
         />
         <h1 class="pt-1 pb-5 text-xs font-bold flex justify-start text-primary">
-          그룹 내 멤버들이 식별 가능한 닉네임을 입력해주세요
+          중복, 공백을 포함한 10글자 이내의 영문, 한글, 숫자
         </h1>
       </div>
     </div>
