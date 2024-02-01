@@ -27,13 +27,14 @@ public class GameRoomMapper {
     /**
      * GameRoom Entity -> SettingOptionDto
      * */
-    public SettingOptionDto convertSettingOptionDto(GameRoom gameRoom, int playerSize) {
+    public SettingOptionDto convertSettingOptionDto(GameRoom gameRoom) {
         return SettingOptionDto.builder()
             .title(gameRoom.getTitle())
             .startDate(gameRoom.getStartDate())
             .endDate(gameRoom.getEndDate())
             .questionType(gameRoom.getQuestionType())
-            .maxMember(playerSize)
+            .maxMember(gameRoom.getPlayers().size())
             .build();
     }
+
 }
