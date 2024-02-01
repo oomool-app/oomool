@@ -3,7 +3,9 @@
     <div class="flex justify-between pt-6">
       <!--로고-->
       <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
+
       <!--알림-->
+      <h1 class="text-2xl font-bold text-left pl-6 text-white"></h1>
       <MessageButton as-child class="absolute right-5"></MessageButton>
     </div>
 
@@ -17,7 +19,7 @@
 
     <!-- 방 목록-->
     <div
-      class="flex flex-col gap-5 w-375 h-803 pt-5 pr-15 bg-white rounded-t-lg"
+      class="flex flex-col gap-5 w-375 h-803 pt-3 pr-15 bg-white rounded-t-lg"
     >
       <h1
         class="text-2xl font-bold p-4 sticky top-0 bg-white h-16 rounded-t-lg z-40"
@@ -25,7 +27,7 @@
         나의 방 목록
       </h1>
 
-      <div class="flex flex-col justify-center pl-6 pr-6 gap-5 space-y-4 z-0">
+      <div class="flex flex-col justify-center pl-6 pr-6 gap-3 space-y-4 z-0">
         <div v-for="room in rooms" :key="room.title">
           <RoomCard :rooms="room"></RoomCard>
         </div>
@@ -35,7 +37,13 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '~/stores/userStore';
+import { useRouter } from 'vue-router';
+
 useBodyColor('#61339B');
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const rooms = [
   {
@@ -71,6 +79,19 @@ const rooms = [
     enddate: '2024-02-08',
   },
 ];
+
+onBeforeMount(async () => {
+  // 페이지 로딩 시 세션 스토리지에서 사용자 정보 가져오기
+  const storedUser = userStore.getStoredUser();
+
+  // 사용자 정보가 있으면 index.vue로, 없으면 login.vue로 리다이렉트
+  if (storedUser != null) {
+    await router.push('/');
+  } else {
+    // 세션 스토리지에 사용자 정보가 없을 경우
+    await router.push('/login');
+  }
+});
 </script>
 
 <style scoped lang="scss">

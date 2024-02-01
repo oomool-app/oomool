@@ -6,24 +6,26 @@
       <!--진행중-->
       <div
         v-if="startDateIsBeforeToday && endDateIsAfterToday"
+        class="flex flex-col"
         @click="$router.push({ path: `room/${rooms.roomid}` })"
       >
-        <CardHeader>
+        <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
-            class="flex bg-white font-bold px-5 py-10 w-70 h-36 shadow-inner rounded-xl justify-center items-center"
+            class="flex bg-white font-bold h-24 shadow-inner rounded-xl justify-center items-center"
           >
             {{ props.rooms.question }}
           </div>
         </CardHeader>
-        <CardContent>
-          <div
-            class="text-white text-2xl tracking-tighter not-italic font-bold leading-6"
-          >
+        <CardContent class="px-3 pt-0">
+          <div class="text-white text-xl not-italic h-3">
             {{ props.rooms.title }}
           </div>
         </CardContent>
-        <CardFooter>
-          <Button class="bg-[#04E260] text-black w-15 h-10">진행중</Button>
+        <CardFooter class="px-3 pb-3 pl-4">
+          <Button
+            class="bg-[#04E260] text-black w-14 h-6 text-center align-middle text-xs rounded-full"
+            >진행중</Button
+          >
         </CardFooter>
       </div>
 
@@ -31,22 +33,21 @@
       <div v-else-if="!startDateIsBeforeToday">
         <Popover>
           <PopoverTrigger as-child>
-            <CardHeader as-child>
+            <CardHeader class="px-3.5 pt-3.5 pb-4">
               <div
-                class="flex bg-white text-[#6D6D6D] font-bold px-5 py-10 w-70 h-36 shadow-inner rounded-xl justify-center items-center"
+                class="flex bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
               >
                 아직 준비 중이에요!
               </div>
             </CardHeader>
-            <CardContent as-child>
-              <div
-                class="text-white text-2xl tracking-tighter not-italic font-bold leading-6"
-              >
+            <CardContent class="px-3 pt-0">
+              <div class="text-white text-xl not-italic h-3">
                 {{ props.rooms.title }}
               </div>
             </CardContent>
-            <CardFooter as-child>
-              <Button class="bg-[#F1D302] text-black w-15 h-10"
+            <CardFooter class="px-3 pb-3 pl-4">
+              <Button
+                class="bg-[#F1D302] text-black w-14 h-6 text-center align-middle text-xs rounded-full"
                 >시작대기</Button
               >
             </CardFooter>
@@ -69,23 +70,26 @@
         v-else-if="!endDateIsAfterToday"
         @click="$router.push({ path: `guess/${rooms.roomid}` })"
       >
-        <CardHeader>
+        <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
-            class="flex bg-white text-[#6D6D6D] font-bold px-5 py-10 w-70 h-36 shadow-inner rounded-xl justify-center items-center"
+            class="flex bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
           >
             종료된 방입니다.
           </div>
         </CardHeader>
-        <CardContent>
-          <div
-            class="text-white text-2xl tracking-tighter not-italic font-bold leading-6"
-          >
-            {{ props.rooms.title }}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button class="bg-[#B0B0B0] text-black w-15 h-10">종료됨</Button>
-        </CardFooter>
+        <div class="h-20">
+          <CardContent class="px-3 pt-0">
+            <div class="text-white text-xl not-italic h-3">
+              {{ props.rooms.title }}
+            </div>
+          </CardContent>
+          <CardFooter class="px-3 pb-3 pl-4">
+            <Button
+              class="bg-[#B0B0B0] text-black w-14 h-6 text-center align-middle text-xs rounded-full"
+              >종료됨</Button
+            >
+          </CardFooter>
+        </div>
       </div>
     </Card>
   </div>
