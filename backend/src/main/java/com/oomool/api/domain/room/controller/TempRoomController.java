@@ -1,5 +1,7 @@
 package com.oomool.api.domain.room.controller;
 
+import java.text.ParseException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +31,19 @@ public class TempRoomController {
 
     @Operation(summary = "대기방 생성 기능", description = "대기방을 생성합니다.")
     @PostMapping
-    public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws JsonProcessingException {
+    public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws
+        JsonProcessingException,
+        ParseException {
+
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            tempRoomService.createTempRoom(request.getSetting(), request.getPlayers()
-                .get(0)));
+            tempRoomService.createTempRoom(request.getSetting(), request.getMaster()));
     }
 
     @Operation(summary = "대기방 조회 기능")
     @GetMapping("/{inviteCode}")
-    public ResponseEntity<?> getTemRoom(@PathVariable("inviteCode") String inviteCode) throws JsonProcessingException {
+    public ResponseEntity<?> getTemRoom(@PathVariable("inviteCode") String inviteCode) throws
+        JsonProcessingException,
+        ParseException {
         return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.getTempRoom(inviteCode));
     }
 

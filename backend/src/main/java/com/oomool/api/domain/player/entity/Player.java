@@ -20,10 +20,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
-@Getter
+@Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "player")
 public class Player {
 
