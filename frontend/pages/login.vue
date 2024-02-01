@@ -70,7 +70,21 @@ const handleKakaoLogin = (): void => {
   window.location.href = kakaoLoginURL;
 };
 
-const handleLogin = (email: string): void => {
+const handleLogin = async (email: string): Promise<void> => {
   console.log(email);
+  const apiEndpoint = `${config.public.oomoolApiUrl}/users/login?email=${email}`;
+
+  const response = await fetch(apiEndpoint, {
+    method: 'GET',
+  });
+
+  if (response.ok) {
+    const responseData = await response.json();
+    console.log('API 응답:', responseData);
+    // 받아서 store, sessionstorage 저장
+    // 홈으로 리다이렉트
+  } else {
+    console.error('API 요청 실패');
+  }
 };
 </script>
