@@ -1,8 +1,8 @@
 package com.oomool.api.domain.room.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.oomool.api.domain.player.entity.Player;
@@ -17,12 +17,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "game_room")
 public class GameRoom {
 
@@ -38,11 +42,11 @@ public class GameRoom {
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private LocalDate startDate;
+    private Date startDate;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private LocalDate endDate;
+    private Date endDate;
 
     @Column(nullable = false, length = 5)
     private QuestionType questionType; // [AW (어색한 사이), BF (친한사이)]

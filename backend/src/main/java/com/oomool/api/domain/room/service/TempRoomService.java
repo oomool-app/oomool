@@ -1,30 +1,32 @@
 package com.oomool.api.domain.room.service;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oomool.api.domain.player.dto.PlayerDto;
-import com.oomool.api.domain.room.dto.SettingRoomDto;
+import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
+import com.oomool.api.domain.room.util.DateUtil;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 
 @Service
 public class TempRoomService {
 
     // Redis의 데이터 액세스를 담당하는 redisService 로직과 분리한다.
-    private final TempRoomRedisService redisService;
+    private final TempRoomRedisService tempRoomRedisService;
 
     @Autowired
     public TempRoomService(TempRoomRedisService redisService) {
-        this.redisService = redisService;
+        this.tempRoomRedisService = redisService;
     }
 
-    public TempRoomDto createTempRoom(SettingRoomDto roomSetting, PlayerDto masterPlayer) throws
+    /**
+     * 대기방 생성
+     * */
+    public TempRoomDto createTempRoom(SettingOptionDto roomSetting, PlayerDto masterPlayer) throws
         JsonProcessingException {
 
         // inviteCode 생성
@@ -32,8 +34,8 @@ public class TempRoomService {
         String inviteCode = generator.generateRandomString();
 
         // 임시방에 데이터 저장
-        redisService.saveTempRoomSetting(inviteCode, roomSetting, masterPlayer.getUserId());
-        redisService.saveTempRoomPlayer(inviteCode, masterPlayer);
+        tempRoomRedisService.saveTempRoomSetting(inviteCode, roomSetting, masterPlayer.getUserId());
+        tempRoomRedisService.saveTempRoomPlayer(inviteCode, masterPlayer);
 
         // 비즈니스 검증로직 필요
 
@@ -54,8 +56,8 @@ public class TempRoomService {
 
         // 4. 이미 기존에 참여하고 있는 유저라면 새로 등록되지 않는다.
         // playerList에 추가된다.
-        redisService.saveTempRoomPlayer(inviteCode, player);
-        return Map.ofEntries(Map.entry("players", redisService.getTempRoomPlayer(inviteCode)));
+        tempRoomRedisService.saveTempRoomPlayer(inviteCode, player);
+        return Map.ofEntries(Map.entry("players", tempRoomRedisService.getTempRoomPlayerList(inviteCode)));
     }
 
     /**
@@ -63,19 +65,15 @@ public class TempRoomService {
      * - 대기방에 대한 전체 정보를 조회한다.
      * */
     public TempRoomDto getTempRoom(String inviteCode) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        // 1. settingRoomDto
-        SettingRoomDto settingRoom = objectMapper.convertValue(redisService.getTempRoomSetting(inviteCode),
-            SettingRoomDto.class);
-        // 2. player List
-        List<PlayerDto> playerList = redisService.getTempRoomPlayer(inviteCode);
-
+        DateUtil dateUtil = new DateUtil();
+        String createAt = (String)tempRoomRedisService.getTempRoomSettingValue(inviteCode, "createAt");
+        String masterId = (String)tempRoomRedisService.getTempRoomSettingValue(inviteCode, "masterId");
         return TempRoomDto.builder()
             .inviteCode(inviteCode)
-            .masterId(playerList.get(0).getUserId())
-            .setting(settingRoom)
-            .players(playerList)
+            .createAt(dateUtil.parseDateTime(createAt))
+            .masterId(Integer.parseInt(masterId))
+            .setting(tempRoomRedisService.getSettingOption(inviteCode))
+            .players(tempRoomRedisService.getTempRoomPlayerList(inviteCode))
             .build();
     }
 
