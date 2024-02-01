@@ -10,7 +10,7 @@ import org.springframework.test.annotation.Rollback;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.question.entity.QuestionType;
-import com.oomool.api.domain.room.dto.SettingRoomDto;
+import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
 
 @SpringBootTest
@@ -27,7 +27,7 @@ class TempRoomServiceTest {
         // given
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        SettingRoomDto setting = SettingRoomDto.builder()
+        SettingOptionDto setting = SettingOptionDto.builder()
             .title("TEST")
             .startDate(dateFormat.parse("2024-01-01"))
             .endDate(dateFormat.parse("2024-01-30"))
@@ -48,7 +48,7 @@ class TempRoomServiceTest {
         // Then
         // 플레이어 저장 테스트
         Assertions.assertEquals(master.getUserId(),
-            redisService.getTempRoomPlayer(tempRoom.getInviteCode()).get(0).getUserId());
+            redisService.getTempRoomPlayerList(tempRoom.getInviteCode()).get(0).getUserId());
     }
 
 }

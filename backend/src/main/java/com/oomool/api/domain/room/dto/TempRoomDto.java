@@ -21,7 +21,7 @@ public class TempRoomDto {
     private String inviteCode;
     private LocalDateTime createAt;
     private int masterId;
-    private SettingRoomDto setting;
+    private SettingOptionDto setting;
     private List<PlayerDto> players;
     private List<UserDto> banList;
 }
