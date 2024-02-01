@@ -85,7 +85,7 @@
 import { Loader2 } from 'lucide-vue-next';
 const route = useRoute();
 interface User {
-  user_id: string;
+  user_id: number;
   user_email: string;
   player_nickname: string;
   player_background_color: string;
@@ -94,49 +94,49 @@ interface User {
 
 const Users = ref<User[]>([
   {
-    user_id: 'aaaa',
+    user_id: 1,
     user_email: 'aaaa@gmail.com',
     player_nickname: 'AAAA',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'bbbb',
+    user_id: 2,
     user_email: 'bbbb@gmail.com',
     player_nickname: 'BBBB',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'cccc',
+    user_id: 3,
     user_email: 'cccc@gmail.com',
     player_nickname: 'CCCC',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'dddd',
+    user_id: 4,
     user_email: 'dddd@gmail.com',
     player_nickname: 'DDDD',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'dddd',
+    user_id: 5,
     user_email: 'dddd@gmail.com',
     player_nickname: 'DDDD',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'dddd',
+    user_id: 6,
     user_email: 'dddd@gmail.com',
     player_nickname: 'DDDD',
     player_background_color: 'red',
     player_avatar_url: '/img/방만들기유령.png',
   },
   {
-    user_id: 'dddd',
+    user_id: 7,
     user_email: 'dddd@gmail.com',
     player_nickname: 'DDDD',
     player_background_color: 'red',
