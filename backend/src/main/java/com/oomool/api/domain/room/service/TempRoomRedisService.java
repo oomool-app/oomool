@@ -20,16 +20,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
-import com.oomool.api.domain.room.util.DateUtil;
+import com.oomool.api.global.util.CustomDateUtil;
 
 @Service
 public class TempRoomRedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public TempRoomRedisService(RedisTemplate<String, Object> redisTemplate) {
+    public TempRoomRedisService(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -38,14 +40,13 @@ public class TempRoomRedisService {
     public void saveTempRoomSetting(String inviteCode, SettingOptionDto settingRoomDto, int masterId) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        DateUtil dateUtil = new DateUtil();
+        CustomDateUtil customDateUtil = new CustomDateUtil();
         Map<String, Object> settingRoomMap = objectMapper.convertValue(settingRoomDto,
             new TypeReference<>() {
             });
 
         settingRoomMap.put("inviteCode", inviteCode);
-        settingRoomMap.put("createAt", dateUtil.convertDateTimeToString(LocalDateTime.now()));
+        settingRoomMap.put("createAt", customDateUtil.convertDateTimeToString(LocalDateTime.now()));
         settingRoomMap.put("masterId", Integer.toString(masterId));
 
         hashOps.putAll("roomSetting:" + inviteCode,
@@ -60,7 +61,6 @@ public class TempRoomRedisService {
         saveUserTempRoom(inviteCode, player.getUserId());
         // 대기방 코드에 player 정보 추가
         ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        ObjectMapper objectMapper = new ObjectMapper();
         String playerJson = objectMapper.writeValueAsString(player);
         listOps.rightPush("roomPlayers:" + inviteCode,
             playerJson); // String : List [inviteCode : List(Player) (player는 String으로)]
@@ -89,7 +89,6 @@ public class TempRoomRedisService {
      * */
     public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
         ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        ObjectMapper objectMapper = new ObjectMapper();
         List<Object> playerJsonList = listOps.range("roomPlayers:" + inviteCode, 0, -1);
         List<PlayerDto> playerList = new ArrayList<>();
         if (playerJsonList != null) {
@@ -113,7 +112,6 @@ public class TempRoomRedisService {
         tempRoomSetting.remove("masterId");
 
         // mapper 반환
-        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(tempRoomSetting, SettingOptionDto.class);
     }
 
