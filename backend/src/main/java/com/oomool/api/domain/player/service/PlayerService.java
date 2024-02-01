@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.oomool.api.domain.player.dto.ManittiDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Avatar;
 import com.oomool.api.domain.player.entity.Player;
@@ -66,5 +67,25 @@ public class PlayerService {
             .stream()
             .map(playerMapper::convertPlayerDto)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * 마니띠의 정보 조회
+     */
+    public ManittiDto getManittiInfo(int authorId) {
+        // authorId로 manittiId 가져오기
+        Player player = playerRepository.findByAuthorId(authorId);
+
+        int manittiId = player.getManittiId();
+
+        // manittiId로 manitti Info 가져오기
+        Player manitti = playerRepository.findByManttiId(manittiId);
+
+        return ManittiDto
+            .builder()
+            .nickname(manitti.getNickname())
+            .avatarColor(manitti.getAvatarColor())
+            .url(manitti.getAvatar().getUrl())
+            .build();
     }
 }
