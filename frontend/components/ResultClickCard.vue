@@ -2,7 +2,7 @@
   <div
     class="card w-64 h-2/3 border border-primary rounded-xl bg-gradient-to-br from-[#61339B] to-[#A8BDF9] flex justify-center items-center"
   >
-    <img class="img w-48 h-auto" src="/img/궁금유령.png" alt="결과확인" />
+    <img class="img w-48 h-auto" src="/img/curiousGhost.png" alt="결과확인" />
   </div>
 </template>
 

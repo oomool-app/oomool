@@ -66,13 +66,13 @@ const colors: string[] = [
 ];
 
 const avatarurls: string[] = [
-  '/img/곰유령.png',
-  '/img/고양이유령.png',
-  '/img/기본유령.png',
-  '/img/기본유령2.png',
-  '/img/소라게유령.png',
-  '/img/토끼유령.png',
-  '/img/헤드셋유령.png',
+  '/img/bearGhost.png',
+  '/img/catGhost.png',
+  '/img/defaultGhost1.png',
+  '/img/defaultGhost2.png',
+  '/img/sangwooGhost.png',
+  '/img/rabbitGhost.png',
+  '/img/musicGhost.png',
 ];
 
 // 인덱스 랜덤 생성

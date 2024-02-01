@@ -4,7 +4,7 @@
       class="bg-white w-40 h-40 flex flex-col items-end relative shadow-lg"
     >
       <div class="mb-auto w-24 h-auto pt-2 drop-shadow-2xl">
-        <img src="/img/방만들기유령3.png" />
+        <img src="/img/carpenterGhost.png" />
       </div>
       <div class="text-[#454545] absolute left-3 bottom-11">
         새로운 방을 원한다면?
