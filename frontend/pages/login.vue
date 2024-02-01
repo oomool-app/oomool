@@ -2,7 +2,7 @@
   <div class="flex flex-col h-screen items-center bg-primary">
     <div class="pt-0 text-center">
       <!--기본 유령 이미지-->
-      <img class="pl-32 pr-32" src="/img/기본유령.png" />
+      <img class="pl-32 pr-32" src="/img/defaultGhost1.png" />
       <h1 class="text-white text-xl pt-5">우리들의 물음표</h1>
       <h1 class="text-white text-5xl pb-5">우물</h1>
     </div>

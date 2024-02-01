@@ -7,13 +7,17 @@
     >
       예측 성공!!
     </div>
-    <img class="img mb-6 w-48 h-auto" src="/img/정답유령.png" alt="결과확인" />
+    <img
+      class="img mb-6 w-48 h-auto"
+      src="/img/successGhost.png"
+      alt="결과확인"
+    />
     <p class="p-2 text-2xl font-bold text-white">당신의 마니또</p>
     <div class="w-28 flex items-center justify-around">
       <div
         class="w-10 h-10 rounded-full bg-red-600 flex justify-center items-center"
       >
-        <img class="w-6 h-auto" src="/img/토끼유령.png" alt="" />
+        <img class="w-6 h-auto" src="/img/rabbitGhost.png" alt="" />
       </div>
       <p class="text-xl font-bold text-white">김현지</p>
     </div>

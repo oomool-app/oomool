@@ -16,7 +16,7 @@
         class="flex flex-col justify-evenly items-center text-center w-[88%]"
       >
         <div>
-          <img class="w-28 h-32" src="/img/질문 유령.png" alt="질문 유령" />
+          <img class="w-28 h-32" src="/img/questionGhost.png" alt="질문 유령" />
         </div>
         <div
           class="w-24 h-8 py-1 font-extrabold border-2 border-primary rounded-lg"
@@ -32,7 +32,11 @@
       v-if="!fixHeader"
       class="sticky top-20 flex justify-around p-4 rounded-b-xl bg-[#F1EBFC]"
     >
-      <img class="w-12 h-14 mr-2" src="/img/질문 유령.png" alt="질문 유령" />
+      <img
+        class="w-12 h-14 mr-2"
+        src="/img/questionGhost.png"
+        alt="질문 유령"
+      />
       <p class="question font-semibold inline-block py-1">
         "내 친구가 좋아할만한 음악 장르나 곡은 무엇일 것 같아요?"
       </p>

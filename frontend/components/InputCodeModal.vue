@@ -7,7 +7,7 @@
         >
           <!-- items-end 클래스 추가 -->
           <div class="mb-auto w-20 h-auto drop-shadow-xl">
-            <img src="/img/입장유령3.png" />
+            <img src="/img/enterGhost.png" />
           </div>
           <div class="text-[#454545] absolute left-3 bottom-11">
             초대 코드가 있나요?

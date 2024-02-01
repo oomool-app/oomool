@@ -57,7 +57,7 @@
           >
             <img
               class="w-56 h-56 inline-block rounded-xl"
-              src="/img/사진등록유령.png"
+              src="/img/photoGhost.png"
               alt="사진 등록 이미지"
             />
           </div>

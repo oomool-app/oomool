@@ -11,7 +11,7 @@
     </div>
     <img
       class="w-10 h-10 rounded-full border"
-      src="/img/정답유령.png"
+      src="/img/successGhost.png"
       alt="프로필 이미지"
     />
   </div>
