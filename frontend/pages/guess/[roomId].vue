@@ -39,7 +39,7 @@
         <p class="font-extrabold text-3xl mt-4">
           내 마니또는 <span class="text-primary">누구</span>였을까요?
         </p>
-        <p class="mt-1 mb-6">진신을 언제나 하나! 내 마니또를 추측해보세요.</p>
+        <p class="mt-1 mb-6">진실은 언제나 하나! 내 마니또를 추측해보세요.</p>
       </div>
     </div>
     <div class="users flex flex-wrap justify-center">
