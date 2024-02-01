@@ -1,8 +1,8 @@
 package com.oomool.api.domain.room.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.oomool.api.domain.player.entity.Player;
@@ -42,11 +42,11 @@ public class GameRoom {
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(nullable = false, length = 5)
     private QuestionType questionType; // [AW (어색한 사이), BF (친한사이)]
