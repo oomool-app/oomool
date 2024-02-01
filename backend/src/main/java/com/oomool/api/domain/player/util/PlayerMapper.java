@@ -1,5 +1,7 @@
 package com.oomool.api.domain.player.util;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
@@ -21,7 +23,8 @@ public class PlayerMapper {
         GameRoom gameRoom,
         User user,
         Avatar avatar,
-        int roomMasterId) {
+        int roomMasterId,
+        Map<Integer, Integer> matchingPairByUserId) {
 
         // PLAYER / MASTER 로 참여했는지 저장
         PlayerType playerType = playerDto.getUserId() == roomMasterId ? PlayerType.MASTER : PlayerType.PLAYER;
@@ -31,6 +34,7 @@ public class PlayerMapper {
             .user(user)
             .nickname(playerDto.getPlayerNickname())
             .playerType(playerType)
+            .manittiId(matchingPairByUserId.get(playerDto.getUserId()))
             .avatar(avatar)
             .avatarColor(playerDto.getPlayerBackgroundColor())
             .build();
