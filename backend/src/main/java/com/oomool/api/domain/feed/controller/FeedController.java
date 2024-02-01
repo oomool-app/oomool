@@ -1,14 +1,20 @@
 package com.oomool.api.domain.feed.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oomool.api.domain.feed.dto.FeedAnswerDto;
+import com.oomool.api.domain.feed.dto.ReceiveAnswerDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.service.FeedService;
+import com.oomool.api.domain.question.service.RoomQuestionService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 public class FeedController {
 
     private final FeedService feedService;
+    private final RoomQuestionService roomQuestionService;
 
     /**
      * 문답방 모든 피드를 반환한다.
@@ -37,4 +44,17 @@ public class FeedController {
         return new ResponseEntity<>(resultRoomFeedDto, HttpStatus.OK);
     }
 
+    /**
+     * 피드 질문 답변 등록
+     */
+    @Operation(summary = "오늘 질문 답변", description = "사용자가 오늘 질문에 대해 답변합니다.")
+    @PostMapping
+    public ResponseEntity<FeedAnswerDto> saveQuestionAnswer(ReceiveAnswerDto receiveAnswerDto) throws IOException {
+
+        // 피드 답변 등록하기
+        FeedAnswerDto feedAnswerDto = feedService.saveQuestionAnswer(receiveAnswerDto.getRoomQuestionId(),
+            receiveAnswerDto.getContent(), receiveAnswerDto.getFileList(),
+            receiveAnswerDto.getAuthorId());
+        return new ResponseEntity<>(feedAnswerDto, HttpStatus.CREATED);
+    }
 }

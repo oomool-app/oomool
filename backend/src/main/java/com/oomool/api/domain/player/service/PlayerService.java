@@ -88,4 +88,12 @@ public class PlayerService {
             .url(manitti.getAvatar().getUrl())
             .build();
     }
+
+    /**
+     * 마니띠 정보 조회(엔티티 반환)
+     */
+    public Player getPlayerInfo(int authorId) {
+        Player player = playerRepository.findByAuthorId(authorId);
+        return player;
+    }
 }

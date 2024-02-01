@@ -1,38 +1,54 @@
 package com.oomool.api.domain.feed.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.oomool.api.domain.feed.dto.FeedAnswerDto;
 import com.oomool.api.domain.feed.dto.FeedImageDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.dto.RoomFeedDto;
 import com.oomool.api.domain.feed.entity.Feed;
+import com.oomool.api.domain.feed.entity.FeedImage;
+import com.oomool.api.domain.feed.repository.FeedImageRepository;
 import com.oomool.api.domain.feed.repository.FeedRepository;
 import com.oomool.api.domain.player.dto.ManittiDto;
+import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.player.service.PlayerService;
 import com.oomool.api.domain.question.dto.QuestionDto;
 import com.oomool.api.domain.question.dto.RoomQuestionFeedDto;
+import com.oomool.api.domain.question.entity.RoomQuestion;
 import com.oomool.api.domain.question.service.QuestionService;
 import com.oomool.api.domain.question.service.RoomQuestionService;
+import com.oomool.api.global.util.CurrentTime;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 트랜잭션에서 여러 서비스를 의존하는 것은
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class FeedService {
-
     private final RoomQuestionService roomQuestionService;
     private final FeedRepository feedRepository;
     private final FeedImageService feedImageService;
     private final QuestionService questionService;
     private final PlayerService playerService;
+    private final FeedImageRepository feedImageRepository;
+    @Value("${file.path}")
+    private String uploadPath;
 
     /**
      * 문답방의 모든 피드를 가져온다
@@ -72,16 +88,10 @@ public class FeedService {
         int questionId = roomQuestionFeedDto.getQuestionId();
         QuestionDto questionDto = questionService.getQuestion(questionId);
 
-        // 현재 시간을 가져옵니다.
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        // 날짜와 시간을 원하는 형식으로 포맷합니다.
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedTime = currentTime.format(formatter);
-
         ResultRoomFeedDto resultRoomFeedDto = ResultRoomFeedDto
             .builder()
-            .date(formattedTime) // 현재 날짜
+            .roomQuestionId(roomQuestionId) // 방 질문 ID
+            .date(CurrentTime.getCurrentTime()) // 현재 날짜
             .roomFeedDtoList(roomFeedDtoList) // 피드 정보(생성 일자, 답변 내용, 마니띠 정보, 이미지 파일)
             .questionDto(questionDto) // 질문 내용, 레벨
             .build();
@@ -89,4 +99,72 @@ public class FeedService {
         return resultRoomFeedDto;
     }
 
+    /**
+     * 질문에 대합 답변 내용 저장(답변 내용, 이미지 파일)
+     */
+    public FeedAnswerDto saveQuestionAnswer(int roomQuestionId, String content,
+        List<MultipartFile> fileList, int authorId) throws IOException {
+
+        RoomQuestion roomQuestion = roomQuestionService.getRoomQuestionById(roomQuestionId);
+        Player player = playerService.getPlayerInfo(authorId);
+
+        // 피드 저장
+        Feed registFeed = new Feed();
+
+        registFeed.setRoomQuestion(roomQuestion);
+        registFeed.setAuthor(player);
+        registFeed.setContent(content);
+        registFeed.setCreateAt(LocalDateTime.now());
+
+        Feed feed = feedRepository.save(registFeed);
+
+        List<FeedImageDto> feedImageDtoList = new ArrayList<>();
+
+        // 피드 이미지 저장
+        for (MultipartFile file : fileList) {
+            // DB에 파일 저장
+            String today = new SimpleDateFormat("yyMMdd").format(new Date());
+            File folder = new File(uploadPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            String originalFileName = file.getOriginalFilename();
+
+            // DB에 저장
+            FeedImage registFeedImage = new FeedImage();
+
+            if (!originalFileName.isEmpty()) {
+                String saveFileName = UUID.randomUUID().toString()
+                    + originalFileName.substring(originalFileName.lastIndexOf('.'));
+                registFeedImage.setSaveFolder(today);
+                registFeedImage.setOriginalName(originalFileName);
+                registFeedImage.setSaveName(saveFileName);
+                file.transferTo(new File(folder, saveFileName));
+
+                // DTO에 파일 저장
+                FeedImageDto feedImageDto = FeedImageDto
+                    .builder()
+                    .originalName(originalFileName)
+                    .fileName(saveFileName)
+                    .folderName(today)
+                    .url("임의의 url")
+                    .build();
+
+                feedImageDtoList.add(feedImageDto);
+            }
+            registFeedImage.setFeed(feed);
+            registFeedImage.setUrl("임의의 url");
+
+            feedImageRepository.save(registFeedImage);
+        }
+
+        FeedAnswerDto feedAnswerDto = FeedAnswerDto
+            .builder()
+            .authorId(player.getId())
+            .content(content)
+            .feedImageDtoList(feedImageDtoList)
+            .build();
+
+        return feedAnswerDto;
+    }
 }

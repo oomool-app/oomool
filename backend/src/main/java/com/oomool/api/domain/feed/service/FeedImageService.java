@@ -10,7 +10,9 @@ import com.oomool.api.domain.feed.entity.FeedImage;
 import com.oomool.api.domain.feed.repository.FeedImageRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class FeedImageService {
@@ -27,6 +29,7 @@ public class FeedImageService {
         for (FeedImage feedImage : feedImageList) {
             FeedImageDto feedImageDto = FeedImageDto
                 .builder()
+                .originalName(feedImage.getOriginalName())
                 .fileName(feedImage.getSaveName())
                 .folderName(feedImage.getSaveFolder())
                 .url(feedImage.getUrl())

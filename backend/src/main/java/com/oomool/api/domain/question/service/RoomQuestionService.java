@@ -20,13 +20,25 @@ public class RoomQuestionService {
      * 방질문 정보를 반환(방질문 ID, 질문 ID, sequence)
      */
     public RoomQuestionFeedDto getRoomQuestion(String roomUid, int sequence) {
-        RoomQuestionFeedDto roomQuestionFeedDto = new RoomQuestionFeedDto();
         RoomQuestion roomQuestion = roomQuestionRepository.findIdsByRoomUidAndSequence(roomUid, sequence);
 
-        roomQuestionFeedDto.setQuestionId(roomQuestion.getQuestion().getId());
-        roomQuestionFeedDto.setRoomQuestionId(roomQuestion.getId());
-        roomQuestionFeedDto.setSequence(roomQuestion.getSequence());
+        RoomQuestionFeedDto roomQuestionFeedDto = RoomQuestionFeedDto
+            .builder()
+            .questionId(roomQuestion.getQuestion().getId())
+            .roomQuestionId(roomQuestion.getId())
+            .sequence(roomQuestion.getSequence())
+            .build();
 
         return roomQuestionFeedDto;
+    }
+
+    /**
+     * 방 질문 정보 반환
+     */
+    public RoomQuestion getRoomQuestionById(int roomQuestionId) {
+
+        RoomQuestion roomQuestion = roomQuestionRepository.findById(roomQuestionId);
+
+        return roomQuestion;
     }
 }

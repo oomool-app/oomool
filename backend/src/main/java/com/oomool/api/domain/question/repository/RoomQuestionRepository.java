@@ -12,4 +12,6 @@ public interface RoomQuestionRepository extends JpaRepository<RoomQuestion, Inte
     @Query("SELECT rq AS sequence FROM RoomQuestion rq "
         + "WHERE rq.room.roomUid = :roomUid AND rq.sequence = :sequence")
     RoomQuestion findIdsByRoomUidAndSequence(@Param("roomUid") String roomUid, @Param("sequence") int sequence);
+
+    RoomQuestion findById(int roomQuestionId);
 }
