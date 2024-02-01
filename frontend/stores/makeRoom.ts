@@ -6,8 +6,21 @@ export const useMakeRoomStore = defineStore('make', () => {
   const type: Ref<string> = ref('');
   const number: Ref<number> = ref(3);
   const range: Ref<DatePickerRangeObject> = ref({
-    start: Date(),
-    end: Date(),
+    start: new Date(),
+    end: new Date(),
   });
-  return { name, type, number, range };
+  function formatDate(date: any): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+  const diffDate = (start: string, end: string): number => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diff = endDate.getTime() - startDate.getTime();
+    return diff / (1000 * 60 * 60 * 24) + 1;
+  };
+  return { name, type, number, range, formatDate, diffDate };
 });
