@@ -9,8 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
-import com.oomool.api.domain.room.util.DateUtil;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
+import com.oomool.api.global.util.CustomDateUtil;
 
 @Service
 public class TempRoomService {
@@ -65,12 +65,12 @@ public class TempRoomService {
      * - 대기방에 대한 전체 정보를 조회한다.
      * */
     public TempRoomDto getTempRoom(String inviteCode) throws JsonProcessingException {
-        DateUtil dateUtil = new DateUtil();
+        CustomDateUtil customDateUtil = new CustomDateUtil();
         String createAt = (String)tempRoomRedisService.getTempRoomSettingValue(inviteCode, "createAt");
         String masterId = (String)tempRoomRedisService.getTempRoomSettingValue(inviteCode, "masterId");
         return TempRoomDto.builder()
             .inviteCode(inviteCode)
-            .createAt(dateUtil.parseDateTime(createAt))
+            .createAt(customDateUtil.parseDateTime(createAt))
             .masterId(Integer.parseInt(masterId))
             .setting(tempRoomRedisService.getSettingOption(inviteCode))
             .players(tempRoomRedisService.getTempRoomPlayerList(inviteCode))
