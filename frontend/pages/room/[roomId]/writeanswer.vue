@@ -6,7 +6,7 @@
         header-name="답변 작성하기"
         class="text-[#61339B]"
       ></FeedHeader>
-      <div></div>
+      <div class="w-3"></div>
     </div>
     <div>
       <input
@@ -15,7 +15,7 @@
         hidden
         type="file"
         class="h-10 px-4 py-2"
-        @change="previewImage"
+        @input="previewImage()"
       />
       <div class="flex flex-col justify-center items-center mt-4">
         <AlertDialog>
@@ -41,21 +41,19 @@
               >
             </AlertDialogHeader>
             <AlertDialogFooter class="flex flex-row justify-evenly">
+              <AlertDialogCancel class="w-20">아니요</AlertDialogCancel>
               <AlertDialogAction class="w-20" @click="removeImage()"
                 >네</AlertDialogAction
               >
-              <AlertDialogCancel class="w-20">아니요</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
 
         <label for="upload-image">
-          <img id="preview" class="w-56 mt-3" />
-          <div
-            v-if="!isUploaded"
-            class="flex justify-center items-center rounded-xl"
-          >
+          <div>
+            <img v-show="isUploaded" id="preview" class="w-56 mt-3" />
             <img
+              v-if="!isUploaded"
               class="w-56 h-56 inline-block rounded-xl"
               src="/img/photoGhost.png"
               alt="사진 등록 이미지"
@@ -86,10 +84,10 @@
             <AlertDialogTitle>답변을 등록하시겠습니까?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter class="flex flex-row justify-evenly">
+            <AlertDialogCancel class="w-20">아니요</AlertDialogCancel>
             <AlertDialogAction class="w-20" @click="registAnswer()"
               >네</AlertDialogAction
             >
-            <AlertDialogCancel class="w-20">아니요</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
         <AlertDialogContent v-else-if="answer === ''">
@@ -120,10 +118,12 @@ const previewImage = (): void => {
           'preview',
         ) as HTMLImageElement;
         previewElement.src = e.target.result;
+        console.log(e.target);
         isUploaded.value = true;
       }
     };
     reader.readAsDataURL(input.files[0]);
+    input.value = '';
   } else {
     const previewElement = document.getElementById(
       'preview',
