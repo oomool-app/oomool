@@ -4,7 +4,7 @@
       class="w-auto h-32 flex flex-col justify-center items-center rounded-lt-xl bg-gradient-to-b from-[#61339B] to-[#c392ff] rounded-t-xl"
     >
       <div
-        class="w-16 h-9 font-bold text-primary text-lg bg-white rounded-full text-center py-1"
+        class="w-20 h-9 font-bold text-primary text-lg bg-white rounded-full text-center py-1"
       >
         DAY {{ props.result.day }}
       </div>
