@@ -19,19 +19,43 @@
     </div>
     <div class="flex flex-col justify-start">
       <p class="p-4 pl-12 text-primary text-lg font-bold">마니또가 한 생각</p>
-      <div class="flex justify-center">
-        <Carousel class="relative w-3/4 max-w-xs">
+      <div class="flex flex-col items-center justify-center">
+        <Carousel
+          :opts="{
+            align: 'start',
+            loop: true,
+          }"
+          :plugins="[
+            Autoplay({
+              delay: 5000,
+              stopOnMouseEnter: true,
+              stopOnInteraction: false,
+            }),
+          ]"
+          class="relative w-3/4 max-w-xs mb-4"
+        >
           <CarouselContent>
             <CarouselItem v-for="item in results" :key="item.day">
               <ResultFinalCard :result="item"></ResultFinalCard>
             </CarouselItem>
           </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
         </Carousel>
+        <div class="flex">
+          <div
+            v-for="item in results"
+            :key="item.day"
+            class="bg-red-500 rounded-full w-4 h-4"
+          ></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import Autoplay from 'embla-carousel-autoplay';
+
 const results = ref([
   {
     day: 1,
