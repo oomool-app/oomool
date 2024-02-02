@@ -3,7 +3,7 @@ package com.oomool.api.domain.notification.service;
 import java.util.List;
 
 import com.oomool.api.domain.notification.dto.PushNotificationDto;
-import com.oomool.api.domain.notification.entity.PushNotificationToken;
+import com.oomool.api.domain.notification.dto.PushNotificationTokenDto;
 
 public interface PushNotificationService {
     /**
@@ -27,7 +27,7 @@ public interface PushNotificationService {
      *
      * @param userId 유저 pk
      */
-    List<PushNotificationToken> getAllTokensByUser(int userId);
+    List<PushNotificationTokenDto> getAllTokensByUser(int userId);
 
     /**
      * 푸시 알림을 보낸다.
