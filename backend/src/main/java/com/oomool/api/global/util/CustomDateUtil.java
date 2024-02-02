@@ -1,7 +1,9 @@
 package com.oomool.api.global.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class CustomDateUtil {
 
@@ -18,6 +20,13 @@ public class CustomDateUtil {
     public String convertDateTimeToString(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return dateTime.format(formatter);
+    }
+
+    /**
+     * DateInteval 계산
+     * */
+    public int getDateInterval(LocalDate startDate, LocalDate endDate) {
+        return (int)ChronoUnit.DAYS.between(startDate, endDate);
     }
 
 }
