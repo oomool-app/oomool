@@ -39,10 +39,10 @@ public class GameRoomController {
         return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("roomUid", roomUid));
     }
 
-    @Operation(summary = "문답방 상세 정보 조회 기능", description = "문답방을 조회합니다.")
+    @Operation(summary = "문답방 상세 정보 조회 기능", description = "문답방의 상세정보를 조회합니다.")
     @GetMapping("/{roomUID}")
-    public ResponseEntity<?> getGameRoom(@PathVariable("roomUID") String roomUid) {
-        return ResponseHandler.generateResponse(HttpStatus.OK, gameRoomService.getGameRoom(roomUid));
+    public ResponseEntity<?> getGameRoomDetail(@PathVariable("roomUID") String roomUid) {
+        return ResponseHandler.generateResponse(HttpStatus.OK, gameRoomService.getGameRoomDetail(roomUid));
     }
 
 }
