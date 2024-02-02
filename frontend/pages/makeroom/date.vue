@@ -10,16 +10,15 @@
       <Calendar v-model.range="store.range" type="range"> </Calendar>
     </div>
     <div>
-      <NuxtLink to="/waitroom/1"
-        ><Button @click="check">만들기</Button></NuxtLink
-      >
+      <Button @click="check">만들기</Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const store = useMakeRoomStore();
-const userInfo: any = localStorage.getItem('user');
+const router = useRouter();
+const userInfo: any = sessionStorage.getItem('user');
 const check = async (event: any): Promise<void> => {
   const element = document.getElementById('check');
   if (element == null) {
@@ -45,25 +44,32 @@ const check = async (event: any): Promise<void> => {
     event.preventDefault();
     return;
   }
-
-  const { data } = await useFetch('https://api-dev.oomool.site/temp', {
-    method: 'POST',
-    body: JSON.stringify({
-      setting: {
-        title: store.name,
-        start_date: store.formatDate(store.range.start),
-        end_date: store.formatDate(store.range.end),
-        question_type: 'BF',
-        max_member: store.number,
-      },
-      master: {
-        user_id: userInfo.user_id,
-        user_email: userInfo.user_email,
-        player_nickname: userInfo.user_nickname,
-        player_background_color: userInfo.player_background_color,
-        player_avatar_url: userInfo.player_avatar_url,
-      },
-    }),
-  });
+  await move();
+};
+const move = async (): Promise<void> => {
+  try {
+    const { data }: any = await useFetch('https://api-dev.oomool.site/temp', {
+      method: 'POST',
+      body: JSON.stringify({
+        setting: {
+          title: store.name,
+          start_date: store.formatDate(store.range.start),
+          end_date: store.formatDate(store.range.end),
+          question_type: store.type,
+          max_member: store.number,
+        },
+        master: {
+          user_id: userInfo.user_id,
+          user_email: userInfo.user_email,
+          player_nickname: userInfo.user_nickname,
+          player_background_color: userInfo.player_background_color,
+          player_avatar_url: userInfo.player_avatar_url,
+        },
+      }),
+    });
+    await router.push(`/waitroom/${data.value.data.invite_code}`);
+  } catch (error: any) {
+    alert(error.message);
+  }
 };
 </script>
