@@ -17,7 +17,7 @@
           </AlertDialogHeader>
           <AlertDialogFooter class="flex flex-row justify-evenly">
             <AlertDialogCancel>취소하기</AlertDialogCancel>
-            <AlertDialogAction>결정하기</AlertDialogAction>
+            <AlertDialogAction @click="goToFinal()">결정하기</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
         <AlertDialogContent v-else-if="whoIsCheck === undefined">
@@ -105,6 +105,7 @@ const users = ref([
     profileUrl: '/img/sangwooGhost.png',
   },
 ]);
+const router = useRouter();
 const see = ref(true);
 const manito = ref<string | undefined>('');
 const whoIsCheck = ref<number | undefined>(undefined);
@@ -116,6 +117,10 @@ const selectManito = (id: number, name: string): void => {
     whoIsCheck.value = undefined;
     manito.value = '';
   }
+};
+
+const goToFinal = async (): Promise<void> => {
+  await router.replace({ path: '/final/1' });
 };
 </script>
 <style scoped>
