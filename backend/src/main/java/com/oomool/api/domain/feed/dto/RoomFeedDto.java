@@ -16,7 +16,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class RoomFeedDto {
-
+    private int authorId; // 작성자 id
     private String content; // 피드 답변 기록
     private String createAt; // 답변 생성 일자
     private List<FeedImageDto> feedImageDtoList; // 피드 이미지
@@ -24,7 +24,8 @@ public class RoomFeedDto {
 
     @Builder
     public RoomFeedDto(String content, String createAt,
-        List<FeedImageDto> feedImageDtoList, ManittiDto manittiDto) {
+        List<FeedImageDto> feedImageDtoList, ManittiDto manittiDto, int authorId) {
+        this.authorId = authorId;
         this.content = content;
         this.createAt = createAt;
         this.feedImageDtoList = feedImageDtoList;

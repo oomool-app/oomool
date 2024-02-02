@@ -1,20 +1,16 @@
 package com.oomool.api.domain.feed.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
 import com.oomool.api.domain.feed.dto.FeedImageDto;
+import com.oomool.api.domain.feed.dto.FeedModifyDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.dto.RoomFeedDto;
 import com.oomool.api.domain.feed.entity.Feed;
@@ -29,8 +25,10 @@ import com.oomool.api.domain.question.dto.RoomQuestionFeedDto;
 import com.oomool.api.domain.question.entity.RoomQuestion;
 import com.oomool.api.domain.question.service.QuestionService;
 import com.oomool.api.domain.question.service.RoomQuestionService;
+import com.oomool.api.global.util.ConvertFile;
 import com.oomool.api.global.util.CurrentTime;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -47,8 +45,7 @@ public class FeedService {
     private final QuestionService questionService;
     private final PlayerService playerService;
     private final FeedImageRepository feedImageRepository;
-    @Value("${file.path}")
-    private String uploadPath;
+    private final ConvertFile convertFile;
 
     /**
      * 문답방의 모든 피드를 가져온다
@@ -75,6 +72,7 @@ public class FeedService {
 
             RoomFeedDto roomFeedDto = RoomFeedDto
                 .builder()
+                .authorId(authorId)
                 .content(feed.getContent()) // 답변 내용
                 .createAt(feed.getCreateAt().toString()) // 피드 생성 날짜
                 .feedImageDtoList(feedImageDtoList) // 이미지 파일 리스트
@@ -122,44 +120,26 @@ public class FeedService {
 
         // 피드 이미지 저장
         for (MultipartFile file : fileList) {
+
+            // 파일을 local에 저장하고 DTO에 담아서 반환해준다.
+            FeedImageDto feedImageDto = convertFile.convertFile(file);
+
             // DB에 파일 저장
-            String today = new SimpleDateFormat("yyMMdd").format(new Date());
-            File folder = new File(uploadPath);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            String originalFileName = file.getOriginalFilename();
-
-            // DB에 저장
             FeedImage registFeedImage = new FeedImage();
-
-            if (!originalFileName.isEmpty()) {
-                String saveFileName = UUID.randomUUID().toString()
-                    + originalFileName.substring(originalFileName.lastIndexOf('.'));
-                registFeedImage.setSaveFolder(today);
-                registFeedImage.setOriginalName(originalFileName);
-                registFeedImage.setSaveName(saveFileName);
-                file.transferTo(new File(folder, saveFileName));
-
-                // DTO에 파일 저장
-                FeedImageDto feedImageDto = FeedImageDto
-                    .builder()
-                    .originalName(originalFileName)
-                    .fileName(saveFileName)
-                    .folderName(today)
-                    .url("임의의 url")
-                    .build();
-
-                feedImageDtoList.add(feedImageDto);
-            }
+            registFeedImage.setSaveFolder(feedImageDto.getFolderName());
+            registFeedImage.setOriginalName(feedImageDto.getOriginalName());
+            registFeedImage.setSaveName(feedImageDto.getFileName());
             registFeedImage.setFeed(feed);
-            registFeedImage.setUrl("임의의 url");
-
+            registFeedImage.setUrl(feedImageDto.getUrl());
             feedImageRepository.save(registFeedImage);
+
+            // Dto에 파일 저장
+            feedImageDtoList.add(feedImageDto);
         }
 
         FeedAnswerDto feedAnswerDto = FeedAnswerDto
             .builder()
+            .feedId(feed.getId())
             .authorId(player.getId())
             .content(content)
             .feedImageDtoList(feedImageDtoList)
@@ -167,4 +147,61 @@ public class FeedService {
 
         return feedAnswerDto;
     }
+
+    /**
+     * 드 답변을 수정합니다
+     *
+     * 파일 delete 할 때 해당 메서드에 @Transaction 붙여줘야함 안그러면
+     * 아래 에러 뜸
+     * jakarta.persistence.TransactionRequiredException: No EntityManager with actual transaction available for current thread - cannot reliably process 'remove' call
+     * 해석하면 EntityManager가 없어서 안정적인 제거를 할 수 없다는 얘기임.
+     */
+    @Transactional
+    public FeedAnswerDto modifyQuestionAnswer(FeedModifyDto feedModifyDto) throws IOException {
+
+        log.info("fileList: {}", feedModifyDto.getFileList());
+
+        int feedId = feedModifyDto.getFeedId();
+
+        Feed feed = feedRepository.findById(feedId);
+
+        feed.setContent(feedModifyDto.getContent());
+
+        // 기존 DB에 있던 파일을 삭제한다.
+        feedImageRepository.deleteByFeedId(feedId);
+
+        List<MultipartFile> newFileList = feedModifyDto.getFileList();
+
+        List<FeedImageDto> feedImageDtoList = new ArrayList<>();
+
+
+        // 새로 입력 받은 이미지 DB에 저장
+        for (int i = 0; i < newFileList.size(); i++) {
+            MultipartFile file = newFileList.get(i);
+
+            FeedImageDto feedImageDto = convertFile.convertFile(file);
+
+            FeedImage registFeedImage = new FeedImage();
+
+            registFeedImage.setFeed(feed);
+            registFeedImage.setOriginalName(feedImageDto.getOriginalName());
+            registFeedImage.setSaveName(feedImageDto.getFileName());
+            registFeedImage.setSaveFolder(feedImageDto.getFolderName());
+            registFeedImage.setUrl(feedImageDto.getUrl());
+
+            feedImageRepository.save(registFeedImage);
+            feedImageDtoList.add(feedImageDto);
+        }
+
+        FeedAnswerDto feedAnswerDto = FeedAnswerDto
+            .builder()
+            .feedId(feedModifyDto.getFeedId())
+            .feedImageDtoList(feedImageDtoList)
+            .content(feedModifyDto.getContent())
+            .authorId(feed.getAuthor().getId())
+            .build();
+
+        return feedAnswerDto;
+    }
+
 }

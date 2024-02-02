@@ -14,13 +14,14 @@ import lombok.ToString;
 @Setter
 @ToString
 public class FeedAnswerDto {
-
+    private int feedId; // 답변을 등록한 해당 피드 id
     private String content; // 답변 내용
     private List<FeedImageDto> feedImageDtoList; // 이미지 파일
     private int authorId; // 작성자 아이디
 
     @Builder
-    public FeedAnswerDto(String content, List<FeedImageDto> feedImageDtoList, int authorId) {
+    public FeedAnswerDto(int feedId, String content, List<FeedImageDto> feedImageDtoList, int authorId) {
+        this.feedId = feedId;
         this.content = content;
         this.feedImageDtoList = feedImageDtoList;
         this.authorId = authorId;
