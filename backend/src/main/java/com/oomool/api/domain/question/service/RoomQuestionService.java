@@ -9,6 +9,9 @@ import com.oomool.api.domain.question.repository.RoomQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * TODO : service 인터페이스와 service Impl로 리팩터링
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor

@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
 import com.oomool.api.domain.feed.dto.FeedImageDto;
-import com.oomool.api.domain.feed.dto.FeedModifyDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.dto.RoomFeedDto;
 import com.oomool.api.domain.feed.entity.Feed;
@@ -157,20 +156,18 @@ public class FeedService {
      * 해석하면 EntityManager가 없어서 안정적인 제거를 할 수 없다는 얘기임.
      */
     @Transactional
-    public FeedAnswerDto modifyQuestionAnswer(FeedModifyDto feedModifyDto) throws IOException {
+    public FeedAnswerDto modifyQuestionAnswer(String content, int feedId, List<MultipartFile> fileList) throws
+        IOException {
 
-        log.info("fileList: {}", feedModifyDto.getFileList());
-
-        int feedId = feedModifyDto.getFeedId();
-
+        // 답변 수정
         Feed feed = feedRepository.findById(feedId);
-
-        feed.setContent(feedModifyDto.getContent());
+        // EM에서 변경감지 처리해서 자동 수정
+        feed.setContent(content);
 
         // 기존 DB에 있던 파일을 삭제한다.
         feedImageRepository.deleteByFeedId(feedId);
 
-        List<MultipartFile> newFileList = feedModifyDto.getFileList();
+        List<MultipartFile> newFileList = fileList;
 
         List<FeedImageDto> feedImageDtoList = new ArrayList<>();
 
@@ -189,15 +186,16 @@ public class FeedService {
             registFeedImage.setSaveFolder(feedImageDto.getFolderName());
             registFeedImage.setUrl(feedImageDto.getUrl());
 
+            // save 안하면 변경 감지 안되던데 이유가..? 그래서 save 처리해줌!
             feedImageRepository.save(registFeedImage);
             feedImageDtoList.add(feedImageDto);
         }
 
         FeedAnswerDto feedAnswerDto = FeedAnswerDto
             .builder()
-            .feedId(feedModifyDto.getFeedId())
+            .feedId(feedId)
             .feedImageDtoList(feedImageDtoList)
-            .content(feedModifyDto.getContent())
+            .content(content)
             .authorId(feed.getAuthor().getId())
             .build();
 
