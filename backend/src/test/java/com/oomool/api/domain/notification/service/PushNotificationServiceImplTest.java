@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.oomool.api.domain.notification.dto.PushNotificationTokenDto;
 import com.oomool.api.domain.notification.entity.PushNotificationToken;
 import com.oomool.api.domain.notification.repository.PushNotificationTokenRepository;
 import com.oomool.api.domain.user.entity.User;
@@ -108,11 +109,12 @@ public class PushNotificationServiceImplTest {
         when(pushNotificationTokenRepository.findAllByUser(user)).thenReturn(pushNotificationTokens);
 
         // When
-        // getAllTokensByUser 메소드를 호출합니다.
-        List<PushNotificationToken> result = pushNotificationService.getAllTokensByUser(userId);
+        List<PushNotificationTokenDto> result = pushNotificationService.getAllTokensByUser(userId);
 
         // Then
         // 반환된 토큰 리스트가 예상한 리스트와 같은지 검증합니다.
-        assertEquals(pushNotificationTokens, result);
+        assertEquals(2, result.size());
+        assertEquals("token1", result.get(0).token());
+        assertEquals("token2", result.get(1).token());
     }
 }
