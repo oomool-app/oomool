@@ -41,13 +41,11 @@ public class GameRoomService {
     /**
      * 문답방 상세 정보 조회
      * */
-    public Map<String, Object> getGameRoom(String roomUid) {
+    public Map<String, Object> getGameRoomDetail(String roomUid) {
 
-        // 문답방 setting 데이터 조회
-        GameRoom gameRoom = gameRoomRepository.findByRoomUid(roomUid)
-            .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
-
-        SettingOptionDto settingOptionDto = gameRoomMapper.convertSettingOptionDto(gameRoom);
+        GameRoom gameRoom = getGameRoom(roomUid);                   // gameRoom 정보 조회
+        SettingOptionDto settingOptionDto = gameRoomMapper.convertSettingOptionDto(
+            gameRoom); // gameRoom to SettingOptionDto
 
         return Map.of(
             "room_uid", roomUid,
@@ -59,7 +57,7 @@ public class GameRoomService {
     /**
      * 문답방 설정값 조회
      * */
-    public SettingOptionDto getSeeingOptionDto(String roomUid) {
+    public SettingOptionDto getSettingOptionDtoByRoomUid(String roomUid) {
 
         GameRoom gameRoom = gameRoomRepository.findByRoomUid(roomUid)
             .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
@@ -67,4 +65,19 @@ public class GameRoomService {
         return gameRoomMapper.convertSettingOptionDto(gameRoom);
     }
 
+    /**
+     * 문답방 설정값 조회
+     * */
+    public SettingOptionDto getSettingOptionDtoByRoom(GameRoom gameRoom) {
+        return gameRoomMapper.convertSettingOptionDto(gameRoom);
+    }
+
+    /**
+     * 문답 방 roomUID 기준 조회
+     */
+    public GameRoom getGameRoom(String roomUid) {
+        return gameRoomRepository.findByRoomUid(roomUid)
+            .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
+    }
 }
+
