@@ -1,27 +1,32 @@
-package com.oomool.api.domain.room.util;
+package com.oomool.api.global.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.temporal.ChronoUnit;
 
-public class DateUtil {
+public class CustomDateUtil {
 
-    public String dateFormat = "yyyy-MM-dd";
+    // date Format
     public String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
-    public Date parseDate(String dateString) throws ParseException {
-        return new SimpleDateFormat(dateFormat).parse(dateString);
-    }
-
+    // String to LocalDateTime
     public LocalDateTime parseDateTime(String dateTimeString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return LocalDateTime.parse(dateTimeString, formatter);
     }
 
+    // LocalDateTime to String
     public String convertDateTimeToString(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return dateTime.format(formatter);
     }
+
+    /**
+     * DateInteval 계산
+     * */
+    public int getDateInterval(LocalDate startDate, LocalDate endDate) {
+        return (int)ChronoUnit.DAYS.between(startDate, endDate);
+    }
+
 }

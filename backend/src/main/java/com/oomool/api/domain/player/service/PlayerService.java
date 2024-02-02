@@ -17,7 +17,7 @@ import com.oomool.api.domain.player.repository.AvatarRepository;
 import com.oomool.api.domain.player.repository.PlayerRepository;
 import com.oomool.api.domain.player.util.PlayerMapper;
 import com.oomool.api.domain.room.entity.GameRoom;
-import com.oomool.api.domain.room.repository.GameRoomRepository;
+import com.oomool.api.domain.room.service.GameRoomService;
 import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
@@ -31,21 +31,23 @@ import lombok.RequiredArgsConstructor;
 public class PlayerService {
 
     private final PlayerRepository playerRepository;
-    private final GameRoomRepository gameRoomRepository;
+    private final PlayerMapper playerMapper;
+    private final GameRoomService gameRoomService;
     private final UserRepository userRepository;
     private final AvatarRepository avatarRepository;
     private final TempRoomRedisService tempRoomRedisService;
-    private final PlayerMapper playerMapper;
 
     /**
      *  플레이어 생성
      * */
     public void savePlayerList(String inviteCode, String roomUid) throws Exception {
-
         // 필요한 정보 조회
         List<PlayerDto> playerDtoList = tempRoomRedisService.getTempRoomPlayerList(inviteCode);
         String masterUserId = tempRoomRedisService.getTempRoomSettingValue(inviteCode, "masterId");
-        GameRoom gameRoom = gameRoomRepository.findByRoomUid(roomUid).orElse(null);
+        GameRoom gameRoom = gameRoomService.getGameRoom(roomUid);
+
+        // 마니띠 매칭 로직
+        Map<Integer, Integer> matchingPairByUserId = matchingPair(playerDtoList);
 
         // 마니띠 매칭 로직
         Map<Integer, Integer> matchingPairByUserId = matchingPair(playerDtoList);
@@ -68,7 +70,7 @@ public class PlayerService {
      * 플레이어 조회
      * */
     public List<PlayerDto> getPlayerDtoList(String roomUid) {
-        return playerRepository.findByRoomUid(roomUid)
+        return gameRoomService.getGameRoom(roomUid).getPlayers()
             .stream()
             .map(playerMapper::convertPlayerDto)
             .collect(Collectors.toList());
