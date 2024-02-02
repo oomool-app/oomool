@@ -1,5 +1,5 @@
 <template>
-  <div id="header" class="header text-xl font-black">
+  <div id="header" class="header text-2xl font-extrabold">
     {{ headerName }}
   </div>
 </template>
