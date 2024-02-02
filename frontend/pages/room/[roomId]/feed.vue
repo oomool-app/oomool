@@ -41,12 +41,17 @@
         "내 친구가 좋아할만한 음악 장르나 곡은 무엇일 것 같아요?"
       </p>
     </div>
-    <div v-for="feed in feeds" :key="feed.name">
-      <div v-if="feed.name === '전은평'">
-        <FeedPageMine :feeds="feed"></FeedPageMine>
-      </div>
-      <div v-else-if="feed.name !== '전은평'">
-        <FeedPageOthers :feeds="feed"></FeedPageOthers>
+    <div v-if="feeds === undefined" class="m-6 mt-10">
+      아직 답변해 준 친구들이 없어요..
+    </div>
+    <div v-else-if="feeds !== undefined">
+      <div v-for="feed in feeds" :key="feed.name">
+        <div v-if="feed.name === '전은평'">
+          <FeedPageMine :feeds="feed"></FeedPageMine>
+        </div>
+        <div v-else-if="feed.name !== '전은평'">
+          <FeedPageOthers :feeds="feed"></FeedPageOthers>
+        </div>
       </div>
     </div>
   </div>
@@ -54,7 +59,13 @@
 <script setup lang="ts">
 const imgUrl =
   'https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=9046601&filePath=L2Rpc2sxL25ld2RhdGEvMjAxNC8yMS9DTFM2L2FzYWRhbFBob3RvXzI0MTRfMjAxNDA0MTY=&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004';
-const feeds = [
+
+interface Feed {
+  name: string;
+  uploadImage: string;
+  content: string;
+}
+const feeds = ref<Feed[] | undefined>([
   {
     name: '박세정',
     uploadImage: imgUrl,
@@ -85,7 +96,7 @@ const feeds = [
     uploadImage: imgUrl,
     content: '게시글6',
   },
-];
+]);
 
 const fixHeader = ref(true);
 

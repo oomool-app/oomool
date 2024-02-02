@@ -6,7 +6,7 @@
     <div class="border rounded-full w-16 h-16">
       <img src="/img/successGhost.png" alt="프로필 이미지" />
     </div>
-    <div>{{ props.member.name }}</div>
+    <div class="font-semibold">{{ props.member.name }}</div>
   </div>
 </template>
 
