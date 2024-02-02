@@ -17,5 +17,4 @@ public class Question {
     private int id; // pk
     private String question; // 질문
     private int level; // 질문 깊이
-
 }

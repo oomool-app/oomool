@@ -7,11 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.player.service.PlayerService;
+import com.oomool.api.domain.room.dto.InviteCodeDto;
 import com.oomool.api.domain.room.service.GameRoomService;
 import com.oomool.api.global.util.ResponseHandler;
 
@@ -30,11 +31,11 @@ public class GameRoomController {
 
     @Operation(summary = "문답방 생성 기능", description = "문답방을 생성합니다.")
     @PostMapping
-    public ResponseEntity<?> createGameRoom(@RequestParam String inviteCode) throws Exception {
+    public ResponseEntity<?> createGameRoom(@RequestBody InviteCodeDto inviteCodeDto) throws Exception {
         // GameRoom Entity 저장 & roomUid 생성
-        String roomUid = gameRoomService.createGameRoom(inviteCode);
+        String roomUid = gameRoomService.createGameRoom(inviteCodeDto.getInviteCode());
         // Player Entity 저장
-        playerService.savePlayerList(inviteCode, roomUid);
+        playerService.savePlayerList(inviteCodeDto.getInviteCode(), roomUid);
         return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("roomUid", roomUid));
     }
 
