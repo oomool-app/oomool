@@ -1,10 +1,12 @@
 package com.oomool.api.domain.notification.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.oomool.api.domain.notification.dto.PushNotificationDto;
+import com.oomool.api.domain.notification.dto.PushNotificationTokenDto;
 import com.oomool.api.domain.notification.entity.PushNotificationToken;
 import com.oomool.api.domain.notification.repository.PushNotificationTokenRepository;
 import com.oomool.api.domain.user.entity.User;
@@ -45,11 +47,18 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     }
 
     @Override
-    public List<PushNotificationToken> getAllTokensByUser(int userId) {
+    public List<PushNotificationTokenDto> getAllTokensByUser(int userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 
-        return pushNotificationTokenRepository.findAllByUser(user);
+        List<PushNotificationToken> tokens = pushNotificationTokenRepository.findAllByUser(user);
+
+        return tokens.stream()
+            .map(token -> PushNotificationTokenDto.builder()
+                .userId(userId)
+                .token(token.getToken())
+                .build())
+            .collect(Collectors.toList());
     }
 
     @Override
