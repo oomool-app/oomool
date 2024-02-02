@@ -17,6 +17,7 @@
     >
       <p class="text-center mt-4 mb-4 text-sm">A. {{ props.result.answer }}</p>
       <img
+        v-if="$props.result.image"
         class="w-full h-auto rounded-lg"
         :src="`${props.result.image}`"
         alt=""
