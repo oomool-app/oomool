@@ -1,19 +1,20 @@
 package com.oomool.api.domain.room.util;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class UniqueCodeGenerator {
 
-    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int LENGTH = 8;
-    private final SecureRandom random = new SecureRandom();
-
-    public String generateRandomString() {
-        StringBuilder sb = new StringBuilder(LENGTH);
-        for (int idx = 0; idx < LENGTH; idx++) {
-            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+    public static String generateRandomString(int length) {
+        final String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+        for (int idx = 0; idx < length; idx++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
         }
         return sb.toString();
     }
+
 }

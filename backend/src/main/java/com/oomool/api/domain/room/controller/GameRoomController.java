@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.player.service.PlayerService;
 import com.oomool.api.domain.room.dto.InviteCodeDto;
-import com.oomool.api.domain.room.service.GameRoomService;
+import com.oomool.api.domain.room.dto.SettingOptionDto;
+import com.oomool.api.domain.room.service.GameRoomServiceImpl;
+import com.oomool.api.domain.room.service.TempRoomRedisService;
+import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,16 +29,20 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "문답방", description = "문답방 API를 명세합니다.")
 public class GameRoomController {
 
-    private final GameRoomService gameRoomService;
+    private final GameRoomServiceImpl gameRoomService;
+    private final TempRoomRedisService tempRoomRedisService;
     private final PlayerService playerService;
 
     @Operation(summary = "문답방 생성 기능", description = "문답방을 생성합니다.")
     @PostMapping
     public ResponseEntity<?> createGameRoom(@RequestBody InviteCodeDto inviteCodeDto) throws Exception {
-        // GameRoom Entity 저장 & roomUid 생성
-        String roomUid = gameRoomService.createGameRoom(inviteCodeDto.getInviteCode());
+
+        String roomUid = UniqueCodeGenerator.generateRandomString(8); // 방 UUID 생성
+        SettingOptionDto settingOptionDto = tempRoomRedisService.getSettingOptionDtoByInviteCode(
+            inviteCodeDto.getInviteCode());
+        gameRoomService.createGameRoom(roomUid, settingOptionDto);
         // Player Entity 저장
-        playerService.savePlayerList(inviteCodeDto.getInviteCode(), roomUid);
+        playerService.savePlayerList(inviteCodeDto.getInviteCode(), roomUid); // TODO :: Player Refactor
         return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("roomUid", roomUid));
     }
 
