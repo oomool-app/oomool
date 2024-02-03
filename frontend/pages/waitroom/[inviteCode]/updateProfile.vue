@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center bg-background justify-center">
+  <div class="box flex flex-col items-center bg-background justify-center">
     <div class="mb-6 text-center">
       <h1 class="text-2xl pt-8 font-bold">프로필 설정하기</h1>
 
@@ -106,3 +106,17 @@ function getRandomAvatar(): string {
 // 링크에서 갖고 있는 초대코드 받아와서 다시 라우터링크에서 사용
 const inviteCode = route.params.inviteCode;
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>

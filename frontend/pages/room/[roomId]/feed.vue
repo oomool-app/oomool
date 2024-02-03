@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="header bg-primary p-4 pt-6 pb-6 sticky top-0 z-10">
+    <div class="header bg-primary p-6 sticky top-0 z-10">
       <div class="flex justify-between">
         <BackButton color="white" />
         <FeedHeader

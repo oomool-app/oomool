@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <div
-      class="mb-6 text-center flex justify-center self-stretch relative pt-7 pb-7 font-bold"
-    >
-      <BackButton color="primary" class="absolute left-1 pt-1" />
+  <div class="box">
+    <div class="mb-6 p-6 text-center flex justify-between pt-7 pb-7 font-bold">
+      <BackButton color="#61339B" />
       <h1 class="text-2xl font-bold text-primary">멤버 목록</h1>
+      <div class="mr-6"></div>
     </div>
     <div class="flex flex-wrap justify-center">
       <div v-for="user in users" :key="user.id" class="m-2 rounded-lg">
@@ -56,3 +55,17 @@ const users = ref([
 
 const see = ref(false);
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>

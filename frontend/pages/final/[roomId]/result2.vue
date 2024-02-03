@@ -29,7 +29,7 @@
         ></ContentHeader>
         <div class="flex flex-col items-center justify-center">
           <Carousel
-            :autoplay="5000"
+            :autoplay="4000"
             :pause-autoplay-on-hover="true"
             class="mb-4 w-11/12"
           >
