@@ -27,7 +27,7 @@ public class GameRoomMapper {
     /**
      * GameRoom Entity -> SettingOptionDto
      * */
-    public SettingOptionDto convertSettingOptionDto(GameRoom gameRoom) {
+    public SettingOptionDto entityToSettingOptionDto(GameRoom gameRoom) {
         return SettingOptionDto.builder()
             .title(gameRoom.getTitle())
             .startDate(gameRoom.getStartDate())
