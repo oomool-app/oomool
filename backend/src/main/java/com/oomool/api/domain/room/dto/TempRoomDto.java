@@ -21,7 +21,7 @@ import lombok.Setter;
 public class TempRoomDto {
     private String inviteCode;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private int masterId;
     private SettingOptionDto setting;
     private List<PlayerDto> players;
