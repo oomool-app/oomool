@@ -1,7 +1,10 @@
 <template>
-  <div class="flex-col m-4">
-    <BackButton color="black"></BackButton>
-    <h1 class="flex justify-center text-xl m-4 font-bold">방 만들기</h1>
+  <div class="box flex-col p-6">
+    <div class="flex justify-between">
+      <BackButton color="black"></BackButton>
+      <h1 class="text-xl font-bold">방 만들기</h1>
+      <div class="mr-6"></div>
+    </div>
     <MakeRoomProgress :cur-page="'4'"></MakeRoomProgress>
     <div class="font-bold mb-4">언제부터 언제까지 진행되나요?</div>
     <div>최대 14일까지 설정할 수 있어요.</div>
@@ -73,3 +76,17 @@ const move = async (): Promise<void> => {
   }
 };
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>

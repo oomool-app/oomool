@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col h-screen bg-primary">
-    <div class="flex flex-col">
+  <div class="box flex flex-col h-screen bg-primary">
+    <div class="flex flex-col p-6">
       <div class="flex justify-between">
         <BackButton color="white"></BackButton>
         <Popover>
@@ -144,3 +144,17 @@ const Users = ref<User[]>([
   },
 ]);
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>

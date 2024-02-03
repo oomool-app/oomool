@@ -3,7 +3,7 @@
     <div class="flex-col w-[77%]">
       <p class="text-right mb-1">수정하기</p>
       <div
-        class="chat-box p-3 border rounded-l-xl rounded-br-xl border-primary bg-[#F1EBFC]"
+        class="chat-box p-3 border border-purple-500 rounded-l-xl rounded-br-xl bg-[#d8c7f9]"
       >
         <img class="rounded-lg mb-2" :src="props.feeds.uploadImage" alt="" />
         {{ props.feeds.content }}

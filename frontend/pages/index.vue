@@ -1,6 +1,6 @@
 <template>
   <div class="bg-primary">
-    <div class="flex justify-between pt-6">
+    <div class="top-container flex justify-between pt-6">
       <!--로고-->
       <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
 
@@ -11,7 +11,7 @@
 
     <!--방 만들기, 방 참여하기 버튼 -->
     <div
-      class="flex flex-row justify-center pt-20 pb-5 gap-2 self-stretch space-x-4 text-center"
+      class="mid-container flex flex-row justify-center pt-20 pb-5 gap-2 self-stretch space-x-4 text-center"
     >
       <MakeRoomButton></MakeRoomButton>
       <InputCodeModal></InputCodeModal>
@@ -19,7 +19,7 @@
 
     <!-- 방 목록-->
     <div
-      class="flex flex-col gap-5 w-375 h-803 pt-3 pr-15 bg-white rounded-t-lg"
+      class="bottom-container flex flex-col gap-5 w-375 h-803 pt-3 pr-15 bg-white rounded-t-lg"
     >
       <h1
         class="text-2xl font-bold p-4 sticky top-0 bg-white h-16 rounded-t-lg z-40"
@@ -97,5 +97,53 @@ onBeforeMount(async () => {
 <style scoped lang="scss">
 body {
   background-color: #61339b;
+}
+
+.top-container {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.mid-container {
+  animation: fade-in2 0.6s ease-in-out;
+}
+
+.bottom-container {
+  animation: fade-in3 0.6s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 </style>

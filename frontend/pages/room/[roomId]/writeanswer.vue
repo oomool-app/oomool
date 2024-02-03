@@ -1,6 +1,6 @@
 <template>
   <div class="pl-6 pr-6">
-    <div class="flex justify-between pt-6 pb-6">
+    <div class="header flex justify-between pt-6 pb-6">
       <BackButton color="#61339B"></BackButton>
       <FeedHeader
         header-name="답변 작성하기"
@@ -8,7 +8,7 @@
       ></FeedHeader>
       <div class="w-3"></div>
     </div>
-    <div>
+    <div class="img-container">
       <input
         id="upload-image"
         accept="image/*"
@@ -63,7 +63,7 @@
       </div>
       <div class="flex justify-end"></div>
     </div>
-    <div class="flex flex-col justify-center items-center">
+    <div class="input-container flex flex-col justify-center items-center">
       <TodayQuestion
         class="mt-4 text-xl font-extrabold"
         :question="question"
@@ -74,7 +74,7 @@
         placeholder=" 마니띠를 떠올리며 오늘의 질문에 답변해 주세요!"
       ></textarea>
     </div>
-    <div class="flex justify-center">
+    <div class="input-container flex justify-center">
       <AlertDialog>
         <AlertDialogTrigger>
           <Button class="mt-6">등록하기</Button>
@@ -144,5 +144,53 @@ const registAnswer = (): void => {};
 <style scoped>
 input[type='file']::file-selector-button {
   background-color: #61339b;
+}
+
+.header {
+  animation: fade-in 0.8s ease-in-out;
+}
+
+.img-container {
+  animation: fade-in2 1.2s ease-in-out;
+}
+
+.input-container {
+  animation: fade-in3 1.2s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 </style>

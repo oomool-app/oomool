@@ -74,11 +74,11 @@
 
     <div class="col-span-6">
       <div class="text-lg font-semibold">{{ props.messages.roomtitle }}</div>
-      <div class="mb-1 text-gray-500 md:text-lg w-64 dark:text-gray-400">
+      <div class="mb-1 text-gray-500 text-sm w-64 dark:text-gray-400">
         {{ props.messages.title }}
       </div>
     </div>
-    <div class="col-span-2">
+    <div class="col-span-2 text-sm">
       <div v-if="dayFromCreate >= 1">{{ dayFromCreate }}일 전</div>
       <div v-else-if="hourFromCreate >= 1">{{ hourFromCreate }}시간 전</div>
       <div v-else>{{ minFromCreate }}분 전</div>

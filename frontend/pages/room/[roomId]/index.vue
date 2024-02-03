@@ -1,12 +1,10 @@
 <template>
   <div id="top-container">
-    <div
-      class="bg-[#61339b] rounded-b-2xl h-32 p-4 pl-5 pr-5 pb-8 drop-shadow-xl"
-    >
+    <div class="bg-[#61339b] rounded-b-2xl h-32 p-6 pb-8 drop-shadow-xl">
       <div class="flex justify-between">
         <BackButton color="white" />
       </div>
-      <div class="flex justify-between mt-8">
+      <div class="flex justify-between mt-6">
         <FeedHeader
           class="text-white text-3xl"
           :header-name="teamName"
@@ -32,7 +30,7 @@
           </p>
           <p
             v-else-if="whoIsManitti"
-            class="btn bg-white w-40 h-10 text-center text-primary py-1 text-xl rounded-full font-bold"
+            class="bg-white w-40 h-10 text-center text-primary py-1 text-xl rounded-full font-bold"
             @click="hideManitti()"
           >
             김현지
@@ -116,23 +114,27 @@ const roomId = ref(1);
 </script>
 <style scope>
 #top-container {
-  animation: fade-in 0.8s ease-in-out;
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.btn:active {
+  background-color: #501b90;
 }
 
 .my-manitti {
-  animation: fade-in 1.2s ease-in-out;
+  animation: fade-in 0.8s ease-in-out;
 }
 
 .question-container {
-  animation: fade-in 1.6s ease-in-out;
+  animation: fade-in2 0.8s ease-in-out;
 }
 
 .answer-container {
-  animation: fade-in 2s ease-in-out;
+  animation: fade-in3 0.8s ease-in-out;
 }
 
 .members-container {
-  animation: fade-in 2.4s ease-in-out;
+  animation: fade-in4 0.8s ease-in-out;
 }
 
 @keyframes fade-in {
@@ -141,6 +143,46 @@ const roomId = ref(1);
   }
 
   to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in4 {
+  0% {
+    opacity: 0;
+  }
+
+  60% {
+    opacity: 0;
+  }
+
+  100% {
     opacity: 1;
   }
 }
