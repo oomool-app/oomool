@@ -179,6 +179,8 @@ public class TempRoomRedisService {
             .collect(Collectors.toList());
     }
 
+    // ================    조회 한 값 변환 (Convert)   ==================
+
     /**
      * 초대코드로 설정 정보를 조회하여 SettingOptionDto로 반환한다. (주요 설정 정보)
      *
