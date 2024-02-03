@@ -1,7 +1,6 @@
 package com.oomool.api.domain.room.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -15,11 +14,10 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
+import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.global.util.CustomDateUtil;
 
@@ -30,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class TempRoomRedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
+    private final TempRoomMapper tempRoomMapper;
 
     /**
      * 방장은 대기방을 Redis에 생성한다.
@@ -74,7 +72,7 @@ public class TempRoomRedisService {
             .inviteCode(inviteCode)
             .createdAt(CustomDateUtil.parseDateTime((String)map.get("createdAt")))
             .masterId(Integer.parseInt((String)map.get("masterId")))
-            .setting(getSettingOptionDtoByMap(map))
+            .setting(tempRoomMapper.mapToSettingOptionDto(map))
             .players(getTempRoomPlayerList(inviteCode))
             .build();
     }
@@ -89,9 +87,7 @@ public class TempRoomRedisService {
     public void saveTempRoomSetting(String inviteCode, SettingOptionDto settingRoomDto, int masterId) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
 
-        Map<String, Object> settingRoomMap = objectMapper.convertValue(settingRoomDto,
-            new TypeReference<>() {
-            });
+        Map<String, Object> settingRoomMap = tempRoomMapper.settingRoomDtoToMap(settingRoomDto);
 
         settingRoomMap.put("inviteCode", inviteCode);
         settingRoomMap.put("createAt", CustomDateUtil.convertDateTimeToString(LocalDateTime.now()));
@@ -104,23 +100,13 @@ public class TempRoomRedisService {
      * Redis에 대기방 플레이어를 저장한다.
      *
      * @param inviteCode 초대코드
-     * @param player 플레이어 프로필 정보
+     * @param playerDto 플레이어 프로필 정보
      * */
-    public void saveTempRoomPlayer(String inviteCode, PlayerDto player) {
-        // == player가 현재 참여하고 있는 대기방코드 추가 ==
+    public void saveTempRoomPlayer(String inviteCode, PlayerDto playerDto) {
         // 유저 기준 참여하고 있는 대기방 현황이 필요
-        saveUserTempRoom(inviteCode, player.getUserId());
-
+        saveUserTempRoom(inviteCode, playerDto.getUserId());
         ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        String playerJson;
-        try {
-            playerJson = objectMapper.writeValueAsString(player);  // 플레이어 정보 추가
-        } catch (JsonProcessingException e) {
-            // TODO :: Global Exception 처리하기
-            e.printStackTrace();
-            playerJson = "{}";
-        }
-        listOps.rightPush("roomPlayers:" + inviteCode, playerJson);
+        listOps.rightPush("roomPlayers:" + inviteCode, tempRoomMapper.playerDtoToString(playerDto));
     }
 
     /**
@@ -153,21 +139,14 @@ public class TempRoomRedisService {
     public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
         ListOperations<String, Object> listOps = redisTemplate.opsForList();
         List<Object> playerJsonList = listOps.range("roomPlayers:" + inviteCode, 0, -1);
-        List<PlayerDto> playerList = new ArrayList<>();
-        if (playerJsonList != null) {
-            for (Object playerJson : playerJsonList) {
-                PlayerDto player = objectMapper.readValue((String)playerJson, PlayerDto.class);
-                playerList.add(player);
-            }
-        }
-        return playerList;
+        return tempRoomMapper.objectToPlayerDtoList(playerJsonList);
     }
 
     /**
      * Redis의 설정 값들의 한 개의 key값에 대한 조회를 한다.
      *
      * @param inviteCode 초대코드
-     * @key 키 [ title, startDate, endDate, questionType, maxMember, inviteCode, createdAt, masterId ]
+     * @param key 키 [ title, startDate, endDate, questionType, maxMember, inviteCode, createdAt, masterId ]
      * */
     public String getTempRoomSettingValue(String inviteCode, String key) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
@@ -200,33 +179,13 @@ public class TempRoomRedisService {
             .collect(Collectors.toList());
     }
 
-    // ================    조회 한 값 변환 (Convert)   ==================
-
-    /**
-     * Redis의 대기방 설정정보를 SettingOptionDto로 반환한다. (주요 설정 정보)
-     * - Redis에 있는 roomSetting 전체 key-value를 가져온다.
-     * - SettingOptionDto로 필요한 정보만 반환한다.
-     *
-     * @param tempRoomSetting 전체 방 설정 정보
-     * */
-    public SettingOptionDto getSettingOptionDtoByMap(Map<String, Object> tempRoomSetting) {
-
-        // settingOptionDto에 해당하지 않는 정보 제외
-        tempRoomSetting.remove("inviteCode");
-        tempRoomSetting.remove("createAt");
-        tempRoomSetting.remove("masterId");
-
-        // mapper 반환
-        return objectMapper.convertValue(tempRoomSetting, SettingOptionDto.class);
-    }
-
     /**
      * 초대코드로 설정 정보를 조회하여 SettingOptionDto로 반환한다. (주요 설정 정보)
      *
      * @param inviteCode 초대코드
      * */
     public SettingOptionDto getSettingOptionDtoByInviteCode(String inviteCode) {
-        return getSettingOptionDtoByMap(getTempRoomSetting(inviteCode));
+        return tempRoomMapper.mapToSettingOptionDto(getTempRoomSetting(inviteCode));
     }
 
 }
