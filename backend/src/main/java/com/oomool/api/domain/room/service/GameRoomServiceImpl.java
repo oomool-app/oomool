@@ -3,6 +3,7 @@ package com.oomool.api.domain.room.service;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
@@ -10,11 +11,10 @@ import com.oomool.api.domain.room.repository.GameRoomRepository;
 import com.oomool.api.domain.room.util.GameRoomMapper;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GameRoomServiceImpl implements GameRoomService {
 
