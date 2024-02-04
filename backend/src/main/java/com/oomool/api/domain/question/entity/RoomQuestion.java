@@ -2,6 +2,7 @@ package com.oomool.api.domain.question.entity;
 
 import static jakarta.persistence.FetchType.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class RoomQuestion {
 
     @Column(name = "seq", nullable = false)
     private int sequence; // 순서
+
+    @Column(name = "date", nullable = true)
+    private LocalDate date;
 
     // 한개의 질문은 여러개의 답변을 갖는다. (1 : N 연관관계)
     @OneToMany(mappedBy = "roomQuestion")

@@ -9,6 +9,7 @@ public class CustomDateUtil {
 
     // date Format
     public static String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    public static String dateFormat = "yyyy-MM-dd";
 
     // String to LocalDateTime
     public static LocalDateTime parseDateTime(String dateTimeString) {
@@ -20,6 +21,12 @@ public class CustomDateUtil {
     public static String convertDateTimeToString(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return dateTime.format(formatter);
+    }
+
+    // LocalDate to String
+    public static String convertDateToString(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+        return date.format(formatter);
     }
 
     /**
