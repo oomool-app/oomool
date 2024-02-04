@@ -1,5 +1,149 @@
 <template>
-  <div>
+  <div class="bg-primary">
+    <div class="top-container flex justify-between pt-6">
+      <!--로고-->
+      <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
 
+      <!--알림-->
+      <h1 class="text-2xl font-bold text-left pl-6 text-white"></h1>
+      <MessageButton as-child class="absolute right-5"></MessageButton>
+    </div>
+
+    <!--방 만들기, 방 참여하기 버튼 -->
+    <div
+      class="mid-container flex flex-row justify-center pt-20 pb-5 gap-2 self-stretch space-x-4 text-center"
+    >
+      <MakeRoomButton></MakeRoomButton>
+      <InputCodeModal></InputCodeModal>
+    </div>
+
+    <!-- 방 목록-->
+    <div
+      class="bottom-container flex flex-col gap-5 w-375 h-803 pt-3 pr-15 bg-white rounded-t-lg"
+    >
+      <h1
+        class="text-2xl font-bold p-4 sticky top-0 bg-white h-16 rounded-t-lg z-40"
+      >
+        나의 방 목록
+      </h1>
+
+      <div class="flex flex-col justify-center pl-6 pr-6 gap-3 space-y-4 z-0">
+        <div v-for="room in rooms" :key="room.title">
+          <RoomCard :rooms="room"></RoomCard>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from '~/stores/userStore';
+import { useRouter } from 'vue-router';
+
+useBodyColor('#61339B');
+
+const userStore = useUserStore();
+const router = useRouter();
+
+const rooms = [
+  {
+    roomid: 1,
+    sequence: 2,
+    question: '내 마니또가 멋있어보였던 순간은?',
+    title: '공통플젝 A809',
+    startdate: '2024-01-25',
+    enddate: '2024-01-30',
+  },
+  {
+    roomid: 2,
+    sequence: 3,
+    question: '내 마니또의 첫인상은?',
+    title: '서울8반 화이팅',
+    startdate: '2024-01-26',
+    enddate: '2024-02-03',
+  },
+  {
+    roomid: 3,
+    sequence: 7,
+    question: '내 마니또의 첫인상은?',
+    title: '소문난 칠공주',
+    startdate: '2024-01-01',
+    enddate: '2024-01-31',
+  },
+  {
+    roomid: 4,
+    sequence: 2,
+    question: '내 마니또에게 배울 점이 있다면?',
+    title: '싸피초등학교 16기',
+    startdate: '2024-02-07',
+    enddate: '2024-02-08',
+  },
+];
+
+onBeforeMount(async () => {
+  // 페이지 로딩 시 세션 스토리지에서 사용자 정보 가져오기
+  const storedUser = userStore.getStoredUser();
+
+  // 사용자 정보가 있으면 index.vue로, 없으면 login.vue로 리다이렉트
+  if (storedUser != null) {
+    await router.push('/');
+  } else {
+    // 세션 스토리지에 사용자 정보가 없을 경우
+    await router.push('/login');
+  }
+});
+</script>
+
+<style scoped lang="scss">
+body {
+  background-color: #61339b;
+}
+
+.top-container {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.mid-container {
+  animation: fade-in2 0.6s ease-in-out;
+}
+
+.bottom-container {
+  animation: fade-in3 0.6s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>
