@@ -1,19 +1,18 @@
 <template>
-  <div>
-    <div class="mb-6 bg-background">
-      <div
-        class="mb-6 text-center flex justify-center self-stretch relative pt-7 pb-7 font-bold"
-      >
-        <BackButton color="primary" class="absolute left-1 pt-1" />
-        <h1 class="text-2xl font-bold text-primary">알림</h1>
-      </div>
+  <div class="mb-6 bg-background">
+    <div
+      class="top-container mb-6 text-center flex justify-between items-center p-6 font-bold"
+    >
+      <BackButton color="#61339b" />
+      <h1 class="text-2xl font-bold text-primary">알림</h1>
+      <div class="mr-4"></div>
+    </div>
 
-      <div
-        class="max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
-      >
-        <div v-for="message in messages" :key="message.messageid">
-          <MessageCard :messages="message" class="pt-3 pb-3"></MessageCard>
-        </div>
+    <div
+      class="body-container max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
+    >
+      <div v-for="message in messages" :key="message.messageid">
+        <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
       </div>
     </div>
   </div>
@@ -59,3 +58,36 @@ const messages = [
   },
 ];
 </script>
+<style scoped>
+.top-container {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.body-container {
+  animation: fade-in2 0.6s ease-in-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-between p-6 pb-2">
+    <div class="header flex justify-between p-6 pb-2">
       <BackButton color="#61339b"></BackButton>
       <NuxtLink to="/">
         <svg
@@ -21,60 +21,50 @@
       </NuxtLink>
     </div>
 
-    <div class="flex flex-col justify-start">
-      <ContentHeader
-        class="p-4 pl-12"
-        header-name="마니또가 한 생각"
-      ></ContentHeader>
-      <div class="flex flex-col items-center justify-center">
-        <Carousel
-          :opts="{
-            align: 'start',
-            loop: false,
-          }"
-          :plugins="[
-            Autoplay({
-              delay: 5000,
-              stopOnMouseEnter: true,
-              stopOnInteraction: false,
-            }),
-          ]"
-          class="relative w-3/4 max-w-xs mb-4"
-        >
-          <CarouselContent>
-            <CarouselItem v-for="item in results" :key="item.day">
-              <ResultFinalCard :result="item"></ResultFinalCard>
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
-        <div class="flex">
-          <div
-            v-for="(item, index) in results"
-            :key="item.day"
-            class="bg-gray-300 rounded-full w-3 h-3 m-0.5 p-1"
-            @click="changeCursor(index)"
-          ></div>
-        </div>
-        <Button class="w-1/2 m-4 rounded-xl"
-          >이미지로 저장하기 &nbsp;&nbsp;
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="w-5 h-5"
+    <div>
+      <div class="answer-container flex flex-col justify-start">
+        <ContentHeader
+          class="p-4 pl-12"
+          header-name="마니또가 한 생각"
+        ></ContentHeader>
+        <div class="flex flex-col items-center justify-center">
+          <Carousel
+            :autoplay="4000"
+            :pause-autoplay-on-hover="true"
+            class="mb-4 w-11/12"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-            />
-          </svg>
-        </Button>
+            <Slide v-for="item in results" :key="item.day">
+              <div class="w-3/4 carousel__item">
+                <ResultFinalCard :result="item"></ResultFinalCard>
+              </div>
+            </Slide>
+            <template #addons>
+              <Pagination />
+              <Navigation />
+            </template>
+          </Carousel>
+
+          <Button class="w-1/2 m-4 rounded-xl"
+            >이미지로 저장하기 &nbsp;&nbsp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+              />
+            </svg>
+          </Button>
+        </div>
       </div>
     </div>
-    <div class="flex justify-center mt-8 mb-8">
+    <div class="footer-container flex justify-center mt-8 mb-8">
       <div class="w-3/4 p-3 flex justify-between bg-purple-200 rounded-xl">
         <div class="w-full pr-2 flex flex-col">
           <div class="text-gray-400 pb-4">
@@ -92,22 +82,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import Autoplay from 'embla-carousel-autoplay';
-import emblaCarouselVue from 'embla-carousel-vue';
-const [emblaRef, emblaApi] = emblaCarouselVue();
+import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 
-const cursorLoc = ref(0);
-const changeCursor = (index: number): void => {
-  cursorLoc.value = index;
-  console.log(emblaApi.value?.rootNode());
-};
-
-watchEffect(() => {
-  console.log(cursorLoc.value);
-  if (emblaApi.value !== null && emblaApi.value !== undefined) {
-    emblaApi.value.scrollTo(cursorLoc.value);
-  }
-});
 const results = ref([
   {
     day: 1,
@@ -206,3 +183,69 @@ const results = ref([
   },
 ]);
 </script>
+<style scoped>
+.carousel-item {
+  min-height: 200px;
+  width: 100%;
+  background-color: var(--vc-clr-primary);
+  color: var(--vc-clr-white);
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-img {
+  max-height: 740px;
+  max-width: 100%;
+}
+
+.header {
+  animation: fade-in 0.8s ease-in-out;
+}
+
+.answer-container {
+  animation: fade-in2 1.2s ease-in-out;
+}
+
+.footer-container {
+  animation: fade-in3 1.2s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in2 {
+  0% {
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>

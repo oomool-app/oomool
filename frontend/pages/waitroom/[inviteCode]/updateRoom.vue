@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col">
+  <div class="box flex flex-col p-6">
     <div class="flex justify-between items-center">
       <BackButton color="black"></BackButton>
       <div>방 설정</div>
-      <div>v</div>
+      <div class="mr-5">v</div>
     </div>
     <div class="flex flex-col">
       <label for="input">방 이름</label>
@@ -40,3 +40,17 @@ const range = ref<DatePickerRangeObject>({
   end: Date(),
 });
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>

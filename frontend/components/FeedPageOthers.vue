@@ -15,7 +15,7 @@
         <p>20분 전</p>
       </div>
       <div
-        class="p-3 border rounded-r-xl rounded-bl-xl border-primary bg-[#F1EBFC]"
+        class="p-3 border border-gray-400 rounded-r-xl rounded-bl-xl bg-[#F1EBFC]"
       >
         <img class="rounded-lg mb-2" :src="props.feeds.uploadImage" alt="" />
         {{ props.feeds.content }}

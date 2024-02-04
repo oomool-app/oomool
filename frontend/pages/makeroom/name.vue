@@ -1,12 +1,11 @@
 <template>
-  <div class="flex-col h-screen">
-    <div class="grid grid-cols-3">
+  <div class="box flex-col h-screen p-6">
+    <div class="flex justify-between">
       <div class="flex items-center">
         <BackButton color="black"></BackButton>
       </div>
-      <div class="flex justify-center items-center">
-        <h1 class="text-xl font-bold">방 만들기</h1>
-      </div>
+      <h1 class="text-xl font-bold">방 만들기</h1>
+      <div class="mr-6"></div>
     </div>
     <MakeRoomProgress :cur-page="'1'"></MakeRoomProgress>
     <div class="font-bold">우리 방의 이름을 정해주세요!</div>
@@ -42,3 +41,17 @@ const check = (e: any): void => {
   }
 };
 </script>
+<style scoped>
+.box {
+  animation: fade-in 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>
