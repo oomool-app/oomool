@@ -9,6 +9,12 @@ else
   . "$ASDF_DIR/asdf.sh"
 fi
 
-export PATH="$ASDF_DIR/shims:$PATH"
+if [ "$(uname)" = "Darwin" ]; then
+  . "/opt/homebrew/opt/asdf/libexec/asdf.sh"
+else
+  . "$ASDF_HOME/asdf.sh"
+fi
+
+export PATH="$ASDF_HOME/shims:$PATH"
 
 npx --no -- commitlint --edit ${1}
