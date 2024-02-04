@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 const message = ref<string | null>('');
-const { token } = useFCM();
+const { token, fetchToken } = useFCM();
 
 const requestNotificationPermission = (): void => {
   Notification.requestPermission()
@@ -42,7 +42,9 @@ const requestNotificationPermission = (): void => {
     });
 };
 
-const getMessageToken = (): void => {
-  message.value = token.value;
+const getMessageToken = async (): Promise<void> => {
+  await fetchToken().then(() => {
+    message.value = token.value;
+  });
 };
 </script>
