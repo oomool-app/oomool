@@ -1,4 +1,4 @@
-package com.oomool.api.domain.player.util;
+package com.oomool.api.domain.room.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,13 +9,14 @@ import java.util.stream.Collectors;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 
-public class MatchPlayer {
+public class MatchManitti {
 
     /**
      * 마니띠를 매칭하는 유틸
      * - 마니띠를 매칭한다.
      * - 마니띠 매칭은 userId를 기준으로 한다.
-     * */
+     *
+     * @param playerDtoList*/
     public static Map<Integer, Integer> matchPair(List<PlayerDto> playerDtoList) {
 
         // 매칭 닉네임 만 뽑기
@@ -29,14 +30,15 @@ public class MatchPlayer {
         List<Integer> availablePlayer = new ArrayList<>(playerList);
 
         for (int playerUserId : playerList) {
-            availablePlayer.remove(playerUserId);                               // 플레이어의 유저아이디 자기자신 제거
+            // index가 아닌 Integer Object가 삭제 되어야 한다.
+            availablePlayer.remove(Integer.valueOf(playerUserId));              // 플레이어의 유저아이디 자기자신 제거
             if (availablePlayer.isEmpty()) {
                 break;
             }                                                                   // 모든 플레이어 매칭되면 종료
             int manittiId = availablePlayer.get(0);                             // 가능한 첫번째 마니띠 선택
             pair.put(playerUserId, manittiId);                                  // 매칭 결과에 넣기
             availablePlayer.add(playerUserId);                                  // 다음 반복 위해, 자기 자신 추가
-            availablePlayer.remove(manittiId);                                  // 내가 지목한 마니띠는 제외
+            availablePlayer.remove(Integer.valueOf(manittiId));                 // 내가 지목한 마니띠는 제외
         }
         return pair;
     }

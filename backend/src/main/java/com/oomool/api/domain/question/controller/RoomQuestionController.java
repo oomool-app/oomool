@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oomool.api.domain.question.service.RoomQuestionService;
+import com.oomool.api.domain.question.service.RoomQuestionServiceImpl;
+import com.oomool.api.domain.room.service.GameRoomServiceImpl;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,12 +22,16 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "질문", description = "질문 관련 API를 명세합니다.")
 public class RoomQuestionController {
 
-    private final RoomQuestionService roomQuestionService;
+    private final RoomQuestionServiceImpl roomQuestionService;
+    private final GameRoomServiceImpl gameRoomService;
 
     @Operation(summary = "방에 대한 질문 생성 기능", description = "문답방에 대한 질문을 생성합니다.")
     @PostMapping("/{roomUID}")
     public ResponseEntity<?> createRoomQuestion(@PathVariable("roomUID") String roomUid) {
-        roomQuestionService.publishRoomQuestionList(roomUid);
+
+        // GameRoom을 기준으로 방에 대한 질문을 생성한다.
+        roomQuestionService.publishRoomQuestionList(gameRoomService.getGameRoom(roomUid));
+
         return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
     }
 
