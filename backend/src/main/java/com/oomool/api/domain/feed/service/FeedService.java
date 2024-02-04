@@ -127,23 +127,25 @@ public class FeedService {
 
         List<FeedImageDto> feedImageDtoList = new ArrayList<>();
 
-        // 피드 이미지 저장
-        for (MultipartFile file : fileList) {
+        if (fileList != null) {
+            // 피드 이미지 저장
+            for (MultipartFile file : fileList) {
 
-            // 파일을 local에 저장하고 DTO에 담아서 반환해준다.
-            FeedImageDto feedImageDto = convertFile.convertFile(file);
+                // 파일을 local에 저장하고 DTO에 담아서 반환해준다.
+                FeedImageDto feedImageDto = convertFile.convertFile(file);
 
-            // DB에 파일 저장
-            FeedImage registFeedImage = new FeedImage();
-            registFeedImage.setSaveFolder(feedImageDto.getFolderName());
-            registFeedImage.setOriginalName(feedImageDto.getOriginalName());
-            registFeedImage.setSaveName(feedImageDto.getFileName());
-            registFeedImage.setFeed(feed);
-            registFeedImage.setUrl(feedImageDto.getUrl());
-            feedImageRepository.save(registFeedImage);
+                // DB에 파일 저장
+                FeedImage registFeedImage = new FeedImage();
+                registFeedImage.setSaveFolder(feedImageDto.getFolderName());
+                registFeedImage.setOriginalName(feedImageDto.getOriginalName());
+                registFeedImage.setSaveName(feedImageDto.getFileName());
+                registFeedImage.setFeed(feed);
+                registFeedImage.setUrl(feedImageDto.getUrl());
+                feedImageRepository.save(registFeedImage);
 
-            // Dto에 파일 저장
-            feedImageDtoList.add(feedImageDto);
+                // Dto에 파일 저장
+                feedImageDtoList.add(feedImageDto);
+            }
         }
 
         FeedAnswerDto feedAnswerDto = FeedAnswerDto
@@ -181,24 +183,25 @@ public class FeedService {
 
         List<FeedImageDto> feedImageDtoList = new ArrayList<>();
 
+        if (newFileList != null) {
+            // 새로 입력 받은 이미지 DB에 저장
+            for (int i = 0; i < newFileList.size(); i++) {
+                MultipartFile file = newFileList.get(i);
 
-        // 새로 입력 받은 이미지 DB에 저장
-        for (int i = 0; i < newFileList.size(); i++) {
-            MultipartFile file = newFileList.get(i);
+                FeedImageDto feedImageDto = convertFile.convertFile(file);
 
-            FeedImageDto feedImageDto = convertFile.convertFile(file);
+                FeedImage registFeedImage = new FeedImage();
 
-            FeedImage registFeedImage = new FeedImage();
+                registFeedImage.setFeed(feed);
+                registFeedImage.setOriginalName(feedImageDto.getOriginalName());
+                registFeedImage.setSaveName(feedImageDto.getFileName());
+                registFeedImage.setSaveFolder(feedImageDto.getFolderName());
+                registFeedImage.setUrl(feedImageDto.getUrl());
 
-            registFeedImage.setFeed(feed);
-            registFeedImage.setOriginalName(feedImageDto.getOriginalName());
-            registFeedImage.setSaveName(feedImageDto.getFileName());
-            registFeedImage.setSaveFolder(feedImageDto.getFolderName());
-            registFeedImage.setUrl(feedImageDto.getUrl());
-
-            // save 안하면 변경 감지 안되던데 이유가..? 그래서 save 처리해줌!
-            feedImageRepository.save(registFeedImage);
-            feedImageDtoList.add(feedImageDto);
+                // save 안하면 변경 감지 안되던데 이유가..? 그래서 save 처리해줌!
+                feedImageRepository.save(registFeedImage);
+                feedImageDtoList.add(feedImageDto);
+            }
         }
 
         FeedAnswerDto feedAnswerDto = FeedAnswerDto
