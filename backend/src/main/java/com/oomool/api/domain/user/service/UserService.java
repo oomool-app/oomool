@@ -40,6 +40,15 @@ public class UserService {
     }
 
     /**
+     * 유저 Id 의 존재 여부 확인
+     *
+     * */
+    public User getUserById(int userId) throws Exception {
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exception("유저가 존재하지 않습니다."));
+        return user;
+    }
+
+    /**
      * 유저가 참여하고 있는 대기방 정보를 조회한다.
      * */
     public List<Map<String, Object>> getTempRoomList(int userId) {
