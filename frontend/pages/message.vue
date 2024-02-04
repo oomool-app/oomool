@@ -1,9 +1,9 @@
 <template>
   <div class="mb-6 bg-background">
     <div
-      class="top-container mb-6 text-center flex justify-between items-center p-6 font-bold"
+      class="top-container mb-6 text-center flex justify-center self-stretch relative pt-7 pb-4 font-bold"
     >
-      <BackButton color="#61339b" />
+      <BackButton color="#61339b" class="absolute left-1 pt-1" />
       <h1 class="text-2xl font-bold text-primary">알림</h1>
       <div class="mr-4"></div>
     </div>
@@ -12,7 +12,7 @@
       class="body-container max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
     >
       <div v-for="message in messages" :key="message.messageid">
-        <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
+        <MessageCard :messages="message" class="pt-3 pb-3"></MessageCard>
       </div>
     </div>
   </div>
