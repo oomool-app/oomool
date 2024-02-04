@@ -1,7 +1,13 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-export ASDF_HOME="$HOME/.asdf"
+export ASDF_DIR="$HOME/.asdf"
+
+if [ "$(uname)" = "Darwin" ]; then
+  . "/opt/homebrew/opt/asdf/libexec/asdf.sh"
+else
+  . "$ASDF_DIR/asdf.sh"
+fi
 
 if [ "$(uname)" = "Darwin" ]; then
   . "/opt/homebrew/opt/asdf/libexec/asdf.sh"

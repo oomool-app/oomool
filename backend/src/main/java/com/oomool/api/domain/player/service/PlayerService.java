@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.oomool.api.domain.player.dto.ManittiDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Avatar;
 import com.oomool.api.domain.player.entity.Player;
@@ -75,6 +76,44 @@ public class PlayerService {
     }
 
     /**
+     * 마니띠의 정보 조회
+     */
+    public ManittiDto getManittiInfo(int authorId) {
+        // authorId로 manittiId 가져오기
+        Player playerByAuthorId = playerRepository.findById(authorId);
+
+        int manittiId = playerByAuthorId.getManittiId();
+
+        // manittiId로 manitti Info 가져오기
+        List<Player> playerList = playerRepository.findAll();
+
+        ManittiDto manittiDto = new ManittiDto();
+
+        for (Player player : playerList) {
+            int playerManittiCheck = player.getUser().getId();
+            if (playerManittiCheck == manittiId) {
+                manittiDto = ManittiDto
+                    .builder()
+                    .nickname(player.getNickname())
+                    .avatarColor(player.getAvatarColor())
+                    .url(player.getAvatar().getUrl())
+                    .build();
+
+                return manittiDto;
+            }
+        }
+        return manittiDto;
+    }
+
+    /**
+     * 마니띠 정보 조회(엔티티 반환)
+     */
+    public Player getPlayerInfo(int authorId) {
+        Player player = playerRepository.findById(authorId);
+        return player;
+    }
+
+    /*
      * 마니띠 매칭
      * - 마니띠 매칭은 USER id를 기준으로 한다.
      * */
@@ -104,5 +143,4 @@ public class PlayerService {
         }
         return pair;
     }
-
 }

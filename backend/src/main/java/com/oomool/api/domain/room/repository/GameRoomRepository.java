@@ -9,7 +9,6 @@ import com.oomool.api.domain.room.entity.GameRoom;
 
 @Repository
 public interface GameRoomRepository extends JpaRepository<GameRoom, Integer> {
-
     // roomUid에 대한 조회 메서드
     Optional<GameRoom> findByRoomUid(String roomUid);
 }
