@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 cleanup() {
     # Reset the trap handler so it's not called twice
     trap - EXIT
