@@ -112,6 +112,8 @@ public class PlayerService {
         Player player = playerRepository.findById(authorId);
         return player;
     }
+
+    /*
      * 마니띠 매칭
      * - 마니띠 매칭은 USER id를 기준으로 한다.
      * */
