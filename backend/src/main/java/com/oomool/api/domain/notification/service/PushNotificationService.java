@@ -30,9 +30,9 @@ public interface PushNotificationService {
     List<PushNotificationTokenDto> getAllTokensByUser(int userId);
 
     /**
-     * 푸시 알림을 보낸다.
+     * 해당하는 유저에게 푸시 알림을 보낸다.
      *
      * @param pushNotificationDto 푸시 알림 정보
      */
-    void sendPushNotification(PushNotificationDto pushNotificationDto);
+    void sendPushNotificationByUser(PushNotificationDto pushNotificationDto);
 }
