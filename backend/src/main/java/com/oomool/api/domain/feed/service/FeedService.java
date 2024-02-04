@@ -56,7 +56,17 @@ public class FeedService {
         // 방 질문 ID로 모든 피드 목록 가져오기.
         int roomQuestionId = roomQuestionFeedDto.getRoomQuestionId();
 
-        List<Feed> feedList = feedRepository.findByRoomQuestionId(roomQuestionId);
+        List<Feed> feedAllList = feedRepository.findAll();
+
+        List<Feed> feedList = new ArrayList<>();
+
+        for (Feed feed : feedAllList) {
+            int roomQuestionIdCheck = feed.getRoomQuestion().getId();
+            // 방 질문 ID가 같은 값을 feedList에 담아준다.
+            if (roomQuestionIdCheck == roomQuestionId) {
+                feedList.add(feed);
+            }
+        }
 
         List<RoomFeedDto> roomFeedDtoList = new ArrayList<>();
 

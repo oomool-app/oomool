@@ -80,26 +80,36 @@ public class PlayerService {
      */
     public ManittiDto getManittiInfo(int authorId) {
         // authorId로 manittiId 가져오기
-        Player player = playerRepository.findByAuthorId(authorId);
+        Player playerByAuthorId = playerRepository.findById(authorId);
 
-        int manittiId = player.getManittiId();
+        int manittiId = playerByAuthorId.getManittiId();
 
         // manittiId로 manitti Info 가져오기
-        Player manitti = playerRepository.findByManttiId(manittiId);
+        List<Player> playerList = playerRepository.findAll();
 
-        return ManittiDto
-            .builder()
-            .nickname(manitti.getNickname())
-            .avatarColor(manitti.getAvatarColor())
-            .url(manitti.getAvatar().getUrl())
-            .build();
+        ManittiDto manittiDto = new ManittiDto();
+
+        for (Player player : playerList) {
+            int playerManittiCheck = player.getUser().getId();
+            if (playerManittiCheck == manittiId) {
+                manittiDto = ManittiDto
+                    .builder()
+                    .nickname(player.getNickname())
+                    .avatarColor(player.getAvatarColor())
+                    .url(player.getAvatar().getUrl())
+                    .build();
+
+                return manittiDto;
+            }
+        }
+        return manittiDto;
     }
 
     /**
      * 마니띠 정보 조회(엔티티 반환)
      */
     public Player getPlayerInfo(int authorId) {
-        Player player = playerRepository.findByAuthorId(authorId);
+        Player player = playerRepository.findById(authorId);
         return player;
     }
      * 마니띠 매칭

@@ -2,12 +2,14 @@ package com.oomool.api.domain.player.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class ManittiDto {
     private String nickname; // 마니띠 닉네임
     private String avatarColor; // 아바타 배경색

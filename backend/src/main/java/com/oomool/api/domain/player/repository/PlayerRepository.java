@@ -14,10 +14,8 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     @Query("SELECT p FROM Player p WHERE p.room.roomUid = :roomUid")
     List<Player> findByRoomUid(String roomUid);
 
-    @Query("SELECT p FROM Player p WHERE p.id = :authorId")
-    Player findByAuthorId(int authorId);
+    Player findById(int authorId);
 
-    @Query("SELECT p FROM Player p WHERE p.user.id = :manittiId")
-    Player findByManttiId(int manittiId);
+    List<Player> findAll();
 }
 

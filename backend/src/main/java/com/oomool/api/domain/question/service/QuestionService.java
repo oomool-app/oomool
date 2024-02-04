@@ -18,7 +18,7 @@ public class QuestionService {
      * 질문 내용과 레벨을 반환합니다.
      */
     public QuestionDto getQuestion(int questionId) {
-        Question question = questionRepository.findByQuestionId(questionId);
+        Question question = questionRepository.findById(questionId);
 
         QuestionDto questionDto = QuestionDto
             .builder()
