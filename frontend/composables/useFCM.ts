@@ -21,8 +21,6 @@ const useFCM = (): UseFCM => {
       });
   };
 
-  onMounted(fetchToken);
-
   return { token, fetchToken };
 };
 
