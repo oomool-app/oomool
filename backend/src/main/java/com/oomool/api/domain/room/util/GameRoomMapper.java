@@ -1,6 +1,7 @@
 package com.oomool.api.domain.room.util;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class GameRoomMapper {
             .startDate(settingOptionDto.getStartDate())
             .endDate(settingOptionDto.getEndDate())
             .questionType(settingOptionDto.getQuestionType())
+            .players(new ArrayList<>())
             .build();
     }
 
