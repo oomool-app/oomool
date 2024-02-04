@@ -50,6 +50,7 @@ export default defineNuxtConfig({
       type: 'module',
       navigateFallbackAllowlist: [/^\/$/],
     },
+    filename: 'firebase-messaging-sw.js',
     injectManifest: {
       rollupFormat: 'iife',
     },
