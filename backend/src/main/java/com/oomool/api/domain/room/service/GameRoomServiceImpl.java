@@ -2,7 +2,6 @@ package com.oomool.api.domain.room.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,9 +77,7 @@ public class GameRoomServiceImpl implements GameRoomService {
             .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
         SettingOptionDto settingOptionDto = gameRoomMapper.entityToSettingOptionDto(gameRoom);
         // 순환참조를 방지하기 위해 Dto로 변환
-        List<PlayerDto> playerDtoList = gameRoom.getPlayers().stream()
-            .map(playerMapper::entityToPlayerDto)
-            .collect(Collectors.toList());
+        List<PlayerDto> playerDtoList = playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
         return Map.of(
             "room_uid", roomUid,
             "create_at", CustomDateUtil.convertDateTimeToString(gameRoom.getCreateAt()),
