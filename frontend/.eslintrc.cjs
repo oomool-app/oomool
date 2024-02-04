@@ -33,5 +33,5 @@ module.exports = {
     'vue/no-multiple-template-root': 'off',
     'max-depth': ['error', 2],
   },
-  ignorePatterns: ['.eslintrc.cjs', '**.config.ts'],
+  ignorePatterns: ['.eslintrc.cjs'],
 };
