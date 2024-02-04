@@ -16,6 +16,7 @@ import com.oomool.api.domain.question.repository.QuestionRepository;
 import com.oomool.api.domain.question.repository.RoomQuestionReposiotry;
 import com.oomool.api.domain.question.util.RoomQuestionUtil;
 import com.oomool.api.domain.room.entity.GameRoom;
+import com.oomool.api.domain.room.service.GameRoomServiceImpl;
 import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,15 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
     private final RoomQuestionReposiotry roomQuestionReposiotry;
     private final QuestionRepository questionRepository;
 
+    // GameRoomService
+    private final GameRoomServiceImpl gameRoomService;
     // 문답방의 질문 생성기
     private final RoomQuestionUtil roomQuestionUtil;
 
     @Override
-    public void publishRoomQuestionList(GameRoom gameRoom) {
+    public void publishRoomQuestionList(String roomUid) {
 
+        GameRoom gameRoom = gameRoomService.getGameRoom(roomUid);
         // 질문 생성에 필요한 조건을 구한다.
         // 1. 몇일 동안 진행될 것인지
         // 2. 질문의 깊이는 어느정도인지
@@ -80,6 +84,20 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
 
     @Override
     public DailyQuestionDto getDailyQuestion(String roomUid) {
+
         return null;
+    }
+
+    @Override
+    public List<DailyQuestionDto> getDailyQuestionList(String roomUid) {
+        // roomQuestion을 DailyQuestionDto로 변환한다.
+        return gameRoomService.getGameRoom(roomUid).getRoomQuestionList()
+            .stream()
+            .map(roomQuestion -> DailyQuestionDto.builder()
+                .question(roomQuestion.getQuestion().getQuestion())
+                .sequence(roomQuestion.getSequence())
+                .level(roomQuestion.getQuestion().getLevel())
+                .build())
+            .collect(Collectors.toList());
     }
 }
