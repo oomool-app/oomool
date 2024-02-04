@@ -5,16 +5,15 @@ import java.util.Map;
 
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
 import com.oomool.api.domain.question.entity.Question;
-import com.oomool.api.domain.room.entity.GameRoom;
 
 public interface RoomQuestionService {
 
     /**
      * 문답방 설정 옵션 기준으로 문답방에 질문을 생성한다.
      *
-     * @param gameRoom 문답방
+     * @param roomUid 문답방 uuid
      * */
-    void publishRoomQuestionList(GameRoom gameRoom);
+    void publishRoomQuestionList(String roomUid);
 
     /**
      * 문답방에 설정된 날짜기준으로 나눈 수량에 따라 Question을 배분한다.
@@ -27,8 +26,14 @@ public interface RoomQuestionService {
     /**
      * 데일리 질문을 조회한다.
      *
-     * @param roomUid 문답방 코드 번호
+     * @param roomUid 문답방 uuid
      * */
     DailyQuestionDto getDailyQuestion(String roomUid);
 
+    /**
+     * 전체 질문 목록을 조회한다.
+     *
+     * @param roomUid 문답방 uuid
+     * */
+    List<DailyQuestionDto> getDailyQuestionList(String roomUid);
 }
