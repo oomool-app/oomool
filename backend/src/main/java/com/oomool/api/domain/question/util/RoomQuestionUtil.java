@@ -1,5 +1,6 @@
 package com.oomool.api.domain.question.util;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,10 +54,12 @@ public class RoomQuestionUtil {
      * @param sequence 순서
      * */
     public RoomQuestion convertToRoomQuestion(Question question, GameRoom gameRoom, int sequence) {
+        LocalDate startDate = gameRoom.getStartDate();
         return RoomQuestion.builder()
             .room(gameRoom)
             .question(question)
             .sequence(sequence)
+            .date(startDate.plusDays(sequence - 1))
             .build();
     }
 

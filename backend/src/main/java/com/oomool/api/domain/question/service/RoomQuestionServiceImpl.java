@@ -1,5 +1,6 @@
 package com.oomool.api.domain.question.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,27 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
     @Override
     public DailyQuestionDto getDailyQuestion(String roomUid) {
 
+        /**
+         * RoomQuestion 관련해서, roomUid와 Sequence를 기준으로 목표하는 값만 가져오려면
+         * 연관관계에 있는 Entity를 조회해서 room_id를 꺼내 다시 game_room_question.room_id를 조회하는 방법이 아닌 (불필요한 조회쿼리가 2회있음)
+         * room_uid, sequence로 조회하는 방법이 필요하다.
+         * -> referecedColumn 을 해서 fk를 room_uid에게도 주는 방식을 사용해야 할 것 같은데,
+         * refactor 하다보니, entity 관계가 깨져, 에러가 생겼다.
+         * -> 월까지 API가 어느정도 나와야 하기 때문에 구체적인 쿼리 변경은 추후 작업에서 개선하도록 할 것 -> Entity 연관관계
+         * */
+        GameRoom gameRoom = gameRoomService.getGameRoom(roomUid);
+        int dateInterval = CustomDateUtil.getDateInterval(LocalDate.now(), gameRoom.getEndDate());
+
+        for (RoomQuestion roomQuestion : gameRoom.getRoomQuestionList()) {
+            if (roomQuestion.getDate().equals(LocalDate.now())) {
+                return DailyQuestionDto.builder()
+                    .question(roomQuestion.getQuestion().getQuestion())
+                    .dailyDate(roomQuestion.getDate())
+                    .sequence(roomQuestion.getSequence())
+                    .level(roomQuestion.getQuestion().getLevel())
+                    .build();
+            }
+        }
         return null;
     }
 
@@ -95,6 +117,7 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
             .stream()
             .map(roomQuestion -> DailyQuestionDto.builder()
                 .question(roomQuestion.getQuestion().getQuestion())
+                .dailyDate(roomQuestion.getDate())
                 .sequence(roomQuestion.getSequence())
                 .level(roomQuestion.getQuestion().getLevel())
                 .build())
