@@ -1,6 +1,8 @@
 package com.oomool.api.domain.player.util;
 
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -52,6 +54,15 @@ public class PlayerMapper {
             .playerBackgroundColor(player.getAvatarColor())
             .playerAvatarUrl(player.getAvatar().getUrl())
             .build();
+    }
+
+    /**
+     * List<Player> -> List</PlayerDto>
+     * */
+    public List<PlayerDto> entityToPlayerDtoList(List<Player> playerList) {
+        return playerList.stream()
+            .map(this::entityToPlayerDto)
+            .collect(Collectors.toList());
     }
 
 }

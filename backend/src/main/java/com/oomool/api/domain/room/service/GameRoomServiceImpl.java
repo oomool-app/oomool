@@ -20,6 +20,7 @@ import com.oomool.api.domain.room.util.MatchManitti;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.service.UserService;
+import com.oomool.api.global.util.CustomDateUtil;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -72,13 +73,16 @@ public class GameRoomServiceImpl implements GameRoomService {
 
     @Override
     public Map<String, Object> getGameRoomDetail(String roomUid) {
-        GameRoom gameRoom = getGameRoom(roomUid);
+        GameRoom gameRoom = gameRoomRepository.findByRoomUid(roomUid)
+            .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
         SettingOptionDto settingOptionDto = gameRoomMapper.entityToSettingOptionDto(gameRoom);
+        // 순환참조를 방지하기 위해 Dto로 변환
+        List<PlayerDto> playerDtoList = playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
         return Map.of(
             "room_uid", roomUid,
-            "create_at", gameRoom.getCreateAt(),
+            "create_at", CustomDateUtil.convertDateTimeToString(gameRoom.getCreateAt()),
             "setting", settingOptionDto,
-            "players", gameRoom.getPlayers()
+            "players", playerDtoList
         );
     }
 

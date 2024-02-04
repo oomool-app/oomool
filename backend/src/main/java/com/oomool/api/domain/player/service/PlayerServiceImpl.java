@@ -1,7 +1,6 @@
 package com.oomool.api.domain.player.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.repository.PlayerRepository;
 import com.oomool.api.domain.player.util.PlayerMapper;
+import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.room.service.GameRoomServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public List<PlayerDto> getPlayerDtoList(String roomUid) {
-        return gameRoomService.getGameRoom(roomUid).getPlayers().stream().map(playerMapper::entityToPlayerDto).collect(
-            Collectors.toList());
+        GameRoom gameRoom = gameRoomService.getGameRoom(roomUid);
+        return playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
     }
 }
