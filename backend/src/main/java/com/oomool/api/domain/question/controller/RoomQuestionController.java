@@ -35,15 +35,6 @@ public class RoomQuestionController {
         return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
     }
 
-    @Operation(summary = "데일리 질문 조회 기능", description = "데일리 질문에 대해 조회합니다.")
-    @GetMapping("/{roomUID}/{sequence}")
-    public ResponseEntity<?> getDailyQuestion(@PathVariable("roomUID") String roomUid,
-        @PathVariable("sequence") int sequence) {
-        // 조회 로직
-
-        return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
-    }
-
     @Operation(summary = "방 질문 목록에 대한 조회 기능", description = "문답방에 대한 전체 질문을 조회한다.")
     @GetMapping("/{roomUID}")
     public ResponseEntity<?> getRoomQuestionList(@PathVariable("roomUID") String roomUid) {
@@ -51,6 +42,14 @@ public class RoomQuestionController {
             Map.of(
                 "room_uid", roomUid,
                 "room_question_list", roomQuestionService.getDailyQuestionList(roomUid)));
+    }
+
+    @Operation(summary = "데일리 질문 조회 기능", description = "데일리 질문에 대해 조회합니다.")
+    @GetMapping("/{roomUID}/daily")
+    public ResponseEntity<?> getDailyQuestion(@PathVariable("roomUID") String roomUid) {
+        // 조회 로직
+
+        return ResponseHandler.generateResponse(HttpStatus.OK, roomQuestionService.getDailyQuestion(roomUid));
     }
 
 }
