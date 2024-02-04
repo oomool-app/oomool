@@ -8,6 +8,7 @@ import java.util.List;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.question.entity.QuestionType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -54,7 +55,7 @@ public class GameRoom {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createAt; // 방 생성 일자
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Player> players = new ArrayList<>();
 
 }

@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.player.service.PlayerServiceImpl;
 import com.oomool.api.domain.room.dto.InviteCodeDto;
-import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.service.GameRoomServiceImpl;
 import com.oomool.api.domain.room.service.TempRoomRedisService;
-import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,12 +35,7 @@ public class GameRoomController {
     @PostMapping
     public ResponseEntity<?> createGameRoom(@RequestBody InviteCodeDto inviteCodeDto) throws Exception {
 
-        String roomUid = UniqueCodeGenerator.generateRandomString(8); // 방 UUID 생성
-        SettingOptionDto settingOptionDto = tempRoomRedisService.getSettingOptionDtoByInviteCode(
-            inviteCodeDto.getInviteCode());
-        gameRoomService.createGameRoom(roomUid, settingOptionDto);
-        // Player Entity 저장
-        playerService.savePlayerList(inviteCodeDto.getInviteCode(), roomUid); // TODO :: Player Refactor
+        String roomUid = gameRoomService.createGameRoom(inviteCodeDto.getInviteCode());
         return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("roomUid", roomUid));
     }
 

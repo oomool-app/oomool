@@ -70,7 +70,7 @@ public class TempRoomRedisService {
 
         return TempRoomDto.builder()
             .inviteCode(inviteCode)
-            .createdAt(CustomDateUtil.parseDateTime((String)map.get("createdAt")))
+            .createdAt(CustomDateUtil.parseDateTime((String)map.get("createAt")))
             .masterId(Integer.parseInt((String)map.get("masterId")))
             .setting(tempRoomMapper.mapToSettingOptionDto(map))
             .players(getTempRoomPlayerList(inviteCode))
