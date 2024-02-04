@@ -9,7 +9,9 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@vite-pwa/nuxt',
     '@pinia/nuxt',
+    'nuxt-vuefire',
   ],
+  plugins: ['@/plugins/messages.client.ts'],
   shadcn: {
     /**
      * Prefix for all the imported component
@@ -25,6 +27,7 @@ export default defineNuxtConfig({
     public: {
       oomoolApiUrl: process.env.NUXT_PUBLIC_OOMOOL_API_URL,
       oomoolSiteUrl: process.env.NUXT_PUBLIC_OOMOOL_SITE_URL,
+      vapidKey: process.env.NUXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
     },
   },
   app: {
@@ -39,6 +42,17 @@ export default defineNuxtConfig({
     },
   },
   pwa: {
+    strategies: 'injectManifest',
+    injectRegister: null,
+    registerType: 'autoUpdate',
+    devOptions: {
+      enabled: true,
+      type: 'module',
+      navigateFallbackAllowlist: [/^\/$/],
+    },
+    injectManifest: {
+      rollupFormat: 'iife',
+    },
     manifest: {
       name: '우물',
       short_name: '우물',
@@ -60,6 +74,17 @@ export default defineNuxtConfig({
           type: 'image/png',
         },
       ],
+    },
+  },
+  vuefire: {
+    config: {
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.FIREBASE_APP_ID,
+      measurementId: process.env.FIREBASE_MEASUREMENT_ID,
     },
   },
 });
