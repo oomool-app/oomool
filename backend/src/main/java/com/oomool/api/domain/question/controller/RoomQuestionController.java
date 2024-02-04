@@ -32,7 +32,7 @@ public class RoomQuestionController {
         // GameRoom을 기준으로 방에 대한 질문을 생성한다.
         roomQuestionService.publishRoomQuestionList(roomUid);
 
-        return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
+        return ResponseHandler.generateResponse(HttpStatus.OK, "문답방의 질문이 생성되었습니다.");
     }
 
     @Operation(summary = "방 질문 목록에 대한 조회 기능", description = "문답방에 대한 전체 질문을 조회한다.")
