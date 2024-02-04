@@ -19,7 +19,7 @@
     </div>
 
     <fieldset
-      class="form-group grid grid-cols-3 flex-wrap justify-center gap-4 pt-5"
+      class="form-group grid grid-cols-3 flex-wrap justify-center gap-4 pt-5 pb-5"
     >
       <button
         class="bg-white p-3 rounded-xl text-black font-bold"
@@ -58,6 +58,12 @@
         로그인6
       </button>
     </fieldset>
+    <button
+      class="bg-white p-3 rounded-xl text-black font-bold"
+      @click="router.push('/firebase/test')"
+    >
+      Firebase Test Page
+    </button>
   </div>
 </template>
 
