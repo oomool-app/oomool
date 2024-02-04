@@ -25,6 +25,7 @@ public class RoomQuestionService {
      * 방질문 정보를 반환(방질문 ID, 질문 ID, sequence)
      */
     public RoomQuestionFeedDto getRoomQuestion(String roomUid, int sequence) {
+
         List<RoomQuestion> roomQuestionList = roomQuestionRepository.findAll();
 
         RoomQuestionFeedDto roomQuestionFeedDto = new RoomQuestionFeedDto();
