@@ -39,58 +39,39 @@
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore';
 import { useRouter } from 'vue-router';
+import { type IGetRoomListInput } from '../repository/modules/interface/users.interface';
 
 useBodyColor('#61339B');
 
 const userStore = useUserStore();
 const router = useRouter();
+const { $api } = useNuxtApp();
 
-const rooms = [
-  {
-    roomid: 1,
-    sequence: 2,
-    question: '내 마니또가 멋있어보였던 순간은?',
-    title: '공통플젝 A809',
-    startdate: '2024-02-02',
-    enddate: '2024-02-16',
-  },
-  {
-    roomid: 2,
-    sequence: 3,
-    question: '내 마니또의 첫인상은?',
-    title: '서울8반 화이팅',
-    startdate: '2024-02-02',
-    enddate: '2024-02-16',
-  },
-  {
-    roomid: 3,
-    sequence: 7,
-    question: '내 마니또의 첫인상은?',
-    title: '소문난 칠공주',
-    startdate: '2024-01-01',
-    enddate: '2024-01-11',
-  },
-  {
-    roomid: 4,
-    sequence: 2,
-    question: '내 마니또에게 배울 점이 있다면?',
-    title: '싸피초등학교 16기',
-    startdate: '2024-02-18',
-    enddate: '2024-02-22',
-  },
-];
+const rooms = ref();
+
+// 유저아이디로 방 목록 가져오기
+const getRoomList = async (): Promise<void> => {
+  try {
+    const storedUser = userStore.getStoredUser();
+
+    if (storedUser != null) {
+      const userId: IGetRoomListInput = {
+        userId: storedUser.id,
+      };
+
+      const response = await $api.users.getRoomList(userId);
+      rooms.value = response.data;
+    } else {
+      // 사용자 정보가 없을 경우 로그인 페이지로 리다이렉트
+      await router.push('/login');
+    }
+  } catch (error) {
+    console.error('Error while fetching room list:', error);
+  }
+};
 
 onBeforeMount(async () => {
-  // 페이지 로딩 시 세션 스토리지에서 사용자 정보 가져오기
-  const storedUser = userStore.getStoredUser();
-
-  // 사용자 정보가 있으면 index.vue로, 없으면 login.vue로 리다이렉트
-  if (storedUser != null) {
-    await router.push('/');
-  } else {
-    // 세션 스토리지에 사용자 정보가 없을 경우
-    await router.push('/login');
-  }
+  await getRoomList();
 });
 </script>
 
