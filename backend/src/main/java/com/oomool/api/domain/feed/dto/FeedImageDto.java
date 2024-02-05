@@ -1,5 +1,6 @@
 package com.oomool.api.domain.feed.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,18 +13,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class FeedImageDto {
     private String originalName;
     private String fileName;
     private String folderName;
     private String url;
-
-    @Builder
-    public FeedImageDto(String originalName, String fileName, String folderName, String url) {
-        this.originalName = originalName;
-        this.fileName = fileName;
-        this.folderName = folderName;
-        this.url = url;
-    }
 }
