@@ -11,6 +11,12 @@
     <div
       class="body-container max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
     >
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="router.push('/firebase/test')"
+      >
+        Firebase Test Page
+      </button>
       <div v-for="message in messages" :key="message.messageid">
         <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
       </div>
@@ -19,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
 const messages = [
   {
     messageid: 1,
