@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oomool.api.domain.notification.dto.PushNotificationDto;
 import com.oomool.api.domain.notification.dto.PushNotificationTokenDto;
 import com.oomool.api.domain.notification.service.PushNotificationService;
 import com.oomool.api.global.util.ResponseHandler;
@@ -53,5 +54,16 @@ public class PushNotificationController {
 
         return ResponseHandler.generateResponse(HttpStatus.OK,
             Map.of("tokens", pushNotificationService.getAllTokensByUser(userId)));
+    }
+
+    // 푸시 알림 전송에 대한 API 생성
+    @PostMapping
+    @Operation(summary = "푸시 알림 전송 기능", description = "해당하는 유저에게 푸시 알림을 보냅니다.")
+    public ResponseEntity<?> sendPushNotificationByUser(
+        @RequestBody PushNotificationDto pushNotificationDto) {
+        pushNotificationService.sendPushNotificationByUser(pushNotificationDto);
+
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            pushNotificationDto);
     }
 }

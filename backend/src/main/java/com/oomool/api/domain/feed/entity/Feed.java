@@ -14,12 +14,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "feed")
 public class Feed extends BaseTimeEntity {
 
@@ -40,4 +42,15 @@ public class Feed extends BaseTimeEntity {
     @JoinColumn(name = "author")
     private Player author;
 
+    public Feed update(String content) {
+        this.content = content;
+        return this;
+    }
+
+    @Builder
+    public Feed(RoomQuestion roomQuestion, String content, Player author) {
+        this.roomQuestion = roomQuestion;
+        this.content = content;
+        this.author = author;
+    }
 }
