@@ -34,17 +34,21 @@ public class TempRoomRedisService {
      * 방장은 대기방을 Redis에 생성한다.
      *
      * @param settingOptionDto 대기방 설정 정보
-     * @param masterPlayerDto 방장 게임 프로필
+     * @param masterUserId 방장 게임 프로필
      * */
-    public TempRoomDto createTempRoom(SettingOptionDto settingOptionDto, PlayerDto masterPlayerDto) throws
+    public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) throws
         JsonProcessingException {
-
         String inviteCode = UniqueCodeGenerator.generateRandomString(15);  // 대기방 초대코드 생성기
 
-        saveTempRoomSetting(inviteCode, settingOptionDto, masterPlayerDto.getUserId());
-        saveTempRoomPlayer(inviteCode, masterPlayerDto);
+        saveTempRoomSetting(inviteCode, settingOptionDto, masterUserId); // USER DTO 는 master 권한을 갖는다.
 
-        return getTempRoom(inviteCode);
+        Map<String, Object> settingOption = getTempRoomSetting(inviteCode);
+        return Map.of(
+            "invite_code", inviteCode,
+            "created_at", settingOption.get("createdAt"),
+            "master_id", settingOption.get("masterId"),
+            "setting", tempRoomMapper.mapToSettingOptionDto(settingOption)
+        );
     }
 
     /**

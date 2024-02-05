@@ -20,13 +20,11 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDto getQuestion(int questionId) {
         Question question = questionRepository.findById(questionId);
 
-        QuestionDto questionDto = QuestionDto
+        return QuestionDto
             .builder()
             .question(question.getQuestion())
             .level(question.getLevel())
             .build();
-
-        return questionDto;
     }
 
 }
