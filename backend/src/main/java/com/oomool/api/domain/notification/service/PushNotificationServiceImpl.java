@@ -16,6 +16,7 @@ import com.oomool.api.domain.notification.repository.PushNotificationTokenReposi
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,11 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     public void saveToken(int userId, String token) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        pushNotificationTokenRepository.findByUserAndToken(user, token)
+            .ifPresent(pushNotificationToken -> {
+                throw new EntityExistsException("해당 토큰이 이미 존재합니다.");
+            });
 
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
             .user(user)
