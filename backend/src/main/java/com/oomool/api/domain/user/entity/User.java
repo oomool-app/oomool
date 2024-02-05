@@ -1,9 +1,11 @@
 package com.oomool.api.domain.user.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.oomool.api.domain.auth.entity.SocialLogin;
+import com.oomool.api.domain.player.entity.Player;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,4 +41,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonBackReference // 순환참조 방지
     private List<SocialLogin> socialLoginList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Player> playerList = new ArrayList<>();
+
 }

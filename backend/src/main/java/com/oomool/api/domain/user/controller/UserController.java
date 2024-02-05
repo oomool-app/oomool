@@ -54,8 +54,15 @@ public class UserController {
     @Operation(summary = "회원 대기방 목록 정보 조회", description = "유저가 참여하고 있는 대기방 목록을 조회합니다.")
     @GetMapping("/{userId}/temps")
     public ResponseEntity<?> getTempRoomList(@PathVariable("userId") Integer userId) {
-        List<?> list = userService.getTempRoomList(userId);
-        return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("TempRoom", list));
+        List<?> tempRoomList = userService.getTempRoomList(userId);
+        return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("temp_room", tempRoomList));
+    }
+
+    @Operation(summary = "회원이 참여하고 있는 그룹 목록 조회", description = "유저가 참여하고 있는 그룹방 정보를 조회합니다.")
+    @GetMapping("/{userId}/games")
+    public ResponseEntity<?> getGameRoomList(@PathVariable("userId") Integer userId) {
+        List<?> gameRoomList = userService.getGameRoomList(userId);
+        return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
     }
 
 }
