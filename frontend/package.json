@@ -30,7 +30,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-tailwindcss": "^3.14.0",
     "eslint-plugin-vue": "^9.20.1",
-    "husky": "^8.0.0",
+    "husky": "^9.0.10",
     "lint-staged": "^15.2.0",
     "nuxt": "^3.9.3",
     "postcss-html": "^1.6.0",
@@ -51,10 +51,10 @@
     "@vueuse/core": "^10.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "firebase": "^10.7.2",
     "embla-carousel": "^8.0.0-rc22",
     "embla-carousel-autoplay": "^8.0.0-rc22",
     "embla-carousel-vue": "^8.0.0-rc22",
+    "firebase": "^10.7.2",
     "lucide-vue-next": "^0.314.0",
     "nuxt-vuefire": "^1.0.1",
     "pinia": "^2.1.7",
@@ -62,7 +62,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "v-calendar": "^3.1.2",
-    "vuefire": "^3.1.22",
-    "vue3-carousel": "^0.3.1"
+    "vue3-carousel": "^0.3.1",
+    "vuefire": "^3.1.22"
   }
 }
