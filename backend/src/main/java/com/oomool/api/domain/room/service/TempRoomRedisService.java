@@ -1,6 +1,7 @@
 package com.oomool.api.domain.room.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -29,6 +30,8 @@ public class TempRoomRedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final TempRoomMapper tempRoomMapper;
+
+    // ================    Service Layer   ==================
 
     /**
      * 방장은 대기방을 Redis에 생성한다.
@@ -109,8 +112,8 @@ public class TempRoomRedisService {
     public void saveTempRoomPlayer(String inviteCode, PlayerDto playerDto) {
         // 유저 기준 참여하고 있는 대기방 현황이 필요
         saveUserTempRoom(inviteCode, playerDto.getUserId());
-        ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        listOps.rightPush("roomPlayers:" + inviteCode, tempRoomMapper.playerDtoToString(playerDto));
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        hashOps.put("roomPlayers:" + inviteCode, playerDto.getUserId(), tempRoomMapper.playerDtoToString(playerDto));
     }
 
     /**
@@ -140,10 +143,9 @@ public class TempRoomRedisService {
      *
      * @param inviteCode 초대코드
      * */
-    public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
-        ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        List<Object> playerJsonList = listOps.range("roomPlayers:" + inviteCode, 0, -1);
-        return tempRoomMapper.objectToPlayerDtoList(playerJsonList);
+    public Map<Integer, Object> getTempRoomPlayerMap(String inviteCode) {
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        return hashOps.entries("roomPlayers:" + inviteCode);
     }
 
     /**
@@ -172,8 +174,7 @@ public class TempRoomRedisService {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
         Set<Object> inviteCodeSet = setOps.members("userInviteTemp:" + userId);
 
-        assert inviteCodeSet != null;
-        if (inviteCodeSet.isEmpty()) {
+        if (inviteCodeSet == null || inviteCodeSet.isEmpty()) {
             throw new NoSuchElementException(userId + "에 해당하는 대기방이 존재하지 않습니다."); // 추후 수정해야함
         }
 
@@ -192,6 +193,19 @@ public class TempRoomRedisService {
      * */
     public SettingOptionDto getSettingOptionDtoByInviteCode(String inviteCode) {
         return tempRoomMapper.mapToSettingOptionDto(getTempRoomSetting(inviteCode));
+    }
+
+    /**
+     * 조회한 HashMap을 List PlayerDto 로 변환한다.
+     *
+     * @param inviteCode 초대코드
+     * */
+    public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
+        List<PlayerDto> playerDtoList = new ArrayList<>();
+        for (Map.Entry<Integer, Object> playerJson : getTempRoomPlayerMap(inviteCode).entrySet()) {
+            playerDtoList.add(tempRoomMapper.objectToPlayerDto(playerJson.getValue()));
+        }
+        return playerDtoList;
     }
 
 }
