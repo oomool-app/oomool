@@ -30,7 +30,7 @@ public class TempRoomMapper {
     public SettingOptionDto mapToSettingOptionDto(Map<String, Object> tempRoomSetting) {
         // settingOptionDto에 해당하지 않는 정보 제외
         tempRoomSetting.remove("inviteCode");
-        tempRoomSetting.remove("createAt");
+        tempRoomSetting.remove("createdAt");
         tempRoomSetting.remove("masterId");
 
         // mapper 반환
