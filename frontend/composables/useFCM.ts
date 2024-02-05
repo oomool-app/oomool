@@ -8,11 +8,14 @@ interface UseFCM {
 }
 
 const useFCM = (): UseFCM => {
+  const config = useRuntimeConfig();
   const token = ref<string | null>(null);
   const { $fcm }: { $fcm: Messaging } = useNuxtApp();
 
   const fetchToken = async (): Promise<void> => {
-    await getToken($fcm)
+    await getToken($fcm, {
+      vapidKey: config.public.vapidKey,
+    })
       .then((currentToken) => {
         token.value = currentToken;
       })
