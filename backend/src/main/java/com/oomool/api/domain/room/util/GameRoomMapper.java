@@ -1,6 +1,5 @@
 package com.oomool.api.domain.room.util;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ public class GameRoomMapper {
     public GameRoom dtoToEntity(String roomUid, SettingOptionDto settingOptionDto) {
         return GameRoom.builder()
             .roomUid(roomUid)
-            .createAt(LocalDateTime.now())
             .title(settingOptionDto.getTitle())
             .startDate(settingOptionDto.getStartDate())
             .endDate(settingOptionDto.getEndDate())
