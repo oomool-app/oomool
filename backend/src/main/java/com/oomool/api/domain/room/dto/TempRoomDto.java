@@ -7,23 +7,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.user.dto.UserDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TempRoomDto {
-    private String inviteCode;
+public record TempRoomDto(
+    String inviteCode,
+    int masterId,
+    SettingOptionDto setting,
+    List<PlayerDto> players,
+    List<UserDto> banList,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
-    private int masterId;
-    private SettingOptionDto setting;
-    private List<PlayerDto> players;
-    private List<UserDto> banList;
+    LocalDateTime createdAt
+) {
 }
