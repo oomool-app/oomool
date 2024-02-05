@@ -1,14 +1,2 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+yarn commitlint --edit $1
 
-export ASDF_HOME="$HOME/.asdf"
-
-if [ "$(uname)" = "Darwin" ]; then
-  . "/opt/homebrew/opt/asdf/libexec/asdf.sh"
-else
-  . "$ASDF_HOME/asdf.sh"
-fi
-
-export PATH="$ASDF_HOME/shims:$PATH"
-
-npx --no -- commitlint --edit ${1}
