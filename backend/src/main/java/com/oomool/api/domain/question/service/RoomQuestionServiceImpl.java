@@ -15,6 +15,7 @@ import com.oomool.api.domain.question.entity.Question;
 import com.oomool.api.domain.question.entity.RoomQuestion;
 import com.oomool.api.domain.question.repository.QuestionRepository;
 import com.oomool.api.domain.question.repository.RoomQuestionReposiotry;
+import com.oomool.api.domain.question.util.RoomQuestionMapper;
 import com.oomool.api.domain.question.util.RoomQuestionUtil;
 import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.room.service.GameRoomServiceImpl;
@@ -29,6 +30,7 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
 
     private final RoomQuestionReposiotry roomQuestionReposiotry;
     private final QuestionRepository questionRepository;
+    private final RoomQuestionMapper roomQuestionMapper;
 
     // GameRoomService
     private final GameRoomServiceImpl gameRoomService;
@@ -99,12 +101,7 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
 
         for (RoomQuestion roomQuestion : gameRoom.getRoomQuestionList()) {
             if (roomQuestion.getDate().equals(LocalDate.now())) {
-                return DailyQuestionDto.builder()
-                    .question(roomQuestion.getQuestion().getQuestion())
-                    .dailyDate(roomQuestion.getDate())
-                    .sequence(roomQuestion.getSequence())
-                    .level(roomQuestion.getQuestion().getLevel())
-                    .build();
+                return roomQuestionMapper.entityToDailyQuestionDto(roomQuestion);
             }
         }
         return null;
@@ -115,12 +112,7 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
         // roomQuestion을 DailyQuestionDto로 변환한다.
         return gameRoomService.getGameRoom(roomUid).getRoomQuestionList()
             .stream()
-            .map(roomQuestion -> DailyQuestionDto.builder()
-                .question(roomQuestion.getQuestion().getQuestion())
-                .dailyDate(roomQuestion.getDate())
-                .sequence(roomQuestion.getSequence())
-                .level(roomQuestion.getQuestion().getLevel())
-                .build())
+            .map(roomQuestionMapper::entityToDailyQuestionDto)
             .collect(Collectors.toList());
     }
 }
