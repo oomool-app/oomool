@@ -1,6 +1,8 @@
 package com.oomool.api.domain.player.util;
 
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -24,7 +26,7 @@ public class PlayerMapper {
         User user,
         Avatar avatar,
         int roomMasterId,
-        Map<Integer, Integer> matchingPairByUserId) {
+        int manittiUserId) {
 
         // PLAYER / MASTER 로 참여했는지 저장
         PlayerType playerType = playerDto.getUserId() == roomMasterId ? PlayerType.MASTER : PlayerType.PLAYER;
@@ -34,7 +36,7 @@ public class PlayerMapper {
             .user(user)
             .nickname(playerDto.getPlayerNickname())
             .playerType(playerType)
-            .manittiId(matchingPairByUserId.get(playerDto.getUserId()))
+            .manittiId(manittiUserId)
             .avatar(avatar)
             .avatarColor(playerDto.getPlayerBackgroundColor())
             .build();
@@ -42,9 +44,9 @@ public class PlayerMapper {
     }
 
     /**
-     * Player Entity를 PlayerDto로 변환
+     * Player Entity -> PlayerDto
      * */
-    public PlayerDto convertPlayerDto(Player player) {
+    public PlayerDto entityToPlayerDto(Player player) {
         return PlayerDto.builder()
             .userId(player.getUser().getId())
             .userEmail(player.getUser().getEmail())
@@ -52,6 +54,15 @@ public class PlayerMapper {
             .playerBackgroundColor(player.getAvatarColor())
             .playerAvatarUrl(player.getAvatar().getUrl())
             .build();
+    }
+
+    /**
+     * List<Player> -> List</PlayerDto>
+     * */
+    public List<PlayerDto> entityToPlayerDtoList(List<Player> playerList) {
+        return playerList.stream()
+            .map(this::entityToPlayerDto)
+            .collect(Collectors.toList());
     }
 
 }
