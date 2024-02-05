@@ -47,6 +47,7 @@ public class UserService {
         User user = userRepository.findByEmail(email);
         UserDto userDto = new UserDto();
 
+        userDto.setId(user.getId());
         userDto.setEmail(user.getEmail());
         userDto.setUsername(user.getUsername());
 
