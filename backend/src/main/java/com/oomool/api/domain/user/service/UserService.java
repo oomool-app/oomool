@@ -2,6 +2,7 @@ package com.oomool.api.domain.user.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
-import com.oomool.api.domain.question.service.RoomQuestionServiceImpl;
 import com.oomool.api.domain.question.util.RoomQuestionMapper;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
@@ -30,7 +30,6 @@ public class UserService {
 
     // 연관관계 참조
     private final TempRoomRedisService tempRoomRedisService;
-    private final RoomQuestionServiceImpl roomQuestionService;
     private final GameRoomMapper gameRoomMapper;
     private final RoomQuestionMapper roomQuestionMapper;
 
@@ -65,14 +64,16 @@ public class UserService {
     /**
      * 유저가 참여하고 있는 대기방 정보를 조회한다.
      * */
-    public List<?> getTempRoomList(int userId) {
+    public List<Map<String, Object>> getTempRoomList(int userId) {
 
         // 참여하고 있는 inviteCode 정보 조회
         List<String> tempRoomList = tempRoomRedisService.getUserInviteTempRoomList(userId);
         List<Map<String, Object>> tempRoomSettingList = new ArrayList<>();
         for (String inviteCode : tempRoomList) {
             tempRoomSettingList.add(
-                Map.of(inviteCode, Map.of("setting", tempRoomRedisService.getTempRoomSetting(inviteCode))));
+                Map.of(
+                    "invite_code", inviteCode,
+                    "setting", tempRoomRedisService.getTempRoomSetting(inviteCode)));
         }
         return tempRoomSettingList;
     }
@@ -83,23 +84,24 @@ public class UserService {
      * @param userId 유저 아이디
      * */
     public List<Map<String, Object>> getGameRoomList(int userId) {
-
+        List<Map<String, Object>> gameRoomList = new ArrayList<>();
         // 참여하고 있는 roomUid 정보 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
-
         for (Player player : user.getPlayerList()) {
             GameRoom gameRoom = player.getRoom(); // GameRoom
-            // DailyQuestionDto dailyQuestionDto = roomQuestionService.getDailyQuestion(
-            //     gameRoom.getRoomUid()); // daily Question
             SettingOptionDto settingOptionDto = gameRoomMapper.entityToSettingOptionDto(gameRoom);
             DailyQuestionDto dailyQuestionDto = gameRoom.getRoomQuestionList().stream()
                 .filter(roomQuestion -> roomQuestion.getDate().equals(LocalDate.now()))
                 .findFirst()
-                .map(roomQuestionMapper::entityToDailyQuestionDto)
-                .orElse(null);
+                .map(roomQuestionMapper::entityToDailyQuestionDto).orElse(null);
+            // 필요 컬럼 넣기
+            Map<String, Object> mainMap = new HashMap<>();
+            mainMap.put("room_uid", gameRoom.getRoomUid());
+            mainMap.put("daily_question", dailyQuestionDto);
+            mainMap.put("setting", settingOptionDto);
+            gameRoomList.add(mainMap);
         }
-
-        return new ArrayList<>();
+        return gameRoomList;
     }
 
 }

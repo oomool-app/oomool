@@ -62,7 +62,7 @@ public class UserController {
     @GetMapping("/{userId}/games")
     public ResponseEntity<?> getGameRoomList(@PathVariable("userId") Integer userId) {
         List<?> gameRoomList = userService.getGameRoomList(userId);
-        return ResponseHandler.generateResponse(HttpStatus.OK, "ok");
+        return ResponseHandler.generateResponse(HttpStatus.OK, gameRoomList);
     }
 
 }
