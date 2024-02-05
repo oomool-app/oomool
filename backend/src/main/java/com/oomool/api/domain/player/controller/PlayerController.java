@@ -34,8 +34,9 @@ public class PlayerController {
     }
 
     @Operation(summary = "플레이어의 마니띠 프로필 조회", description = "'나'와 나의 마니띠 프로필을 조회합니다.")
-    @GetMapping("/{roomUid}/{userId}")
-    public ResponseEntity<?> getPlayerManitti(@PathVariable("roomUid") String roomUid, int userId) {
+    @GetMapping("/{roomUID}/{userId}")
+    public ResponseEntity<?> getPlayerManitti(@PathVariable("roomUID") String roomUid,
+        @PathVariable("userId") int userId) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
             playerService.getManittiPlayerProfile(roomUid, userId)
         );
