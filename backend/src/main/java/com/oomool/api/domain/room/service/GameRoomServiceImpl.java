@@ -46,8 +46,8 @@ public class GameRoomServiceImpl implements GameRoomService {
         TempRoomDto tempRoomDto = tempRoomRedisService.getTempRoom(inviteCode);         // 초대코드로 임시방 정보 조회
 
         // 대기방으로부터 저장해야할 목록
-        GameRoom gameRoom = gameRoomMapper.dtoToEntity(roomUid, tempRoomDto.getSetting());
-        List<PlayerDto> playerDtoList = tempRoomDto.getPlayers();
+        GameRoom gameRoom = gameRoomMapper.dtoToEntity(roomUid, tempRoomDto.setting());
+        List<PlayerDto> playerDtoList = tempRoomDto.players();
 
         // 마니또 매칭 결과
         Map<Integer, Integer> matchMap = MatchManitti.matchPair(playerDtoList);
@@ -57,7 +57,7 @@ public class GameRoomServiceImpl implements GameRoomService {
             User user = userService.getUserById(playerDto.getUserId());
             Avatar avatar = avatarService.getAvatarByPlayerAvatarUrl(playerDto.getPlayerAvatarUrl());
             Player player = playerMapper.dtoToEntity(roomUid, playerDto, gameRoom, user, avatar,
-                tempRoomDto.getMasterId(), matchMap.get(playerDto.getUserId()));
+                tempRoomDto.masterId(), matchMap.get(playerDto.getUserId()));
             gameRoom.getPlayers().add(player); // 문답방에 플레이어를 넣는다.
         }
         gameRoomRepository.save(gameRoom);
@@ -80,7 +80,7 @@ public class GameRoomServiceImpl implements GameRoomService {
         List<PlayerDto> playerDtoList = playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
         return Map.of(
             "room_uid", roomUid,
-            "create_at", CustomDateUtil.convertDateTimeToString(gameRoom.getCreateAt()),
+            "created_at", CustomDateUtil.convertDateTimeToString(gameRoom.getCreatedAt()),
             "setting", settingOptionDto,
             "players", playerDtoList
         );

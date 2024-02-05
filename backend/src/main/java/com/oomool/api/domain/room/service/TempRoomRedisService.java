@@ -70,7 +70,7 @@ public class TempRoomRedisService {
 
         return TempRoomDto.builder()
             .inviteCode(inviteCode)
-            .createdAt(CustomDateUtil.parseDateTime((String)map.get("createAt")))
+            .createdAt(CustomDateUtil.parseDateTime((String)map.get("createdAt")))
             .masterId(Integer.parseInt((String)map.get("masterId")))
             .setting(tempRoomMapper.mapToSettingOptionDto(map))
             .players(getTempRoomPlayerList(inviteCode))
@@ -90,7 +90,7 @@ public class TempRoomRedisService {
         Map<String, Object> settingRoomMap = tempRoomMapper.settingRoomDtoToMap(settingRoomDto);
 
         settingRoomMap.put("inviteCode", inviteCode);
-        settingRoomMap.put("createAt", CustomDateUtil.convertDateTimeToString(LocalDateTime.now()));
+        settingRoomMap.put("createdAt", CustomDateUtil.convertDateTimeToString(LocalDateTime.now()));
         settingRoomMap.put("masterId", Integer.toString(masterId));
 
         hashOps.putAll("roomSetting:" + inviteCode, settingRoomMap);

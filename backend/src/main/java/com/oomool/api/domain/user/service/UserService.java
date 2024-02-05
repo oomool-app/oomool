@@ -15,6 +15,7 @@ import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.domain.room.util.GameRoomMapper;
+import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
@@ -30,6 +31,7 @@ public class UserService {
 
     // 연관관계 참조
     private final TempRoomRedisService tempRoomRedisService;
+    private final TempRoomMapper tempRoomMapper;
     private final GameRoomMapper gameRoomMapper;
     private final RoomQuestionMapper roomQuestionMapper;
 
@@ -68,10 +70,15 @@ public class UserService {
         List<String> tempRoomList = tempRoomRedisService.getUserInviteTempRoomList(userId);
         List<Map<String, Object>> tempRoomSettingList = new ArrayList<>();
         for (String inviteCode : tempRoomList) {
+            Map<String, Object> tempRoomSetting = tempRoomRedisService.getTempRoomSetting(inviteCode);
+            int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
+            SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
             tempRoomSettingList.add(
                 Map.of(
                     "invite_code", inviteCode,
-                    "setting", tempRoomRedisService.getTempRoomSetting(inviteCode)));
+                    "master_id", masterId,
+                    "setting", settingOptionDto)
+            );
         }
         return tempRoomSettingList;
     }
