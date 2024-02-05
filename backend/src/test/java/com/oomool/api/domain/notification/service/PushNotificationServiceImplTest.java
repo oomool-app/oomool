@@ -42,7 +42,12 @@ public class PushNotificationServiceImplTest {
         // 테스트에 필요한 User와 PushNotificationToken 객체를 생성합니다.
         int userId = 1;
         String token = "token";
-        User user = new User(userId, "email", "username", null);
+        User user = User.builder()
+            .id(userId)
+            .email("email")
+            .username("username")
+            .build();
+
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
             .user(user)
             .token(token)
@@ -67,7 +72,7 @@ public class PushNotificationServiceImplTest {
         // 테스트에 필요한 User와 PushNotificationToken 객체를 생성합니다.
         int userId = 1;
         String token = "token";
-        User user = new User(userId, "email", "username", null);
+        User user = new User(userId, "email", "username", null, null);
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
             .user(user)
             .token(token)
@@ -92,7 +97,11 @@ public class PushNotificationServiceImplTest {
         // Given
         // 테스트에 필요한 User와 PushNotificationToken 객체를 생성합니다.
         int userId = 1;
-        User user = new User(userId, "email", "username", null);
+        User user = User.builder()
+            .id(userId)
+            .email("email")
+            .username("username")
+            .build();
         PushNotificationToken pushNotificationToken1 = PushNotificationToken.builder()
             .user(user)
             .token("token1")
