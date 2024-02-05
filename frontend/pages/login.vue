@@ -58,12 +58,6 @@
         로그인6
       </button>
     </fieldset>
-    <button
-      class="bg-white p-3 rounded-xl text-black font-bold"
-      @click="router.push('/firebase/test')"
-    >
-      Firebase Test Page
-    </button>
   </div>
 </template>
 

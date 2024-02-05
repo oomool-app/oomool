@@ -3,13 +3,13 @@ import { useNuxtApp } from '#app';
 import { getToken, type Messaging } from 'firebase/messaging';
 
 interface UseFCM {
-  token: Ref<string | null>;
+  token: Ref<string>;
   fetchToken: () => Promise<void>;
 }
 
 const useFCM = (): UseFCM => {
   const config = useRuntimeConfig();
-  const token = ref<string | null>(null);
+  const token = ref<string>('');
   const { $fcm }: { $fcm: Messaging } = useNuxtApp();
 
   const fetchToken = async (): Promise<void> => {
