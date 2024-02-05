@@ -7,5 +7,6 @@ import com.oomool.api.domain.player.entity.Player;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
+    Player findById(int authorId);
 }
 
