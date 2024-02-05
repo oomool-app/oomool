@@ -31,7 +31,7 @@ public class TempRoomController {
     @PostMapping
     public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws JsonProcessingException {
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            tempRoomRedisService.createTempRoom(request.getSetting(), request.getMaster()));
+            tempRoomRedisService.createTempRoom(request.getSetting(), request.getUserDto()));
     }
 
     @Operation(summary = "대기방 조회 기능")
