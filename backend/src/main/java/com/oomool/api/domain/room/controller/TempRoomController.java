@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.TempRoomRequestDto;
 import com.oomool.api.domain.room.service.TempRoomRedisService;
+import com.oomool.api.domain.user.service.UserService;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,12 +27,14 @@ import lombok.RequiredArgsConstructor;
 public class TempRoomController {
 
     private final TempRoomRedisService tempRoomRedisService;
+    private final UserService userService;
 
     @Operation(summary = "대기방 생성 기능", description = "대기방을 생성합니다.")
     @PostMapping
     public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws JsonProcessingException {
+        int masterId = userService.getUserIdByEmail(request.getMaster().getEmail());
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            tempRoomRedisService.createTempRoom(request.getSetting(), request.getUserDto()));
+            tempRoomRedisService.createTempRoom(request.getSetting(), masterId));
     }
 
     @Operation(summary = "대기방 조회 기능")

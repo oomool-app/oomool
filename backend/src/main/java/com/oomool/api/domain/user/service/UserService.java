@@ -47,11 +47,18 @@ public class UserService {
         User user = userRepository.findByEmail(email);
         UserDto userDto = new UserDto();
 
-        userDto.setId(user.getId());
         userDto.setEmail(user.getEmail());
         userDto.setUsername(user.getUsername());
 
         return userDto;
+    }
+
+    /**
+     * 유저 Email로 조회 후 id를 리턴
+     * */
+    public int getUserIdByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        return user.getId();
     }
 
     /**
