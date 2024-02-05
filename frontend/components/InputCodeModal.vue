@@ -1,7 +1,10 @@
 <template>
   <div>
     <Dialog>
-      <DialogTrigger as-child class="bg-white text-black w-40 h-40">
+      <DialogTrigger
+        as-child
+        class="bg-white text-black w-40 h-40 hover:bg-white"
+      >
         <Button
           class="bg-white w-40 h-40 flex flex-col items-end relative shadow-lg"
         >

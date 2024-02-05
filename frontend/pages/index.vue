@@ -2,7 +2,7 @@
   <div class="bg-primary">
     <div class="top-container flex justify-between pt-6">
       <!--로고-->
-      <h1 class="text-2xl font-bold text-left pl-6 text-white">OooMool</h1>
+      <img src="/img/logo.png" class="pl-4 w-40 h-auto" />
 
       <!--알림-->
       <h1 class="text-2xl font-bold text-left pl-6 text-white"></h1>
@@ -51,16 +51,16 @@ const rooms = [
     sequence: 2,
     question: '내 마니또가 멋있어보였던 순간은?',
     title: '공통플젝 A809',
-    startdate: '2024-01-25',
-    enddate: '2024-01-30',
+    startdate: '2024-02-02',
+    enddate: '2024-02-16',
   },
   {
     roomid: 2,
     sequence: 3,
     question: '내 마니또의 첫인상은?',
     title: '서울8반 화이팅',
-    startdate: '2024-01-26',
-    enddate: '2024-02-03',
+    startdate: '2024-02-02',
+    enddate: '2024-02-16',
   },
   {
     roomid: 3,
@@ -68,15 +68,15 @@ const rooms = [
     question: '내 마니또의 첫인상은?',
     title: '소문난 칠공주',
     startdate: '2024-01-01',
-    enddate: '2024-01-31',
+    enddate: '2024-01-11',
   },
   {
     roomid: 4,
     sequence: 2,
     question: '내 마니또에게 배울 점이 있다면?',
     title: '싸피초등학교 16기',
-    startdate: '2024-02-07',
-    enddate: '2024-02-08',
+    startdate: '2024-02-18',
+    enddate: '2024-02-22',
   },
 ];
 
