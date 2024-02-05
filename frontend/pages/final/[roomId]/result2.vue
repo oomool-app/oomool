@@ -46,6 +46,7 @@
 
           <Button class="w-1/2 m-4 rounded-xl"
             >이미지로 저장하기 &nbsp;&nbsp;
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -64,6 +65,7 @@
         </div>
       </div>
     </div>
+
     <div class="footer-container flex justify-center mt-8 mb-8">
       <div class="w-3/4 p-3 flex justify-between bg-purple-200 rounded-xl">
         <div class="w-full pr-2 flex flex-col">
@@ -84,6 +86,43 @@
 <script setup lang="ts">
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
+import {
+  type IGetDailyQuestionInput,
+  type IGetAllQuestionsByRoomUidInput,
+} from '../../../repository/modules/interface/question.interface';
+const { $api } = useNuxtApp();
+
+const form = reactive<IGetDailyQuestionInput>({
+  roomUid: 'mzMuob8A',
+});
+
+// 전체 질문 모음
+const questions = ref();
+// 방 아이디로 전체 질문 가져오기
+const getAllQuestionsByRoomUid = async (): Promise<void> => {
+  try {
+    const roomUid: IGetAllQuestionsByRoomUidInput = {
+      roomUid: form.roomUid,
+    };
+    const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
+    console.log(response);
+    questions.value = response.data.room_question_list;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+onMounted(async () => {
+  await getAllQuestionsByRoomUid();
+  console.log(questions.value);
+  console.log(questions.value);
+  // questions.value = question;
+});
+// await useAsyncData(`roomUid:${form.roomUid}`, async (): Promise<void> => {
+
+//   questions.value = question;
+//   console.log(questions.value);
+// });
 
 const results = ref([
   {

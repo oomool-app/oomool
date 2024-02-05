@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'nuxt-vuefire',
   ],
-  plugins: ['@/plugins/messages.client.ts'],
+  plugins: ['@/plugins/messages.client.ts', '@/plugins/api.ts'],
   shadcn: {
     /**
      * Prefix for all the imported component
