@@ -13,6 +13,8 @@ import com.oomool.api.domain.question.entity.RoomQuestion;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,6 +54,7 @@ public class GameRoom {
     private LocalDate endDate;
 
     @Column(nullable = false, length = 5)
+    @Enumerated(EnumType.STRING)
     private QuestionType questionType; // [AW (어색한 사이), BF (친한사이)]
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,5 +66,4 @@ public class GameRoom {
 
     @OneToMany(mappedBy = "room")
     private List<RoomQuestion> roomQuestionList = new ArrayList<>();
-
 }
