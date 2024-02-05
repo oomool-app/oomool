@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
+import com.oomool.api.domain.question.dto.RoomQuestionFeedDto;
 import com.oomool.api.domain.question.entity.Question;
+import com.oomool.api.domain.question.entity.RoomQuestion;
 
 public interface RoomQuestionService {
 
@@ -36,4 +38,14 @@ public interface RoomQuestionService {
      * @param roomUid 문답방 uuid
      * */
     List<DailyQuestionDto> getDailyQuestionList(String roomUid);
+
+    /**
+     * 방질문 정보를 반환한다.
+     */
+    RoomQuestionFeedDto getRoomQuestion(String roomUid, int sequence);
+
+    /**
+     *
+     */
+    RoomQuestion getRoomQuestionById(int roomQuestionId);
 }

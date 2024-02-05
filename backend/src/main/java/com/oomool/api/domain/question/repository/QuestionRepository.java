@@ -9,6 +9,7 @@ import com.oomool.api.domain.question.entity.Question;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-
     List<Question> findByLevel(int level);
+
+    Question findById(int questionId);
 }
