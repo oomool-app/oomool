@@ -19,7 +19,6 @@ import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
-import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -35,14 +34,13 @@ public class TempRoomRedisService {
      * 방장은 대기방을 Redis에 생성한다.
      *
      * @param settingOptionDto 대기방 설정 정보
-     * @param masterUserDto 방장 게임 프로필
+     * @param masterUserId 방장 게임 프로필
      * */
-    public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, UserDto masterUserDto) throws
+    public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) throws
         JsonProcessingException {
-
         String inviteCode = UniqueCodeGenerator.generateRandomString(15);  // 대기방 초대코드 생성기
 
-        saveTempRoomSetting(inviteCode, settingOptionDto, masterUserDto.getId()); // USER DTO 는 master 권한을 갖는다.
+        saveTempRoomSetting(inviteCode, settingOptionDto, masterUserId); // USER DTO 는 master 권한을 갖는다.
 
         Map<String, Object> settingOption = getTempRoomSetting(inviteCode);
         return Map.of(

@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 public class TempRoomRequestDto {
     private SettingOptionDto setting;
-    private UserDto userDto;
+    private UserDto master;
 }
