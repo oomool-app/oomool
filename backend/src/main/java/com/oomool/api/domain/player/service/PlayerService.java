@@ -3,6 +3,7 @@ package com.oomool.api.domain.player.service;
 import java.util.List;
 
 import com.oomool.api.domain.player.dto.ManittiDto;
+import com.oomool.api.domain.player.dto.ManittiPairDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Player;
 
@@ -14,6 +15,22 @@ public interface PlayerService {
      * @param roomUid 문답방 코드
      * */
     List<PlayerDto> getPlayerDtoList(String roomUid);
+
+    /**
+     * 나의 플레이어 프로필을 조회한다.
+     *
+     * @param roomUid 문답방 코드
+     * @param userId 유저 아이디
+     * */
+    PlayerDto getPlayerByUserId(String roomUid, int userId);
+
+    /**
+     * User ID를 기준으로 나의 마니띠의 Player 프로필을 가져온다.
+     *
+     * @param roomUid 문답방 코드
+     * @param userId 유저 아이디
+     * */
+    ManittiPairDto getManittiPlayerProfile(String roomUid, int userId);
 
     /**
      * 마니띠 정보 가져오기

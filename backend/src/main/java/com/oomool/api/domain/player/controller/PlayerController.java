@@ -24,11 +24,22 @@ public class PlayerController {
 
     private final PlayerServiceImpl playerService;
 
-    @Operation(summary = "플레이어 조회 기능", description = "플레이어를 생성합니다.")
+    @Operation(summary = "플레이어 전체 조회", description = "현재 문답방에 참여하고 있는 전체 플레이어 정보를 조회합니다.")
     @GetMapping("/{roomUID}")
     public ResponseEntity<?> getPlayerList(@PathVariable("roomUID") String roomUid) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of("players", playerService.getPlayerDtoList(roomUid)));
+            Map.of(
+                "players", playerService.getPlayerDtoList(roomUid)
+            ));
+    }
+
+    @Operation(summary = "플레이어의 마니띠 프로필 조회", description = "'나'와 나의 마니띠 프로필을 조회합니다.")
+    @GetMapping("/{roomUID}/{userId}")
+    public ResponseEntity<?> getPlayerManitti(@PathVariable("roomUID") String roomUid,
+        @PathVariable("userId") int userId) {
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            playerService.getManittiPlayerProfile(roomUid, userId)
+        );
     }
 
 }
