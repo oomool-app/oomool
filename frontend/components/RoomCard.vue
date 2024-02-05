@@ -7,18 +7,18 @@
       <div
         v-if="startDateIsBeforeToday && endDateIsAfterToday"
         class="flex flex-col"
-        @click="$router.push({ path: `room/${rooms.roomid}` })"
+        @click="$router.push({ path: `room/${rooms.room_uid}` })"
       >
         <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
             class="flex bg-white font-bold h-24 shadow-inner rounded-xl justify-center items-center"
           >
-            {{ props.rooms.question }}
+            {{ props.rooms?.daily_question?.question }}
           </div>
         </CardHeader>
         <CardContent class="px-3 pt-0">
           <div class="text-white text-xl not-italic h-3">
-            {{ props.rooms.title }}
+            {{ props.rooms?.setting?.title }}
           </div>
         </CardContent>
         <CardFooter class="px-3 pb-3 pl-4">
@@ -42,7 +42,7 @@
             </CardHeader>
             <CardContent class="px-3 pt-0">
               <div class="text-white text-xl not-italic h-3">
-                {{ props.rooms.title }}
+                {{ props.rooms?.setting?.title }}
               </div>
             </CardContent>
             <CardFooter class="px-3 pb-3 pl-4">
@@ -68,7 +68,7 @@
       <!--종료됨-->
       <div
         v-else-if="!endDateIsAfterToday"
-        @click="$router.push({ path: `guess/${rooms.roomid}` })"
+        @click="$router.push({ path: `guess/${rooms.room_uid}` })"
       >
         <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
@@ -80,7 +80,7 @@
         <div class="h-20">
           <CardContent class="px-3 pt-0">
             <div class="text-white text-xl not-italic h-3">
-              {{ props.rooms.title }}
+              {{ props.rooms?.setting?.title }}
             </div>
           </CardContent>
           <CardFooter class="px-3 pb-3 pl-4">
@@ -97,12 +97,25 @@
 
 <script setup lang="ts">
 interface Room {
-  roomid: number;
+  room_uid: string;
+  title: string;
+  start_date: string;
+  end_date: string;
   sequence: number;
   question: string;
-  title: string;
-  startdate: string;
-  enddate: string;
+  daily_question: {
+    daily_date: string;
+    question: string;
+    sequence: number;
+    level: number;
+  };
+  setting: {
+    title: string;
+    start_date: string;
+    end_date: string;
+    question_type: string;
+    max_member: number;
+  };
 }
 
 const props = defineProps<{
@@ -112,10 +125,12 @@ const props = defineProps<{
 const today: Date = new Date();
 
 const startDateIsBeforeToday =
-  new Date(props.rooms.startdate as string) < today;
-const endDateIsAfterToday = new Date(props.rooms.enddate as string) > today;
+  new Date(props.rooms.setting.start_date as string) < today;
+const endDateIsAfterToday =
+  new Date(props.rooms.setting.end_date as string) > today;
 const timeBeforeStart =
-  new Date(props.rooms.startdate as string).getTime() - today.getTime();
+  new Date(props.rooms.setting.start_date as string).getTime() -
+  today.getTime();
 const dayBeforeStart = Math.floor(timeBeforeStart / (1000 * 60 * 60 * 24));
 const minBeforeStart = Math.floor(timeBeforeStart / 1000 / 60);
 const hourBeforeStart = Math.floor(timeBeforeStart / (1000 * 60 * 60));
