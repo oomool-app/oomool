@@ -54,11 +54,9 @@ public class UserService {
 
     /**
      * 유저 Id 의 존재 여부 확인
-     *
      * */
     public User getUserById(int userId) throws Exception {
-        User user = userRepository.findById(userId).orElseThrow(() -> new Exception("유저가 존재하지 않습니다."));
-        return user;
+        return userRepository.findById(userId).orElseThrow(() -> new Exception("유저가 존재하지 않습니다."));
     }
 
     /**
