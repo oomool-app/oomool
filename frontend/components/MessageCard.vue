@@ -78,7 +78,7 @@
         {{ props.messages.title }}
       </div>
     </div>
-    <div class="col-span-2 text-sm">
+    <div class="col-span-2 text-sm pr-3">
       <div v-if="dayFromCreate >= 1">{{ dayFromCreate }}일 전</div>
       <div v-else-if="hourFromCreate >= 1">{{ hourFromCreate }}시간 전</div>
       <div v-else>{{ minFromCreate }}분 전</div>
