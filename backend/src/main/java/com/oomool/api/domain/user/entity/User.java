@@ -1,6 +1,5 @@
 package com.oomool.api.domain.user.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -43,6 +42,6 @@ public class User {
     private List<SocialLogin> socialLoginList;
 
     @OneToMany(mappedBy = "user")
-    private List<Player> playerList = new ArrayList<>();
+    private List<Player> playerList;
 
 }
