@@ -29,7 +29,7 @@ public class ConvertFile {
         // DB에 파일 저장
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
 
-        log.info("uploadPath : ", uploadPath);
+        log.info("uploadPath : {}", uploadPath);
 
         File folder = new File(uploadPath);
 
@@ -39,6 +39,7 @@ public class ConvertFile {
 
         String originalFileName = file.getOriginalFilename();
 
+        assert originalFileName != null;
         if (!originalFileName.isEmpty()) {
             String saveFileName = UUID.randomUUID().toString()
                 + originalFileName.substring(originalFileName.lastIndexOf('.'));
@@ -55,8 +56,7 @@ public class ConvertFile {
 
             return feedImageDto;
         }
-        FeedImageDto feedImageDto = new FeedImageDto();
-        return feedImageDto;
+        return new FeedImageDto();
     }
 }
 
