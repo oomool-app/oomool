@@ -1,7 +1,7 @@
 <template>
   <Nuxt-link to="/makeroom/name">
     <Button
-      class="bg-white w-40 h-40 flex flex-col items-end relative shadow-lg"
+      class="bg-white w-40 h-40 flex flex-col items-end relative shadow-lg hover:bg-white"
     >
       <div class="mb-auto w-24 h-auto pt-2 drop-shadow-2xl">
         <img src="/img/carpenterGhost.png" />
