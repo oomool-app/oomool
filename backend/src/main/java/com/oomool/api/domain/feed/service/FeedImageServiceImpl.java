@@ -23,7 +23,7 @@ public class FeedImageServiceImpl implements FeedImageService {
      * 피드 이미지 정보를 모두 반환합니다(파일 명, 폴더 명, url)
      */
     public List<FeedImageDto> getFeedImages(int feedId) {
-        List<FeedImage> feedImageList = feedImageRepository.findByFeed_Id(feedId);
+        List<FeedImage> feedImageList = feedImageRepository.findByFeedId(feedId);
         List<FeedImageDto> feedImageDtoList = new ArrayList<>();
 
         for (FeedImage feedImage : feedImageList) {

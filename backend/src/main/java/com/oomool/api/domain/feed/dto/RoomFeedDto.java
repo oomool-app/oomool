@@ -23,7 +23,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoomFeedDto {
-    private int authorId; // 작성자 id
+    private int userId; // 작성자 id
     private String content; // 피드 답변 기록
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt; // 답변 생성 일자

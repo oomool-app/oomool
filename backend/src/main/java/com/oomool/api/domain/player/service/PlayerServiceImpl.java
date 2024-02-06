@@ -84,7 +84,7 @@ public class PlayerServiceImpl implements PlayerService {
      */
     @Override
     public Player getPlayerInfo(int authorId) {
-        Player player = playerRepository.findById(authorId);
+        Player player = playerRepository.findByUserId(authorId);
         return player;
     }
 }
