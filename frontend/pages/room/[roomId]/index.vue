@@ -6,7 +6,7 @@
       </div>
       <div class="flex justify-between mt-6">
         <FeedHeader
-          class="text-white text-3xl"
+          class="text-white text-3xl w-3/4 whitespace-nowrap"
           :header-name="teamName"
         ></FeedHeader>
         <div
@@ -42,7 +42,7 @@
       <div class="question-container">
         <div class="flex justify-between">
           <ContentHeader header-name="오늘의 질문" />
-          <NuxtLink :to="`${roomId}/writeanswer`" class="text-sm py-1">
+          <NuxtLink :to="`${roomUid}/writeanswer`" class="text-sm py-1">
             <div class="text-[#61339b] font-semibold">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,7 @@
       <div class="answer-container">
         <div class="flex justify-between">
           <ContentHeader header-name="우리들의 답변" />
-          <TotalButton :link="`${roomId}/feed`" text="전체보기" />
+          <TotalButton :link="`${roomUid}/feed`" text="전체보기" />
         </div>
         <div
           class="p-5 mt-5 mb-10 rounded-lg bg-gradient-to-r from-[#61339b] to-[#a8bdf9] border-primary border-2 text-white text-center font-semibold"
@@ -83,7 +83,7 @@
       <div class="members-container mb-6">
         <div class="flex justify-between">
           <ContentHeader header-name="멤버 목록" />
-          <TotalButton :link="`${roomId}/members`" text="전체보기" />
+          <TotalButton :link="`${roomUid}/members`" text="전체보기" />
         </div>
         <div class="flex overflow-auto">
           <div v-for="member in members" :key="member.user_id">
