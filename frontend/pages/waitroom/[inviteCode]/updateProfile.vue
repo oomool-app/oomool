@@ -46,6 +46,7 @@
 <script setup lang="ts">
 const router = useRouter();
 const route = useRoute();
+// const router = useRouter();
 
 const colors: string[] = [
   '#FFD8CC',
