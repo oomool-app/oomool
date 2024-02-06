@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,11 +56,17 @@ public class TempRoomController {
         return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.joinTempRoom(inviteCode, player));
     }
 
-    @Operation(summary = "대기방 삭제", description = "방장은 대기방을 삭제 할 수 있고 플레이어는 퇴장할 수 있다.")
+    @Operation(summary = "대기방 삭제", description = "방장은 대기방을 삭제할 수 있다.")
     @DeleteMapping("/{inviteCode}")
     public ResponseEntity<?> deleteTempRoom(@PathVariable("inviteCode") String inviteCode,
-        @RequestBody PlayerDto player) {
-        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.deleteTempRoom(inviteCode, player));
+        @RequestParam("id") int userId) {
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.deleteTempRoom(inviteCode, userId));
+    }
+
+    @Operation(summary = "플레이어 퇴장 ", description = "플레이어는 대기방을 퇴장할 수 있다.")
+    @DeleteMapping("/{inviteCode}/players/{userId}")
+    public ResponseEntity<?> exit(@PathVariable("inviteCode") String inviteCode, @PathVariable("userId") int userId) {
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.exitTempRoom(inviteCode, userId));
     }
 
 }
