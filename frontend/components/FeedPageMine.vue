@@ -5,7 +5,11 @@
       <div
         class="chat-box p-3 border border-purple-500 rounded-l-xl rounded-br-xl bg-[#d8c7f9]"
       >
-        <img class="rounded-lg mb-2" :src="props.feeds.uploadImage" alt="" />
+        <img
+          class="rounded-lg mb-2"
+          :src="props.feeds.feed_image_dto_list[0]"
+          alt=""
+        />
         {{ props.feeds.content }}
       </div>
     </div>
@@ -17,11 +21,7 @@
   </div>
 </template>
 <script setup lang="ts">
-interface Feed {
-  name: string;
-  uploadImage: string;
-  content: string;
-}
+import type Feed from '~/repository/modules/interface/feeds.interface';
 const props = defineProps<{
   feeds: Feed;
 }>();
