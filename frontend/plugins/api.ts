@@ -4,6 +4,7 @@ import QuestionModule from '../repository/modules/question';
 import UsersModule from '~/repository/modules/users';
 import RoomsModule from '~/repository/modules/rooms';
 import PlayersModule from '~/repository/modules/players';
+import MakeModule from '~/repository/modules/waitroom';
 
 /** ApiInstance interface provides us with good typing */
 interface IApiInstance {
@@ -11,6 +12,7 @@ interface IApiInstance {
   users: UsersModule;
   rooms: RoomsModule;
   players: PlayersModule;
+  make: MakeModule;
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -30,6 +32,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     users: new UsersModule(apiFetcher),
     rooms: new RoomsModule(apiFetcher),
     players: new PlayersModule(apiFetcher),
+    make: new MakeModule(apiFetcher),
   };
 
   return {
