@@ -13,7 +13,7 @@ public class SecurityUserDto {
     private String email;
     private String role;
     private String nickname;
-    
+
     @Builder
     public SecurityUserDto(int userId, String email, String role, String nickname) {
         this.userId = userId;

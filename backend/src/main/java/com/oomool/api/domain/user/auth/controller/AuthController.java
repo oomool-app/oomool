@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.user.auth.jwt.JwtService;
@@ -66,19 +68,21 @@ public class AuthController {
         }
 
         return ResponseEntity.badRequest().body(TokenResponseStatus.addStatus(400, null));
-
     }
 
     // 시큐리티 인증 / 인가 테스트 하기 위한 API
     @GetMapping("/access-token")
+    @ResponseBody
     public String tokenTest(@RequestHeader("Authorization") final String accessToken) {
+        log.info("accessToken: {}", accessToken);
         return accessToken;
     }
 
     // 로그인 성공 시 redirect api
     @GetMapping("/redirect")
-    public String createRedirect() {
-        return "로그인 성공!";
+    public String createRedirect(@RequestParam("token") String token) {
+        return token;
     }
+
 }
 

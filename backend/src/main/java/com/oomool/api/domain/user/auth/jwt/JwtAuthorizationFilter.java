@@ -24,7 +24,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * 이 클래스는 Spring Security에서 요청을 필터링하여 JWT 토큰을 검증하고, 유효한 토큰이 있는 경우 해당 토큰을 사용하여 사용자를 인증하는 역할
+ * 이 클래스는 Spring Security에서 요청을 필터링하여 JWT 토큰을 검증하고,
+ * 유효한 토큰이 있는 경우 해당 토큰을 사용하여 사용자를 인증하는 역할
+ *
+ * 검증된 사용자 정보를 SecurityContextHolder에 저장.
  */
 @RequiredArgsConstructor
 @Component
@@ -60,14 +63,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             throw new JwtException("Access Token 만료!");
         }
 
-        // 토큰이 유효하다면
-        log.info("호출되는지 체크");
-
         // AccessToken의 값이 있고, 유효한 경우에 진행한다.
         // AccessToken 내부의 payload에 있는 email로 user를 조회한다. 없다면 예외를 발생시킨다 -> 정상 케이스가 아님
         User findUser = userRepository.findByEmail(jwtService.getEmail(token))
             .orElseThrow(IllegalStateException::new);
 
+        log.info("접속 유저: {}", findUser);
+        log.info("접속 유저 권한 : {}", jwtService.getRole(token));
 
         // SecurityContext에 등록할 User 객체를 만들어준다.
         SecurityUserDto userDto = SecurityUserDto.builder()
@@ -79,11 +81,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // SecurityContext에 인증 객체를 등록해준다.
         /**
-         * SecurityContextHolder : 현재 실행 중인 애플리케이션의 보안 컨텍스트를 저장하고 액세스하는 데 사용되는 클래스 보안 컨텍스트에는 현재 인증된 사용자 및 해당 사용자의 권한 정보 등이 포함
+         * SecurityContextHolder : 현재 실행 중인 애플리케이션의 보안 컨텍스트를 저장하고 액세스하는 데 사용되는 클래스 보안 컨텍스트에는
+         * 현재 인증된 사용자 및 해당 사용자의 권한 정보 등이 포함
          */
         Authentication auth = getAuthentication(userDto);
+        log.info("auth : {}", auth);
         SecurityContextHolder.getContext().setAuthentication(auth);
-
+        log.info("securityContext : {}", SecurityContextHolder.getContext());
         filterChain.doFilter(request, response);
     }
 

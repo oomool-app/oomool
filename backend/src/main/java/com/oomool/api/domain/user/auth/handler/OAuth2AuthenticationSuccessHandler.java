@@ -28,6 +28,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     /**
      * 인증이 성공했을 때 호출되는 메서드로, 실제로 어떤 동작을 할지를 결정
+     * JWT, refresj Token을 생성하고 액세스 토큰은 response.Header에 담아서 보내고,
+     * refreshToken은 redis에 저장.
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -36,13 +38,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = authentication.getName();
         String role = authentication.getAuthorities().toString();
 
+        log.info("tmp 1 : {}", role);
+
         String url = makeRedirectUrl(jwtService.generateToken(email, role));
         String token = jwtService.generateToken(email, role); // 액세스 토큰
 
-        // DB에 refreshToken을 저장해두었다가 기간이 만료되면 새로 발급하도록 해야할 듯
-
         String refreshToken = jwtService.generateRefreshToken(email, role); // 리프레시 토큰 생성
 
+        // redis에 저장
         refreshTokenService.saveTokenInfo(email, refreshToken, token);
 
         // 응답 헤더에 액세스 토큰 반환
@@ -67,6 +70,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      */
     private String makeRedirectUrl(String token) {
         return UriComponentsBuilder.fromUriString("http://localhost:8080/oauth2/redirect")
+            .queryParam("token", token)
             .build()
             .toUriString();
     }

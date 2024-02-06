@@ -29,8 +29,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws
         ServletException, IOException {
         try {
+            logger.info("jwt 검증 통과");
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
+            logger.info("jwtExceptionFilter error");
             response.setStatus(401);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
