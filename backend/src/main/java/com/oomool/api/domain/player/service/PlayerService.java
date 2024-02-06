@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.oomool.api.domain.player.dto.ManittiDto;
-import com.oomool.api.domain.player.dto.ManittiPairDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Player;
 
@@ -31,7 +30,7 @@ public interface PlayerService {
      * @param roomUid 문답방 코드
      * @param userId 유저 아이디
      * */
-    ManittiPairDto getManittiPlayerProfile(String roomUid, int userId);
+    Map<String, Object> getManittiPlayerProfile(String roomUid, int userId);
 
     /**
      * 문답방의 나를 "마니띠"로 갖는 마니또를 조회한다.
