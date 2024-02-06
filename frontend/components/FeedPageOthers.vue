@@ -9,7 +9,9 @@
     <div class="flex-col w-[77%]">
       <div class="flex justify-between">
         <p class="font-semibold inline-block mb-1">
-          <span class="text-primary font-extrabold">{{ props.feeds.name }}</span
+          <span class="text-primary font-extrabold">{{
+            props.feeds.manitti_dto.nickname
+          }}</span
           >의 마니또
         </p>
         <p>20분 전</p>
@@ -17,18 +19,18 @@
       <div
         class="p-3 border border-gray-400 rounded-r-xl rounded-bl-xl bg-[#F1EBFC]"
       >
-        <img class="rounded-lg mb-2" :src="props.feeds.uploadImage" alt="" />
+        <img
+          class="rounded-lg mb-2"
+          :src="props.feeds.feed_image_dto_list[0]"
+          alt=""
+        />
         {{ props.feeds.content }}
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-interface Feed {
-  name: string;
-  uploadImage: string;
-  content: string;
-}
+import type Feed from '~/repository/modules/interface/feeds.interface';
 const props = defineProps<{
   feeds: Feed;
 }>();
