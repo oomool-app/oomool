@@ -26,7 +26,7 @@
           오늘의 질문
         </div>
         <div class="text-lg font-extrabold text-center">
-          내 친구가 좋아할만한 음악 장르나 곡은 무엇일 것 같아요?
+          {{ question }}
         </div>
       </div>
     </div>
@@ -51,11 +51,11 @@
       <img class="w-5/6" src="/img/emptyGhost.png" alt="" />
     </div>
     <div v-else-if="feeds !== undefined" class="feed-container">
-      <div v-for="feed in feeds" :key="feed.name">
-        <div v-if="feed.name === '전은평'">
+      <div v-for="feed in feeds" :key="feed.author_id">
+        <div v-if="feed.author_id === userId">
           <FeedPageMine :feeds="feed"></FeedPageMine>
         </div>
-        <div v-else-if="feed.name !== '전은평'">
+        <div v-else-if="feed.author_id !== userId">
           <FeedPageOthers :feeds="feed"></FeedPageOthers>
         </div>
       </div>
@@ -63,51 +63,48 @@
   </div>
 </template>
 <script setup lang="ts">
-const imgUrl =
-  'https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=9046601&filePath=L2Rpc2sxL25ld2RhdGEvMjAxNC8yMS9DTFM2L2FzYWRhbFBob3RvXzI0MTRfMjAxNDA0MTY=&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004';
+import type Feed from '../../../repository/modules/interface/feeds.interface';
+const { $api } = useNuxtApp();
+const route = useRoute();
+const userId = useUserStore().getStoredUser()?.id;
+const roomUid = route.params.roomId as string;
+const question = ref();
+let sequence: any;
+// 오늘의 질문 조회
+const getDailyQuestion = async (): Promise<void> => {
+  try {
+    const response = await $api.question.getDailyQuestion(roomUid);
+    question.value = response.data.question;
+    sequence = response.data.sequence;
+    console.log(sequence);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-interface Feed {
-  name: string;
-  uploadImage: string;
-  content: string;
-}
-// const feeds = ref<Feed[] | undefined>();
-const feeds = ref<Feed[] | undefined>([
-  {
-    name: '박세정',
-    uploadImage: imgUrl,
-    content: '게시글1',
-  },
-  {
-    name: '전은평',
-    uploadImage: imgUrl,
-    content: '게시글2',
-  },
-  {
-    name: '김병현',
-    uploadImage: '',
-    content: '게시글3',
-  },
-  {
-    name: '김현지',
-    uploadImage: imgUrl,
-    content: '게시글4',
-  },
-  {
-    name: '김성수',
-    uploadImage: imgUrl,
-    content: '게시글5',
-  },
-  {
-    name: '정필모',
-    uploadImage: imgUrl,
-    content: '게시글6',
-  },
-]);
+// 답변들
+const feeds = ref<Feed[] | undefined>();
 
+// 오늘의 질문에 대한 모든 피드 조회
+const getAllFeedsByRoomUidAndSequence = async (): Promise<void> => {
+  try {
+    if (sequence !== undefined) {
+      const response = await $api.feeds.getAllFeedsByRoomUidAndSequence({
+        roomUid,
+        sequence,
+      });
+      console.log(response);
+      feeds.value = response.data.room_feed_dto_list;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 const fixHeader = ref(true);
 
-onMounted(() => {
+onMounted(async () => {
+  await getDailyQuestion();
+  await getAllFeedsByRoomUidAndSequence();
   window.addEventListener('scroll', function () {
     if (this.window.scrollY > 200) {
       fixHeader.value = false;
