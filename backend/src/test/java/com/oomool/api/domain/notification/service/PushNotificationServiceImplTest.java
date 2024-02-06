@@ -75,7 +75,7 @@ public class PushNotificationServiceImplTest {
             .build();
 
         // PushNotificationTokenRepository의 findPushNotificationTokenByToken 메소드가 호출되면 pushNotificationToken을 반환하도록 설정합니다.
-        when(pushNotificationTokenRepository.findPushNotificationTokenByToken(token)).thenReturn(
+        when(pushNotificationTokenRepository.findByToken(token)).thenReturn(
             Optional.of(pushNotificationToken));
 
         // When
