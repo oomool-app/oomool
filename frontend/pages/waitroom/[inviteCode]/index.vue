@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="getWaitRoomData !== null"
-    class="box flex flex-col h-screen bg-primary"
-  >
+  <div class="box flex flex-col h-screen bg-primary">
     <div class="flex flex-col p-6">
       <div class="flex justify-between">
         <BackButton color="white"></BackButton>
@@ -26,15 +23,15 @@
       </div>
       <div class="flex">
         <div class="text-white">
-          {{ getWaitRoomData.data.setting.start_date }}
+          {{ getWaitRoomData?.data.setting.start_date }}
         </div>
         <div class="text-white">
-          {{ getWaitRoomData.data.setting.end_date }}
+          {{ getWaitRoomData?.data.setting.end_date }}
         </div>
       </div>
       <div class="text-white">
         <FeedHeader
-          :header-name="getWaitRoomData.data.setting.title"
+          :header-name="getWaitRoomData?.data.setting.title"
         ></FeedHeader>
       </div>
       <div class="flex p-2">
@@ -45,8 +42,8 @@
             <UsersIcon></UsersIcon>
           </div>
           <div>
-            {{ getWaitRoomData.data.players.length }}/{{
-              getWaitRoomData.data.setting.max_member
+            {{ getWaitRoomData?.data.players.length }}/{{
+              getWaitRoomData?.data.setting.max_member
             }}
           </div>
         </div>
@@ -54,8 +51,8 @@
           <div class="flex justify-center items-center text-primary font-bold">
             <div
               v-if="
-                getWaitRoomData.data.players.length !==
-                getWaitRoomData.data.setting.max_member
+                getWaitRoomData?.data.players.length !==
+                getWaitRoomData?.data.setting.max_member
               "
             >
               대기 중
@@ -67,15 +64,15 @@
     </div>
     <div class="flex flex-col grow bg-background rounded-t-md">
       <ScrollArea class="h-80">
-        <div v-for="user in getWaitRoomData.data.players" :key="user.user_id">
+        <div v-for="user in getWaitRoomData?.data.players" :key="user.user_id">
           <WaitingUser :user="user"></WaitingUser>
         </div>
         <Dialog>
           <DialogTrigger>
             <div
               v-if="
-                getWaitRoomData.data.players.length !==
-                getWaitRoomData.data.setting.max_member
+                getWaitRoomData?.data.players.length !==
+                getWaitRoomData?.data.setting.max_member
               "
             >
               + 더 많은 친구 초대하기
@@ -87,7 +84,7 @@
             <DialogHeader>
               <DialogTitle>방 초대하기</DialogTitle>
               <DialogDescription>
-                <div>{{ getWaitRoomData.data.invite_code }}</div>
+                <div>{{ getWaitRoomData?.data.invite_code }}</div>
               </DialogDescription>
             </DialogHeader>
 
@@ -104,8 +101,8 @@
       </ScrollArea>
       <div
         v-if="
-          getWaitRoomData.data.players.length ===
-            getWaitRoomData.data.setting.max_member && auth
+          getWaitRoomData?.data.players.length ===
+            getWaitRoomData?.data.setting.max_member && auth
         "
         class="flex justify-center"
       >
@@ -123,65 +120,71 @@
 
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next';
-interface User {
-  user_id: number;
-  user_email: string;
-  player_nickname: string;
-  player_background_color: string;
-  player_avatar_url: string;
-}
-interface ApiResponse {
-  data: {
-    invite_code: string;
-    created_at: string;
-    master_id: number;
-    setting: {
-      title: string;
-      start_date: string;
-      end_date: string;
-      question_type: string;
-      max_member: number;
-    };
-    players: User[];
-  };
-}
+import { type IGetWaitRoomResponse } from '~/repository/modules/interface/waitroom.interface';
+import {
+  type ICreateRoomUidInput,
+  type IGetRoomUidResponse,
+} from '~/repository/modules/interface/rooms.interface';
+import { type IRegistQuestionToRoomInput } from '~/repository/modules/interface/question.interface';
+const { $api } = useNuxtApp();
 const route = useRoute();
 const router = useRouter();
 const auth = ref<boolean>(false);
-const getWaitRoomData = ref<ApiResponse | null>(null);
-const inviteCode = route.params.inviteCode;
+const getWaitRoomData = ref<IGetWaitRoomResponse>();
 const userInfo = ref();
-const userAuth = (): void => {
-  if (getWaitRoomData.value !== null) {
-    if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
-      auth.value = true;
-    }
-  }
-};
 const userItem = localStorage.getItem('user');
 if (userItem !== null) {
   userInfo.value = JSON.parse(userItem);
 }
-if (typeof inviteCode === 'string') {
-  const { data } = await useAsyncData(
-    'getWaitRoomData',
-    async () =>
-      await $fetch<ApiResponse | null>(
-        `https://api-dev.oomool.site/temp/${inviteCode}`,
-      ),
-  );
-  getWaitRoomData.value = data.value;
-  userAuth();
-}
+onMounted(async (): Promise<void> => {
+  await getData();
+});
+
+const getData = async (): Promise<void> => {
+  const input = route.params.inviteCode;
+  if (typeof input === 'string') {
+    getWaitRoomData.value = await $api.make.getWaitRoom(input);
+    console.log(getWaitRoomData);
+  }
+};
+
 const createRoom = async (): Promise<void> => {
-  const inviteCode = route.params.inviteCode;
-  await $fetch('https://api-dev.oomool.site/rooms', {
-    method: 'POST',
-    body: JSON.stringify({
-      invite_code: inviteCode,
-    }),
-  });
-  await router.push('/');
+  try {
+    const input = ref<ICreateRoomUidInput>();
+    const inviteCode = route.params.inviteCode;
+    if (typeof inviteCode === 'string') {
+      input.value = {
+        invite_code: inviteCode,
+      };
+    }
+    const roomData = ref<IGetRoomUidResponse>();
+    const temp = ref<string>();
+    const roomId = ref<IRegistQuestionToRoomInput>();
+    if (input.value !== undefined) {
+      roomData.value = await $api.rooms.createRoom(input.value);
+      temp.value = roomData.value.data.roomUid;
+      roomId.value = {
+        roomUid: temp.value,
+      };
+      await $api.question.registQuestionToRoom(roomId.value);
+    }
+    await router.push('/');
+  } catch (error) {
+    console.error(error);
+  }
+  // const roomData = await $fetch('https://api-dev.oomool.site/rooms', {
+  //   method: 'POST',
+  //   body: JSON.stringify({
+  //     invite_code: inviteCode,
+  //   }),
+  // });
+  // const roomId = ref();
+  // if (roomData !== null && roomData !== undefined) {
+  //   roomId.value = roomData.data.roomUid;
+  // }
+  // await $fetch(`https://api-dev.oomool.site/questions/${roomId.value}`, {
+  //   method: 'POST',
+  // });
 };
 </script>
 <style scoped>
