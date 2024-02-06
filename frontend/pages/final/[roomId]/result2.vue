@@ -33,7 +33,7 @@
             :pause-autoplay-on-hover="true"
             class="mb-4 w-11/12"
           >
-            <Slide v-for="item in results" :key="item.day">
+            <Slide v-for="item in questions" :key="item.sequence">
               <div class="w-3/4 carousel__item">
                 <ResultFinalCard :result="item"></ResultFinalCard>
               </div>
@@ -65,7 +65,7 @@
         </div>
       </div>
     </div>
-
+    <div>{{ questions }}</div>
     <div class="footer-container flex justify-center mt-8 mb-8">
       <div class="w-3/4 p-3 flex justify-between bg-purple-200 rounded-xl">
         <div class="w-full pr-2 flex flex-col">
@@ -86,141 +86,27 @@
 <script setup lang="ts">
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
-import {
-  type IGetDailyQuestionInput,
-  type IGetAllQuestionsByRoomUidInput,
-} from '../../../repository/modules/interface/question.interface';
+import { type RoomQuestionList } from '../../../repository/modules/interface/question.interface';
 const { $api } = useNuxtApp();
-
-const form = reactive<IGetDailyQuestionInput>({
-  roomUid: 'mzMuob8A',
-});
+const route = useRoute();
 
 // 전체 질문 모음
-const questions = ref();
+const questions = ref<RoomQuestionList[]>();
 // 방 아이디로 전체 질문 가져오기
-const getAllQuestionsByRoomUid = async (): Promise<void> => {
+const getAllQuestions = async (): Promise<void> => {
   try {
-    const roomUid: IGetAllQuestionsByRoomUidInput = {
-      roomUid: form.roomUid,
-    };
+    const roomUid = route.params.roomId as string;
     const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
-    console.log(response);
     questions.value = response.data.room_question_list;
+    console.log(response);
   } catch (error) {
     console.log(error);
   }
 };
 
 onMounted(async () => {
-  await getAllQuestionsByRoomUid();
-  console.log(questions.value);
-  console.log(questions.value);
-  // questions.value = question;
+  await getAllQuestions();
 });
-// await useAsyncData(`roomUid:${form.roomUid}`, async (): Promise<void> => {
-
-//   questions.value = question;
-//   console.log(questions.value);
-// });
-
-const results = ref([
-  {
-    day: 1,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 2,
-    question: '내 친구 취미는?',
-    answer: '게임 많이 하는 것 같던데, 게임!!',
-    image: 'https://cdn.gametoc.co.kr/news/photo/202308/74641_231767_545.jpg',
-  },
-  {
-    day: 3,
-    question: '친구 습관은?',
-    answer: '지각하기,,,?',
-  },
-  {
-    day: 4,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 5,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 6,
-    question: '내 친구 취미는?',
-    answer: '게임 많이 하는 것 같던데, 게임!!',
-    image: 'https://cdn.gametoc.co.kr/news/photo/202308/74641_231767_545.jpg',
-  },
-  {
-    day: 7,
-    question: '친구 습관은?',
-    answer: '지각하기,,,?',
-  },
-  {
-    day: 8,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 9,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 10,
-    question: '내 친구 취미는?',
-    answer: '게임 많이 하는 것 같던데, 게임!!',
-    image: 'https://cdn.gametoc.co.kr/news/photo/202308/74641_231767_545.jpg',
-  },
-  {
-    day: 11,
-    question: '친구 습관은?',
-    answer: '지각하기,,,?',
-  },
-  {
-    day: 12,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;; 목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 13,
-    question: '내 친구 첫인상은 어땠나요?',
-    answer:
-      '목소리가 부드러워서 성시경인줄.. 노래방 갔을 때 그 환상이 다 깨져버렸지만;;',
-    image:
-      'https://yt3.googleusercontent.com/vQrdlCaT4Tx1axJtSUa1oxp2zlnRxH-oMreTwWqB-2tdNFStIOrWWw-0jwPvVCUEjm_MywltBFY=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    day: 14,
-    question: '내 친구 취미는?',
-    answer: '게임 많이 하는 것 같던데, 게임!!',
-    image: 'https://cdn.gametoc.co.kr/news/photo/202308/74641_231767_545.jpg',
-  },
-]);
 </script>
 <style scoped>
 .carousel-item {
