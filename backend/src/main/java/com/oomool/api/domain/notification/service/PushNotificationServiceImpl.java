@@ -16,8 +16,8 @@ import com.oomool.api.domain.notification.repository.PushNotificationTokenReposi
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,14 +31,14 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     private final FirebaseMessaging firebaseMessaging;
 
     @Override
+    @Transactional
     public void saveToken(int userId, String token) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 
-        pushNotificationTokenRepository.findByUserAndToken(user, token)
-            .ifPresent(pushNotificationToken -> {
-                throw new EntityExistsException("해당 토큰이 이미 존재합니다.");
-            });
+        // 기존 토큰이 존재한다면(기기 로그인 변경 등 issue 발생 시) 삭제 후 재등록
+        pushNotificationTokenRepository.findPushNotificationTokenByToken(token)
+            .ifPresent(pushNotificationTokenRepository::delete);
 
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
             .user(user)
@@ -49,11 +49,9 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     }
 
     @Override
-    public void removeToken(int userId, String token) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
-
-        PushNotificationToken pushNotificationToken = pushNotificationTokenRepository.findByUserAndToken(user, token)
+    public void removeToken(String token) {
+        PushNotificationToken pushNotificationToken = pushNotificationTokenRepository
+            .findPushNotificationTokenByToken(token)
             .orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않습니다."));
 
         pushNotificationTokenRepository.delete(pushNotificationToken);
