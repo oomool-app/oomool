@@ -33,8 +33,8 @@ const inputStyle = computed(() => {
 <style scoped>
 input {
   appearance: none;
-  width: 80%;
-  height: 0.4rem;
+  width: 100%;
+  height: 0.75rem;
   background: #d5d4d3;
   cursor: pointer;
   border-radius: 1rem;
@@ -42,8 +42,8 @@ input {
 
 input::-webkit-slider-thumb {
   appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background: #fff;
   border: 1px solid #4e297c;
   border-radius: 50%;
