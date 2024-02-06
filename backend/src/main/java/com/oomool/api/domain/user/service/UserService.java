@@ -116,5 +116,4 @@ public class UserService {
         }
         return gameRoomList;
     }
-
 }

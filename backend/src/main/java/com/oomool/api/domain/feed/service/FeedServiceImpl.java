@@ -75,12 +75,12 @@ public class FeedServiceImpl implements FeedService {
             List<FeedImageDto> feedImageDtoList = feedImageService.getFeedImages(feedId);
 
             // 작성자 ID를 가져와서 마니띠를 찾는다.
-            int authorId = feed.getAuthor().getId();
+            int authorId = feed.getAuthor().getUser().getId();
             ManittiDto manittiDto = playerService.getManittiInfo(authorId);
 
             RoomFeedDto roomFeedDto = RoomFeedDto
                 .builder()
-                .authorId(authorId)
+                .userId(authorId)
                 .content(feed.getContent()) // 답변 내용
                 .createdAt(feed.getCreatedAt()) // 생성 일자
                 .feedImageDtoList(feedImageDtoList) // 이미지 파일 리스트
@@ -147,7 +147,6 @@ public class FeedServiceImpl implements FeedService {
         return FeedAnswerDto
             .builder()
             .feedId(feed.getId())
-            .authorId(player.getId())
             .content(content)
             .feedImageDtoList(feedImageDtoList)
             .build();
@@ -200,7 +199,6 @@ public class FeedServiceImpl implements FeedService {
             .feedId(feedId)
             .feedImageDtoList(feedImageDtoList)
             .content(content)
-            .authorId(feed.getAuthor().getId())
             .build();
     }
 }
