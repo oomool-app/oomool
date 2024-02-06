@@ -119,6 +119,21 @@ public class TempRoomRedisService {
         return "퇴장이 완료되었습니다.";
     }
 
+    /**
+     * 대기방의 플레이어 프로필을 수정한다.
+     *
+     * @param inviteCode 초대코드
+     * @param requestUpdateProfileDto 수정할 대상의 프로필 정보
+     * */
+    public PlayerDto modifyPlayerProfile(String inviteCode, PlayerDto requestUpdateProfileDto) throws
+        JsonProcessingException {
+        int userId = requestUpdateProfileDto.getUserId();
+        // Redis에서 수정은 "덮어쓰기"
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        hashOps.put("roomPlayers:" + inviteCode, userId, tempRoomMapper.playerDtoToString(requestUpdateProfileDto));
+        return tempRoomMapper.objectToPlayerDto(hashOps.get("roomPlayers:" + inviteCode, userId));
+    }
+
     // ================    비즈니스 Layer   ==================
 
     /**
