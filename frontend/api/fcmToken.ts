@@ -30,8 +30,7 @@ export const FETCH_FCM_TOKEN = new (class extends ApiService {
 
   async deleteToken(data: TokenData): Promise<ServerResponse<string>> {
     const res = await this.DELETE<string>(
-      `${this.getBaseUrl()}/push-notifications/token`,
-      data,
+      `${this.getBaseUrl()}/push-notifications/token?token=${data.token}`,
     );
 
     return res;
