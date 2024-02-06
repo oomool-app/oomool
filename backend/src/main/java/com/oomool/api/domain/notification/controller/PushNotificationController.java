@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.notification.dto.PushNotificationDto;
@@ -41,8 +42,10 @@ public class PushNotificationController {
     // 토큰 삭제에 대한 API 생성
     @DeleteMapping("/token")
     @Operation(summary = "푸시 알림 토큰 삭제 기능", description = "푸시 알림 토큰을 삭제합니다.")
-    public ResponseEntity<?> removeToken(@RequestBody PushNotificationTokenDto pushNotificationTokenDto) {
-        pushNotificationService.removeToken(pushNotificationTokenDto.userId(), pushNotificationTokenDto.token());
+    public ResponseEntity<?> removeToken(
+        @RequestParam(name = "token") String token
+    ) {
+        pushNotificationService.removeToken(token);
 
         return ResponseHandler.generateResponse(HttpStatus.OK, "푸시 알림 토큰이 삭제되었습니다.");
     }
