@@ -1,19 +1,28 @@
 <template>
-  <div class="box flex-col p-6">
-    <div class="flex justify-between">
-      <BackButton color="black"></BackButton>
-      <h1 class="text-xl font-bold">방 만들기</h1>
-      <div class="mr-6"></div>
-    </div>
-    <MakeRoomProgress :cur-page="'4'"></MakeRoomProgress>
-    <div class="font-bold mb-4">언제부터 언제까지 진행되나요?</div>
-    <div>최대 14일까지 설정할 수 있어요.</div>
-    <div id="check" class="text-red-600"></div>
-    <div class="flex justify-center items-center">
-      <Calendar v-model.range="store.range" type="range"> </Calendar>
+  <div class="box grid grid-rows-[6rem,2rem,4.5rem,5rem] h-screen p-6">
+    <div class="grid grid-cols-3">
+      <div class="flex items-center">
+        <BackButton color="black"></BackButton>
+      </div>
+      <div class="flex items-center justify-center text-2xl font-extrabold">
+        방 만들기
+      </div>
     </div>
     <div>
-      <Button @click="check">만들기</Button>
+      <MakeRoomProgress :cur-page="'4'"></MakeRoomProgress>
+    </div>
+    <div>
+      <div class="font-bold text-xl pt-2">언제부터 언제까지 진행되나요?</div>
+      <div class="text-sm">3일부터 최대 14일까지 설정할 수 있어요.</div>
+      <div id="check" class="text-red-600 text-sm"></div>
+    </div>
+    <div class="flex justify-center">
+      <div class="w-11/12">
+        <Calendar v-model.range="store.range" type="range"> </Calendar>
+      </div>
+    </div>
+    <div class="flex justify-center items-end pb-6">
+      <Button class="w-full rounded-full text-lg" @click="check">만들기</Button>
     </div>
   </div>
 </template>
@@ -60,7 +69,7 @@ const move = async (): Promise<void> => {
     const input = ref<IMakeRoomInput>();
     input.value = {
       setting: {
-        title: store.name,
+        title: store.name.trim(),
         start_date: store.formatDate(store.range.start),
         end_date: store.formatDate(store.range.end),
         question_type: store.type,
