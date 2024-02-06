@@ -19,9 +19,27 @@
 </template>
 
 <script setup lang="ts">
+interface ApiResponse {
+  data: {
+    invite_code: string;
+    created_at: string;
+    master_id: string;
+    setting: {
+      title: string;
+      start_date: string;
+      end_date: string;
+      question_type: string;
+      max_member: number;
+    };
+  };
+}
 const store = useMakeRoomStore();
 const router = useRouter();
-const userInfo: any = sessionStorage.getItem('user');
+const userItem = localStorage.getItem('user');
+const userInfo = ref();
+if (userItem !== null) {
+  userInfo.value = JSON.parse(userItem);
+}
 const check = async (event: any): Promise<void> => {
   const element = document.getElementById('check');
   if (element == null) {
@@ -51,7 +69,8 @@ const check = async (event: any): Promise<void> => {
 };
 const move = async (): Promise<void> => {
   try {
-    const { data }: any = await useFetch('https://api-dev.oomool.site/temp', {
+    const data = ref<ApiResponse | null>(null);
+    data.value = await $fetch<ApiResponse>('https://api-dev.oomool.site/temp', {
       method: 'POST',
       body: JSON.stringify({
         setting: {
@@ -62,17 +81,18 @@ const move = async (): Promise<void> => {
           max_member: store.number,
         },
         master: {
-          user_id: userInfo.user_id,
-          user_email: userInfo.user_email,
-          player_nickname: userInfo.user_nickname,
-          player_background_color: userInfo.player_background_color,
-          player_avatar_url: userInfo.player_avatar_url,
+          email: userInfo.value.email,
+          username: userInfo.value.name,
         },
       }),
     });
-    await router.push(`/waitroom/${data.value.data.invite_code}`);
+    if (data.value !== null) {
+      await router.push(
+        `/waitroom/${data.value.data.invite_code}/updateProfile`,
+      );
+    }
   } catch (error: any) {
-    alert(error.message);
+    alert('잘못된 접근입니다. 다시 시도해주세요!');
   }
 };
 </script>

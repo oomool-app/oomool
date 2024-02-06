@@ -3,7 +3,7 @@
     <ResultSuccessCard v-if="IsSuccess"></ResultSuccessCard>
     <ResultFailCard v-if="!IsSuccess"></ResultFailCard>
     <div class="mt-8 flex flex-col items-center mr-6">
-      <NuxtLink :to="`/final/${roomId}/result2`"
+      <NuxtLink :to="`/final/${roomUid}/result2`"
         ><p
           class="go-to-result text-primary text-center font-semibold text-2xl"
         >
@@ -29,7 +29,8 @@
 
 <script setup lang="ts">
 const IsSuccess = ref(true);
-const roomId = ref(1);
+const route = useRoute();
+const roomUid = route.params.roomId;
 </script>
 <style scoped>
 .go-to-result {
