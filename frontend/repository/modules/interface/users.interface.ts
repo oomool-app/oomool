@@ -26,6 +26,26 @@ export interface IGetRoomListResponse {
   };
 }
 
+export interface IGetTempRoomListInput {
+  userId: number;
+}
+
+export interface IGetTempRoomListResponse {
+  data: {
+    temp_room: {
+      invite_code: string;
+      setting: {
+        title: string;
+        start_date: string;
+        end_date: string;
+        question_type: string;
+        max_member: number;
+      };
+      master_id: number;
+    };
+  };
+}
+
 interface RoomList {
   room_uid: string;
   title: string;

@@ -31,6 +31,9 @@
         <div v-for="room in rooms" :key="room.title">
           <RoomCard :rooms="room"></RoomCard>
         </div>
+        <div v-for="temproom in temprooms" :key="temproom.invite_code">
+          <TempRoomCard :temprooms="temproom"></TempRoomCard>
+        </div>
       </div>
     </div>
   </div>
@@ -39,15 +42,20 @@
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore';
 import { useRouter } from 'vue-router';
-import { type IGetRoomListInput } from '../repository/modules/interface/users.interface';
+import {
+  type IGetRoomListInput,
+  type IGetTempRoomListInput,
+} from '../repository/modules/interface/users.interface';
 
 useBodyColor('#61339B');
 
 const userStore = useUserStore();
 const router = useRouter();
 const { $api } = useNuxtApp();
+// const { token, fetchToken } = useFCM();
 
 const rooms = ref();
+const temprooms = ref();
 
 // 유저아이디로 방 목록 가져오기
 const getRoomList = async (): Promise<void> => {
@@ -61,6 +69,7 @@ const getRoomList = async (): Promise<void> => {
 
       const response = await $api.users.getRoomList(userId);
       rooms.value = response.data;
+      console.log(rooms);
     } else {
       // 사용자 정보가 없을 경우 로그인 페이지로 리다이렉트
       await router.push('/login');
@@ -70,8 +79,78 @@ const getRoomList = async (): Promise<void> => {
   }
 };
 
-onBeforeMount(async () => {
+// 유저아이디로 대기방 목록 가져오기
+const getTempRoomList = async (): Promise<void> => {
+  try {
+    const storedUser = userStore.getStoredUser();
+
+    if (storedUser != null) {
+      const userId: IGetTempRoomListInput = {
+        userId: storedUser.id,
+      };
+
+      const response = await $api.users.getTempRoomList(userId);
+      temprooms.value = response.data.temp_room;
+      console.log(temprooms);
+      console.log('Gggggggggggggggggggg');
+      console.log(temprooms.value);
+    } else {
+      // 사용자 정보가 없을 경우 로그인 페이지로 리다이렉트
+      await router.push('/login');
+    }
+  } catch (error) {
+    console.error('Error while fetching room list:', error);
+  }
+};
+
+// const getMessageToken = async (): Promise<void> => {
+//   if (token.value === '') {
+//     await fetchToken().then(() => {
+//       message.value = token.value;
+//     });
+//   }
+//   message.value = token.value;
+// };
+
+// const message = ref<string>('');
+// const requestNotificationPermission = (): void => {
+//   Notification.requestPermission()
+//     .then(async (permission) => {
+//       if (permission === 'granted') {
+//         console.log('Notification permission granted.');
+//         message.value = 'Notification permission granted.';
+//         await getMessageToken();
+//         // 메인페이지로 이동
+//         await router.push('/index');
+//         return;
+//       }
+//       console.log('Notification permission denied.');
+//       message.value = 'Notification permission denied.';
+//       // 메인페이지로 이동
+//       await router.push('/index');
+//     })
+//     .catch((error) => {
+//       console.error(
+//         'Error occurred while asking for notification permission:',
+//         error,
+//       );
+//       message.value = `Error occurred while asking for notification permission. error: ${error}`;
+//     });
+// };
+
+onMounted(async () => {
+  // if (Notification.permission == null) {
+  //   // 모달 창 띄우고 거기서 ㅇㅋ되면 requestNotificationPermission(); 실행
+  //   await router.push({ path: '/notification' });
+
+  // } else if (
+  //   Notification.permission === 'granted' ||
+  //   Notification.permission === 'denied'
+  // ) {
+  //   await router.push({ path: '/' });
+  // }
   await getRoomList();
+  await getTempRoomList();
 });
 </script>
 
