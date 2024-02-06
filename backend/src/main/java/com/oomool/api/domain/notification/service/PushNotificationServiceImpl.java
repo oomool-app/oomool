@@ -37,7 +37,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
             .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 
         // 기존 토큰이 존재한다면(기기 로그인 변경 등 issue 발생 시) 삭제 후 재등록
-        pushNotificationTokenRepository.findPushNotificationTokenByToken(token)
+        pushNotificationTokenRepository.findByToken(token)
             .ifPresent(pushNotificationTokenRepository::delete);
 
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
@@ -51,7 +51,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     @Override
     public void removeToken(String token) {
         PushNotificationToken pushNotificationToken = pushNotificationTokenRepository
-            .findPushNotificationTokenByToken(token)
+            .findByToken(token)
             .orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않습니다."));
 
         pushNotificationTokenRepository.delete(pushNotificationToken);

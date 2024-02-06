@@ -69,18 +69,13 @@ public class PushNotificationServiceImplTest {
     @Test
     public void removeTokenTest() {
         // Given
-        // 테스트에 필요한 User와 PushNotificationToken 객체를 생성합니다.
-        int userId = 1;
         String token = "token";
-        User user = new User(userId, "email", "username", null, null);
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
-            .user(user)
             .token(token)
             .build();
 
-        // PushNotificationTokenRepository의 findByUserAndToken 메소드가 호출되면 pushNotificationToken을 반환하도록 설정합니다.
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(pushNotificationTokenRepository.findByUserAndToken(user, token)).thenReturn(
+        // PushNotificationTokenRepository의 findPushNotificationTokenByToken 메소드가 호출되면 pushNotificationToken을 반환하도록 설정합니다.
+        when(pushNotificationTokenRepository.findByToken(token)).thenReturn(
             Optional.of(pushNotificationToken));
 
         // When
