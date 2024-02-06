@@ -9,9 +9,11 @@
           class="text-white text-3xl"
           :header-name="teamName"
         ></FeedHeader>
-        <DDay
-          class="d-day border text-primary border-white bg-white h-9 w-14 rounded-full text-center font-bold py-1"
-        ></DDay>
+        <div
+          class="d-day border text-primary border-white bg-white h-9 w-14 rounded-xl text-center font-bold py-1"
+        >
+          D-{{ dDay }}
+        </div>
       </div>
     </div>
     <div class="bottom-container p-4 pt-6">
@@ -20,7 +22,7 @@
         <div
           class="flex justify-evenly items-center my-manitti border-2 border-[#61339b] bg-gradient-to-r from-[#61339b] to-[#a8bdf9] h-32 mt-4 mb-8 rounded-xl"
         >
-          <img src="/img/rabbitGhost.png" alt="" class="ghost h-3/4 w-auto" />
+          <img :src="manittiAvatar" alt="" class="ghost h-3/4 w-auto" />
           <p
             v-if="!whoIsManitti"
             class="btn bg-primary w-40 h-10 text-white text-center py-1 text-xl rounded-full font-bold drop-shadow-2xl"
@@ -33,7 +35,7 @@
             class="bg-white w-40 h-10 text-center text-primary py-1 text-xl rounded-full font-bold"
             @click="hideManitti()"
           >
-            김현지
+            {{ manittiName }}
           </p>
         </div>
       </div>
@@ -64,7 +66,7 @@
         <div
           class="border-2 border-primary rounded-lg p-5 mt-4 mb-10 text-center font-semibold"
         >
-          내 친구가 좋아할만한 음악 장르나 곡은 무엇인 것 같아요?
+          {{ todayQuestion }}
         </div>
       </div>
       <div class="answer-container">
@@ -84,7 +86,7 @@
           <TotalButton :link="`${roomId}/members`" text="전체보기" />
         </div>
         <div class="flex overflow-auto">
-          <div v-for="member in members" :key="member.name">
+          <div v-for="member in members" :key="member.user_id">
             <RoomProfile :member="member"></RoomProfile>
           </div>
         </div>
@@ -94,7 +96,78 @@
 </template>
 
 <script setup lang="ts">
-const teamName = '김성수와 아이들';
+const { $api } = useNuxtApp();
+const route = useRoute();
+const userStore = useUserStore();
+const roomUid = route.params.roomId as string;
+const teamName = ref();
+const members = ref();
+const endDate = ref<Date | undefined>();
+const dDay = ref();
+const todayQuestion = ref();
+const manittiName = ref();
+const manittiAvatar = ref();
+// 문답방 전체 정보 받아오기
+const getRoomDetail = async (): Promise<void> => {
+  try {
+    const response = await $api.rooms.getRoomDetail(roomUid);
+    members.value = response.data.players;
+    teamName.value = response.data.setting.title;
+    endDate.value = response.data.setting.end_date;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// D-day 계산
+const getDDay = async (): Promise<void> => {
+  try {
+    const today: any = new Date();
+    if (endDate.value !== undefined) {
+      const endDateObj = new Date(endDate.value);
+
+      const timeDiff = endDateObj.getTime() - today.getTime();
+
+      const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+      dDay.value = remainingDays;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// 오늘의 질문 조회
+const getDailyQuestion = async (): Promise<void> => {
+  try {
+    const response = await $api.question.getDailyQuestion(roomUid);
+    todayQuestion.value = response.data.question;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// 내 마니띠 조회
+const getMyManitti = async (): Promise<void> => {
+  try {
+    const userId = userStore.getStoredUser()?.id;
+    if (userId !== null && userId !== undefined) {
+      const response = await $api.players.getMyManitti({ roomUid, userId });
+      manittiName.value = response.data.manitti.player_nickname;
+      manittiAvatar.value = response.data.manitti.player_avatar_url;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+onMounted(async () => {
+  await getRoomDetail();
+  await getDDay();
+  await getDailyQuestion();
+  await getMyManitti();
+});
+
 const whoIsManitti = ref(false);
 const discoverManitti = (): void => {
   whoIsManitti.value = true;
@@ -102,14 +175,6 @@ const discoverManitti = (): void => {
 const hideManitti = (): void => {
   whoIsManitti.value = false;
 };
-const members = ref([
-  { name: '박세정' },
-  { name: '전은평' },
-  { name: '김병현' },
-  { name: '정필묘' },
-  { name: '김현지' },
-  { name: '김성수' },
-]);
 const roomId = ref(1);
 </script>
 <style scope>
