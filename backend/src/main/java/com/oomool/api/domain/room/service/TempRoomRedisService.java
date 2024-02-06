@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,9 +16,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
-import com.oomool.api.domain.room.exception.NotTempRoomMasterException;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
+import com.oomool.api.global.exception.BaseException;
+import com.oomool.api.global.exception.StatusCode;
 import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,18 @@ public class TempRoomRedisService {
      * @param playerDto 참여자 게임 프로필
      * */
     public Map<String, Object> joinTempRoom(String inviteCode, PlayerDto playerDto) throws JsonProcessingException {
-        // 입장 여부 검증 로직 필요
+
+        // 1. Redis에 inviteCode가 없으면 Fail
+        if (Boolean.FALSE.equals(redisTemplate.hasKey("roomSetting:" + inviteCode))) {
+            throw new BaseException(StatusCode.INVALID_INVITE_CODE);
+        }
+
+        // 2. 같은 inviteCode에 중복 여부 확인
+        if (!redisTemplate.opsForSet().isMember("userInviteTemp:" + playerDto.getUserId(), inviteCode)) {
+            throw new BaseException(StatusCode.DUPLICATION_INVITE_CODE);
+        }
+
+        // 저장
         saveTempRoomPlayer(inviteCode, playerDto);
         return Map.ofEntries(Map.entry("players", getTempRoomPlayerList(inviteCode)));
     }
@@ -74,6 +85,9 @@ public class TempRoomRedisService {
     public TempRoomDto getTempRoom(String inviteCode) throws JsonProcessingException {
 
         Map<String, Object> map = getTempRoomSetting(inviteCode);
+        if (map == null) {
+            throw new BaseException(StatusCode.INVALID_INVITE_CODE);
+        }
 
         return TempRoomDto.builder()
             .inviteCode(inviteCode)
@@ -94,7 +108,7 @@ public class TempRoomRedisService {
 
         // 방장의 권한이 아닐경우 (플레이어일 경우)
         if (!isMasterInTempRoom(inviteCode, masterUserId)) {
-            throw new NotTempRoomMasterException("플레이어는 대기방을 삭제할 수 없습니다.");
+            throw new BaseException(StatusCode.NOT_MASTER_AUTH_TEMPROOM);
         }
         // 방장 일 경우 - 삭제 권한 존재
         deleteTempRoomByMaster(inviteCode);
@@ -112,7 +126,7 @@ public class TempRoomRedisService {
 
         // 유저가 초대코드의 방장 권한이 있다면 퇴장할 수 없다.
         if (isMasterInTempRoom(inviteCode, userId)) {
-            throw new NotTempRoomMasterException("방장은 대기방에서 퇴장할 수 없습니다.");
+            throw new BaseException(StatusCode.FORBIDDEN, "플레이어는 방을 퇴장할 수 없습니다. ");
         }
         // 유저가 방장이 아닌 경우 방을 나간다.
         deleteTempRoomByPlayer(inviteCode, userId);
@@ -262,7 +276,7 @@ public class TempRoomRedisService {
         Object settingValue = hashOps.get("roomSetting:" + inviteCode, key);
 
         if (settingValue == null) {
-            throw new NoSuchElementException("해당 키에 대한 설정값이 존재하지 않습니다.");
+            throw new BaseException(StatusCode.INVALID_INVITE_CODE);
         }
 
         return settingValue.toString();
@@ -278,7 +292,7 @@ public class TempRoomRedisService {
         Set<Object> inviteCodeSet = setOps.members("userInviteTemp:" + userId);
 
         if (inviteCodeSet == null || inviteCodeSet.isEmpty()) {
-            throw new NoSuchElementException(userId + "에 해당하는 대기방이 존재하지 않습니다."); // 추후 수정해야함
+            throw new BaseException(StatusCode.INVALID_INVITE_CODE);
         }
 
         return inviteCodeSet.stream()
@@ -297,7 +311,7 @@ public class TempRoomRedisService {
         // 방 존재 여부 확인
         boolean exists = Boolean.TRUE.equals(redisTemplate.hasKey("roomSetting:" + inviteCode));
         if (!exists) {
-            throw new IllegalArgumentException("유효하지 않은 초대코드 입니다.");
+            throw new BaseException(StatusCode.INVALID_INVITE_CODE);
         }
 
         // redis에 저장한 player InviteCode 관리하는 set
