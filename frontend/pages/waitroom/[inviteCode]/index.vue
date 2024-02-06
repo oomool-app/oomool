@@ -1,5 +1,8 @@
 <template>
-  <div class="box flex flex-col h-screen bg-primary">
+  <div
+    v-if="getWaitRoomData !== null"
+    class="box flex flex-col h-screen bg-primary"
+  >
     <div class="flex flex-col p-6">
       <div class="flex justify-between">
         <BackButton color="white"></BackButton>
@@ -9,22 +12,31 @@
           </PopoverTrigger>
           <PopoverContent>
             <ul>
-              <NuxtLink :to="`${route.params.inviteCode}/updateRoom`"
-                >방설정하기</NuxtLink
-              >
-              <NuxtLink to="/">퇴장하기</NuxtLink>
+              <li>
+                <NuxtLink :to="`${route.params.inviteCode}/updateRoom`"
+                  >방설정하기</NuxtLink
+                >
+              </li>
+              <li>
+                <NuxtLink to="/">퇴장하기</NuxtLink>
+              </li>
             </ul>
           </PopoverContent>
         </Popover>
       </div>
       <div class="flex">
-        <DDay class="text-white"></DDay>
-        <EndDate class="text-white"></EndDate>
+        <div class="text-white">
+          {{ getWaitRoomData.data.setting.start_date }}
+        </div>
+        <div class="text-white">
+          {{ getWaitRoomData.data.setting.end_date }}
+        </div>
       </div>
-      <FeedHeader class="text-white"></FeedHeader>
-      <FeedHeader class="text-white"></FeedHeader>
-      <FeedHeader class="text-white"></FeedHeader>
-      <FeedHeader class="text-white"></FeedHeader>
+      <div class="text-white">
+        <FeedHeader
+          :header-name="getWaitRoomData.data.setting.title"
+        ></FeedHeader>
+      </div>
       <div class="flex p-2">
         <div
           class="flex justify-center bg-background rounded-xl w-1/4 font-bold text-primary m-1"
@@ -32,23 +44,42 @@
           <div>
             <UsersIcon></UsersIcon>
           </div>
-          <div>{{ Users.length }}/30</div>
+          <div>
+            {{ getWaitRoomData.data.players.length }}/{{
+              getWaitRoomData.data.setting.max_member
+            }}
+          </div>
         </div>
-        <div class="bg-amber-400 rounded-xl m-1 w-1/6">
+        <div class="bg-amber-400 rounded-xl m-1 w-2/6">
           <div class="flex justify-center items-center text-primary font-bold">
-            대기중
+            <div
+              v-if="
+                getWaitRoomData.data.players.length !==
+                getWaitRoomData.data.setting.max_member
+              "
+            >
+              대기 중
+            </div>
+            <div v-else>시작 대기</div>
           </div>
         </div>
       </div>
     </div>
     <div class="flex flex-col grow bg-background rounded-t-md">
       <ScrollArea class="h-80">
-        <div v-for="user in Users" :key="user.user_id">
+        <div v-for="user in getWaitRoomData.data.players" :key="user.user_id">
           <WaitingUser :user="user"></WaitingUser>
         </div>
         <Dialog>
           <DialogTrigger>
-            <div>+ 더 많은 친구 초대하기</div>
+            <div
+              v-if="
+                getWaitRoomData.data.players.length !==
+                getWaitRoomData.data.setting.max_member
+              "
+            >
+              + 더 많은 친구 초대하기
+            </div>
           </DialogTrigger>
           <DialogContent
             class="border-none bg-white rounded-t-xl relative h-56 bottom-28"
@@ -56,7 +87,7 @@
             <DialogHeader>
               <DialogTitle>방 초대하기</DialogTitle>
               <DialogDescription>
-                <div>1Bx7Yf8d</div>
+                <div>{{ getWaitRoomData.data.invite_code }}</div>
               </DialogDescription>
             </DialogHeader>
 
@@ -71,7 +102,16 @@
           </DialogContent>
         </Dialog>
       </ScrollArea>
-      <div class="flex justify-center">
+      <div
+        v-if="
+          getWaitRoomData.data.players.length ===
+            getWaitRoomData.data.setting.max_member && auth
+        "
+        class="flex justify-center"
+      >
+        <Button class="w-1/2" @click="createRoom"> 시작 </Button>
+      </div>
+      <div v-else class="flex justify-center">
         <Button class="w-1/2" disabled>
           <Loader2 class="w-4 h-4 animate-spin" />
           시작 대기중
@@ -83,7 +123,6 @@
 
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next';
-const route = useRoute();
 interface User {
   user_id: number;
   user_email: string;
@@ -91,58 +130,59 @@ interface User {
   player_background_color: string;
   player_avatar_url: string;
 }
-
-const Users = ref<User[]>([
-  {
-    user_id: 1,
-    user_email: 'aaaa@gmail.com',
-    player_nickname: 'AAAA',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 2,
-    user_email: 'bbbb@gmail.com',
-    player_nickname: 'BBBB',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 3,
-    user_email: 'cccc@gmail.com',
-    player_nickname: 'CCCC',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 4,
-    user_email: 'dddd@gmail.com',
-    player_nickname: 'DDDD',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 5,
-    user_email: 'dddd@gmail.com',
-    player_nickname: 'DDDD',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 6,
-    user_email: 'dddd@gmail.com',
-    player_nickname: 'DDDD',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-  {
-    user_id: 7,
-    user_email: 'dddd@gmail.com',
-    player_nickname: 'DDDD',
-    player_background_color: 'red',
-    player_avatar_url: '/img/carpenterGhost.png',
-  },
-]);
+interface ApiResponse {
+  data: {
+    invite_code: string;
+    created_at: string;
+    master_id: number;
+    setting: {
+      title: string;
+      start_date: string;
+      end_date: string;
+      question_type: string;
+      max_member: number;
+    };
+    players: User[];
+  };
+}
+const route = useRoute();
+const router = useRouter();
+const auth = ref<boolean>(false);
+const getWaitRoomData = ref<ApiResponse | null>(null);
+const inviteCode = route.params.inviteCode;
+const userInfo = ref();
+const userAuth = (): void => {
+  if (getWaitRoomData.value !== null) {
+    if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
+      auth.value = true;
+    }
+  }
+};
+const userItem = localStorage.getItem('user');
+if (userItem !== null) {
+  userInfo.value = JSON.parse(userItem);
+}
+if (typeof inviteCode === 'string') {
+  const { data } = await useAsyncData(
+    'getWaitRoomData',
+    async () =>
+      await $fetch<ApiResponse | null>(
+        `https://api-dev.oomool.site/temp/${inviteCode}`,
+      ),
+  );
+  getWaitRoomData.value = data.value;
+  userAuth();
+}
+const createRoom = async (): Promise<void> => {
+  const inviteCode = route.params.inviteCode;
+  await $fetch('https://api-dev.oomool.site/rooms', {
+    method: 'POST',
+    body: JSON.stringify({
+      invite_code: inviteCode,
+    }),
+  });
+  await router.push('/');
+};
 </script>
 <style scoped>
 .box {

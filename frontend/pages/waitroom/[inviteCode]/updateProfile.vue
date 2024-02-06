@@ -27,6 +27,7 @@
         </h1>
         <input
           id="username"
+          v-model="nickname"
           type="text"
           class="flex bg-[#F9FAFB] rounded-md border-2 border-[#6D6D6D] items-center w-80 h-12 justify-center text-s pl-2"
           placeholder="kakao nickname"
@@ -38,15 +39,12 @@
       </div>
     </div>
     <!--설정하기 버튼-->
-    <Button
-      class="mx-auto"
-      @click="$router.push({ path: `/waitroom/${inviteCode}` })"
-      >프로필 설정하기</Button
-    >
+    <Button class="mx-auto" @click="join">프로필 설정하기</Button>
   </div>
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
 const route = useRoute();
 
 const colors: string[] = [
@@ -104,7 +102,33 @@ function getRandomAvatar(): string {
 }
 
 // 링크에서 갖고 있는 초대코드 받아와서 다시 라우터링크에서 사용
-const inviteCode = route.params.inviteCode;
+const userItem = localStorage.getItem('user');
+const userInfo = ref();
+const nickname = ref();
+if (userItem !== null) {
+  userInfo.value = JSON.parse(userItem);
+}
+const join = async (): Promise<void> => {
+  const inviteCode = route.params.inviteCode;
+  if (typeof inviteCode === 'string') {
+    const data = await $fetch(
+      `https://api-dev.oomool.site/temp/${inviteCode}/players`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: userInfo.value.id,
+          user_email: userInfo.value.email,
+          player_nickname: nickname.value,
+          player_background_color: randomColor.value,
+          player_avatar_url: randomAvatar.value,
+        }),
+      },
+    );
+    if (data !== null) {
+      await router.push(`/waitroom/${inviteCode}`);
+    }
+  }
+};
 </script>
 <style scoped>
 .box {
