@@ -39,11 +39,13 @@
       </div>
     </div>
     <!--설정하기 버튼-->
-    <Button class="mx-auto" @click="join">프로필 설정하기</Button>
+    <Button class="mx-auto" @click="setting">프로필 설정하기</Button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { type IJoinWaitRoomInput } from '~/repository/modules/interface/waitroom.interface';
+
 const router = useRouter();
 const route = useRoute();
 // const router = useRouter();
@@ -103,32 +105,32 @@ function getRandomAvatar(): string {
 }
 
 // 링크에서 갖고 있는 초대코드 받아와서 다시 라우터링크에서 사용
-const userItem = localStorage.getItem('user');
 const userInfo = ref();
 const nickname = ref();
-if (userItem !== null) {
-  userInfo.value = JSON.parse(userItem);
-}
+const userStore = useUserStore();
+const { $api } = useNuxtApp();
 const join = async (): Promise<void> => {
-  const inviteCode = route.params.inviteCode;
-  if (typeof inviteCode === 'string') {
-    const data = await $fetch(
-      `https://api-dev.oomool.site/temp/${inviteCode}/players`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          user_id: userInfo.value.id,
-          user_email: userInfo.value.email,
-          player_nickname: nickname.value,
-          player_background_color: randomColor.value,
-          player_avatar_url: randomAvatar.value,
-        }),
-      },
-    );
-    if (data !== null) {
+  try {
+    const input = ref<IJoinWaitRoomInput>();
+    const inviteCode = route.params.inviteCode;
+    input.value = {
+      user_id: userInfo.value.id,
+      user_email: userInfo.value.email,
+      player_nickname: nickname.value,
+      player_background_color: randomColor.value,
+      player_avatar_url: randomAvatar.value,
+    };
+    if (typeof inviteCode === 'string') {
+      await $api.make.joinWaitRoom(input.value, inviteCode);
       await router.push(`/waitroom/${inviteCode}`);
     }
+  } catch (error: any) {
+    alert('잘못된 접근!!');
   }
+};
+const setting = async (): Promise<void> => {
+  userInfo.value = userStore.getStoredUser();
+  await join();
 };
 </script>
 <style scoped>
