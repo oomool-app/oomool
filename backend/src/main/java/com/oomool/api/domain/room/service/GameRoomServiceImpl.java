@@ -22,9 +22,10 @@ import com.oomool.api.domain.room.util.MatchManitti;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.service.UserService;
+import com.oomool.api.global.exception.BaseException;
+import com.oomool.api.global.exception.StatusCode;
 import com.oomool.api.global.util.CustomDateUtil;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,6 +55,10 @@ public class GameRoomServiceImpl implements GameRoomService {
         GameRoom gameRoom = gameRoomMapper.dtoToEntity(roomUid, tempRoomDto.setting());
         List<PlayerDto> playerDtoList = tempRoomDto.players();
 
+        if (playerDtoList.size() < 3) {
+            throw new BaseException(StatusCode.CANNOT_START_OOMOOL_ROOM, "3인 미만의 인원은 방을 생성할 수 없습니다.");
+        }
+
         // 마니또 매칭 결과
         Map<Integer, Integer> matchMap = MatchManitti.matchPair(playerDtoList);
 
@@ -70,6 +75,8 @@ public class GameRoomServiceImpl implements GameRoomService {
             gameRoom.getPlayers().add(player); // 문답방에 플레이어를 넣는다.
         }
         gameRoomRepository.save(gameRoom);
+        // 대기방 삭제
+        tempRoomRedisService.deleteTempRoomByMaster(inviteCode);
 
         return roomUid;
     }
@@ -77,13 +84,13 @@ public class GameRoomServiceImpl implements GameRoomService {
     @Override
     public GameRoom getGameRoom(String roomUid) {
         return gameRoomRepository.findByRoomUid(roomUid)
-            .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
+            .orElseThrow(() -> new BaseException(StatusCode.INVILD_OOMOOL_ROOM_UUID));
     }
 
     @Override
     public Map<String, Object> getGameRoomDetail(String roomUid) {
         GameRoom gameRoom = gameRoomRepository.findByRoomUid(roomUid)
-            .orElseThrow(() -> new EntityNotFoundException("room UID가 존재하지 않습니다."));
+            .orElseThrow(() -> new BaseException(StatusCode.INVILD_OOMOOL_ROOM_UUID));
         SettingOptionDto settingOptionDto = gameRoomMapper.entityToSettingOptionDto(gameRoom);
         // 순환참조를 방지하기 위해 Dto로 변환
         List<PlayerDto> playerDtoList = playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
