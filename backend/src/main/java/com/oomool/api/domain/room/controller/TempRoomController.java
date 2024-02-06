@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
+import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomRequestDto;
 import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.domain.user.service.UserService;
@@ -74,10 +76,21 @@ public class TempRoomController {
     }
 
     @Operation(summary = "플레이어 프로필 수정", description = "플레이어는 대기방의 프로필을 수정할 수 있다.")
-    @PutMapping("/{inviteCode}")
+    @PutMapping("/{inviteCode}/profile")
     public ResponseEntity<?> modifyPlayerProfile(@PathVariable("inviteCode") String inviteCode,
         @RequestBody PlayerDto playerDto) throws JsonProcessingException {
         return ResponseHandler.generateResponse(HttpStatus.OK,
             Map.of("player", tempRoomRedisService.modifyPlayerProfile(inviteCode, playerDto)));
     }
+
+    @Operation(summary = "대기방의 방 설정 옵션 수정하기", description = "방장은 대기방의 설정 옵션을 수정할 수 있다.")
+    @PatchMapping("/{inviteCode}/setting")
+    public ResponseEntity<?> modifyTempRoomSettingOption(@PathVariable("inviteCode") String inviteCode,
+        @RequestBody SettingOptionDto settingOptionDto) {
+        //
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            Map.of("setting", tempRoomRedisService.modifyTempRoomSettingOption(inviteCode, settingOptionDto))
+        );
+    }
+
 }
