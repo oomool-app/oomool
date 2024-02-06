@@ -1,20 +1,33 @@
 <template>
-  <div class="box flex-col p-6">
-    <div class="flex justify-between">
-      <BackButton color="black"></BackButton>
-      <h1 class="text-xl font-bold">방 만들기</h1>
-      <div class="mr-6"></div>
+  <div class="box grid grid-rows-[6rem,2rem,6rem,5rem] h-screen p-6">
+    <div class="grid grid-cols-3">
+      <div class="flex items-center">
+        <BackButton color="black"></BackButton>
+      </div>
+      <div class="flex items-center justify-center text-2xl font-extrabold">
+        방 만들기
+      </div>
     </div>
-    <MakeRoomProgress :cur-page="'2'"></MakeRoomProgress>
-    <div class="font-bold mb-4">우리들, 어떤 사이예요?</div>
-    <div>매일 제공되는 질문의 유형이 결정돼요!</div>
-    <div v-if="typeCheck" class="text-red-600">질문의 유형을 정해주세요!</div>
-    <MakeRoomTypeButton
-      :game-type="store.type"
-      @update-type="handleUpdateType"
-    ></MakeRoomTypeButton>
     <div>
-      <NuxtLink to="number"><Button @click="check">다음</Button></NuxtLink>
+      <MakeRoomProgress :cur-page="'2'"></MakeRoomProgress>
+    </div>
+    <div>
+      <div class="font-bold text-xl pt-2">우리들, 어떤 사이예요?</div>
+      <div class="text-sm">매일 제공되는 질문의 유형이 결정돼요!</div>
+    </div>
+    <div>
+      <MakeRoomTypeButton
+        :game-type="store.type"
+        @update-type="handleUpdateType"
+      ></MakeRoomTypeButton>
+      <div v-if="typeCheck" class="text-red-600 mt-2">
+        질문의 유형을 정해주세요!
+      </div>
+    </div>
+    <div class="flex justify-center items-end pb-6">
+      <NuxtLink class="w-full rounded-full" to="number">
+        <Button class="w-full rounded-full text-lg" @click="check">다음</Button>
+      </NuxtLink>
     </div>
   </div>
 </template>

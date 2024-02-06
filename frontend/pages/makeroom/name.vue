@@ -1,42 +1,56 @@
 <template>
-  <div class="box flex-col h-screen p-6">
-    <div class="flex justify-between">
+  <div class="box grid grid-rows-[6rem,2rem,4.5rem,5rem] h-screen p-6">
+    <div class="grid grid-cols-3">
       <div class="flex items-center">
         <BackButton color="black"></BackButton>
       </div>
-      <h1 class="text-xl font-bold">방 만들기</h1>
-      <div class="mr-6"></div>
+      <div class="flex items-center justify-center text-2xl font-extrabold">
+        방 만들기
+      </div>
     </div>
-    <MakeRoomProgress :cur-page="'1'"></MakeRoomProgress>
-    <div class="font-bold">우리 방의 이름을 정해주세요!</div>
-    <div v-if="nameCheck" class="text-red-600">방의 이름을 정해주세요!</div>
+    <div>
+      <MakeRoomProgress :cur-page="'1'"></MakeRoomProgress>
+    </div>
+    <div class="font-bold text-xl pt-2">우리 방의 이름을 정해주세요!</div>
     <div>
       <input
         id="userName"
         :value="store.name"
         name="userName"
         type="text"
-        class="w-full border border-purple-800 rounded h-8"
-        placeholder="방 이름"
+        class="w-full border border-purple-800 rounded-lg h-10 p-3"
+        placeholder="방의 이름을 정해주세요!"
         autocomplete="off"
         @input="changeInput"
       />
+      <div id="check" class="text-red-600 text-sm mt-2"></div>
     </div>
-    <div class="flex justify-center items-end grow">
-      <NuxtLink to="type"><Button @click="check">다음</Button></NuxtLink>
+    <div class="flex justify-center items-end pb-6">
+      <NuxtLink class="w-full rounded-full" to="type">
+        <Button class="w-full rounded-full text-lg" @click="check">다음</Button>
+      </NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const store = useMakeRoomStore();
+const reg = /[^\w\sㄱ-힣()0-9]/g;
 const changeInput = (event: any): void => {
   store.name = event.target.value;
 };
-const nameCheck = ref<boolean>(false);
 const check = (e: any): void => {
-  if (store.name === '') {
-    nameCheck.value = true;
+  const element = document.getElementById('check');
+  if (element == null) {
+    return;
+  }
+  element.innerText = '';
+  if (
+    reg.test(store.name) ||
+    store.name.trim() === '' ||
+    store.name.trim().length >= 10
+  ) {
+    element.innerText = '특수문자, 공백을 제외하고 10자이내로 입력해주세요!';
     e.preventDefault();
   }
 };

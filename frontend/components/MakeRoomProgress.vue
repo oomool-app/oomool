@@ -16,7 +16,7 @@ const props = defineProps<{
 <style>
 #create-progress {
   appearance: none;
-  width: 90%;
+  width: 100%;
 }
 
 #create-progress::-webkit-progress-bar {
