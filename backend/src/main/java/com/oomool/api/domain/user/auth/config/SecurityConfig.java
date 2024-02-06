@@ -13,7 +13,7 @@ import com.oomool.api.domain.user.auth.handler.OAuth2AuthenticationFailureHandle
 import com.oomool.api.domain.user.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.oomool.api.domain.user.auth.jwt.JwtAuthorizationFilter;
 import com.oomool.api.domain.user.auth.jwt.JwtExceptionFilter;
-import com.oomool.api.domain.user.auth.service.OAuth2UserService;
+import com.oomool.api.domain.user.auth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity //시큐리티 활성화 -> 기본 스프링 필터 체인에 등록
 public class SecurityConfig {
 
-    private final OAuth2UserService oAuth2UserService;
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
@@ -32,20 +32,21 @@ public class SecurityConfig {
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(requests -> requests
-                // .requestMatchers("/login").permitAll()
-                .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
-                .requestMatchers(("/oauth2/access-token")).permitAll()
-                .requestMatchers(("/oauth2/redirect")).permitAll()
-                .requestMatchers(("/test/**")).permitAll()
-                .requestMatchers(("/**")).permitAll()
-                .anyRequest().authenticated()) // 나머지 요청은 모두 인증이 필요
             .sessionManagement(
                 sessions -> sessions.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS)) // 세션 사용 x, 사용자 지정 토큰 방식 사용(jwt)
+            .authorizeHttpRequests(requests -> requests
+                // .requestMatchers("/login").permitAll()
+                // .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
+                // .requestMatchers(("/oauth2/redirect")).permitAll() // redirect url
+                // .requestMatchers(("/oauth2/access-token")).hasRole("USER")
+                // .requestMatchers(("/oauth2/access-token")).permitAll()
+                // .requestMatchers(("/test/**")).permitAll()
+                .requestMatchers(("/**")).permitAll()
+                .anyRequest().authenticated()) // 나머지 요청은 모두 인증이 필요
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
-                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
             );
@@ -56,5 +57,4 @@ public class SecurityConfig {
         http.addFilterBefore(jwtExceptionFilter, JwtAuthorizationFilter.class);
         return http.build();
     }
-
 }

@@ -9,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.oomool.api.domain.user.auth.user.OAuth2UserInfo;
+import com.oomool.api.domain.user.auth.dto.OAuth2UserInfo;
 import com.oomool.api.domain.user.entity.User;
 
 public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
@@ -58,7 +58,7 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("USER")); // 권한 세팅
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")); // 권한 세팅
     }
 
     @Override
