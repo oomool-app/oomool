@@ -45,11 +45,11 @@ public class UserService {
 
     public UserDto searchUserEmail(String email) {
         User user = userRepository.findByEmail(email);
-        UserDto userDto = new UserDto();
-
-        userDto.setId(user.getId());
-        userDto.setEmail(user.getEmail());
-        userDto.setUsername(user.getUsername());
+        UserDto userDto = UserDto.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .build();
 
         return userDto;
     }
