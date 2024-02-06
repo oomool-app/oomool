@@ -1,11 +1,14 @@
 package com.oomool.api.domain.room.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,9 +67,17 @@ public class TempRoomController {
     }
 
     @Operation(summary = "플레이어 퇴장 ", description = "플레이어는 대기방을 퇴장할 수 있다.")
-    @DeleteMapping("/{inviteCode}/players/{userId}")
-    public ResponseEntity<?> exit(@PathVariable("inviteCode") String inviteCode, @PathVariable("userId") int userId) {
+    @DeleteMapping("/{inviteCode}/{userId}")
+    public ResponseEntity<?> exitTempRoom(@PathVariable("inviteCode") String inviteCode,
+        @PathVariable("userId") int userId) {
         return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.exitTempRoom(inviteCode, userId));
     }
 
+    @Operation(summary = "플레이어 프로필 수정", description = "플레이어는 대기방의 프로필을 수정할 수 있다.")
+    @PutMapping("/{inviteCode}")
+    public ResponseEntity<?> modifyPlayerProfile(@PathVariable("inviteCode") String inviteCode,
+        @RequestBody PlayerDto playerDto) throws JsonProcessingException {
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            Map.of("player", tempRoomRedisService.modifyPlayerProfile(inviteCode, playerDto)));
+    }
 }
