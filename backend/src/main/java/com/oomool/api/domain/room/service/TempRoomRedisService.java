@@ -134,6 +134,31 @@ public class TempRoomRedisService {
         return tempRoomMapper.objectToPlayerDto(hashOps.get("roomPlayers:" + inviteCode, userId));
     }
 
+    /**
+     * 방장은 대기방의 설정 옵션을 수정할 수 있다.
+     *
+     * @param inviteCode 초대코드
+     * @param requestUpdateSettingOptionDto 방 설정 정보
+     * */
+    public SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
+        SettingOptionDto requestUpdateSettingOptionDto) {
+        // 수정할 대상 MAP으로 변환하기
+        Map<String, Object> updateSettingOption = tempRoomMapper.settingRoomDtoToMap(requestUpdateSettingOptionDto);
+        /**
+         *  if (!isMasterInTempRoom()); 방장 검증하기
+         *  방장이면 수정이 가능하고
+         *  방장이 아닌 일반 플레이어면 방이 수정되면 안된다.
+         */
+
+        for (String settingKey : updateSettingOption.keySet()) {
+            Object settingValue = updateSettingOption.get(settingKey);
+            if (updateSettingOption.get(settingKey) != null) {
+                modifyTempRoomSettingOption(inviteCode, settingKey, settingValue);
+            }
+        }
+        return getSettingOptionDtoByInviteCode(inviteCode);
+    }
+
     // ================    비즈니스 Layer   ==================
 
     /**
@@ -194,6 +219,15 @@ public class TempRoomRedisService {
     public void saveUserTempRoom(String inviteCode, int userId) {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
         setOps.add("userInviteTemp:" + userId, inviteCode);
+    }
+
+    /**
+     * Redis에 유저의 세팅 정보 부분 수정을 한다.
+     *
+     * */
+    public void modifyTempRoomSettingOption(String inviteCode, String key, Object value) {
+        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+        hashOps.put("roomSetting:" + inviteCode, key, value);
     }
 
     /**
