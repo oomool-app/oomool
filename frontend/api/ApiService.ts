@@ -125,17 +125,9 @@ export default class ApiService {
   }
 
   // DELETE 메서드
-  protected async DELETE<T>(
-    url: string,
-    body?: any,
-  ): Promise<ServerResponse<T>> {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
+  protected async DELETE<T>(url: string): Promise<ServerResponse<T>> {
     const data = await ApiService.fetch<T>(url, {
       method: 'DELETE',
-      headers,
-      body,
     });
 
     return data;
