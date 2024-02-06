@@ -19,20 +19,8 @@
 </template>
 
 <script setup lang="ts">
-interface ApiResponse {
-  data: {
-    invite_code: string;
-    created_at: string;
-    master_id: string;
-    setting: {
-      title: string;
-      start_date: string;
-      end_date: string;
-      question_type: string;
-      max_member: number;
-    };
-  };
-}
+import { type IMakeRoomInput } from '~/repository/modules/interface/waitroom.interface';
+const { $api } = useNuxtApp();
 const store = useMakeRoomStore();
 const router = useRouter();
 const userItem = localStorage.getItem('user');
@@ -69,28 +57,23 @@ const check = async (event: any): Promise<void> => {
 };
 const move = async (): Promise<void> => {
   try {
-    const data = ref<ApiResponse | null>(null);
-    data.value = await $fetch<ApiResponse>('https://api-dev.oomool.site/temp', {
-      method: 'POST',
-      body: JSON.stringify({
-        setting: {
-          title: store.name,
-          start_date: store.formatDate(store.range.start),
-          end_date: store.formatDate(store.range.end),
-          question_type: store.type,
-          max_member: store.number,
-        },
-        master: {
-          email: userInfo.value.email,
-          username: userInfo.value.name,
-        },
-      }),
-    });
-    if (data.value !== null) {
-      await router.push(
-        `/waitroom/${data.value.data.invite_code}/updateProfile`,
-      );
-    }
+    const input = ref<IMakeRoomInput>();
+    input.value = {
+      setting: {
+        title: store.name,
+        start_date: store.formatDate(store.range.start),
+        end_date: store.formatDate(store.range.end),
+        question_type: store.type,
+        max_member: store.number,
+      },
+      master: {
+        id: userInfo.value.id,
+        email: userInfo.value.email,
+        username: userInfo.value.name,
+      },
+    };
+    const data = await $api.make.createWaitRoom(input.value);
+    await router.push(`/waitroom/${data.data.invite_code}/updateProfile`);
   } catch (error: any) {
     alert('잘못된 접근입니다. 다시 시도해주세요!');
   }
