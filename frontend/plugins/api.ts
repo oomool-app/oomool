@@ -5,7 +5,6 @@ import UsersModule from '~/repository/modules/users';
 import RoomsModule from '~/repository/modules/rooms';
 import PlayersModule from '~/repository/modules/players';
 import FeedsModule from '~/repository/modules/feeds';
-import type PushNotificationModule from '~/repository/modules/pushNotifications';
 
 /** ApiInstance interface provides us with good typing */
 interface IApiInstance {
@@ -13,7 +12,6 @@ interface IApiInstance {
   users: UsersModule;
   rooms: RoomsModule;
   players: PlayersModule;
-  pushNotifications: PushNotificationModule;
   feeds: FeedsModule;
 }
 
@@ -35,7 +33,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     rooms: new RoomsModule(apiFetcher),
     players: new PlayersModule(apiFetcher),
     feeds: new FeedsModule(apiFetcher),
-    pushNotifications: undefined,
   };
 
   return {
