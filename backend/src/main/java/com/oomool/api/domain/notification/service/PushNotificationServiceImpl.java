@@ -49,11 +49,9 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     }
 
     @Override
-    public void removeToken(int userId, String token) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
-
-        PushNotificationToken pushNotificationToken = pushNotificationTokenRepository.findByUserAndToken(user, token)
+    public void removeToken(String token) {
+        PushNotificationToken pushNotificationToken = pushNotificationTokenRepository
+            .findPushNotificationTokenByToken(token)
             .orElseThrow(() -> new EntityNotFoundException("해당 토큰이 존재하지 않습니다."));
 
         pushNotificationTokenRepository.delete(pushNotificationToken);

@@ -85,7 +85,7 @@ public class PushNotificationServiceImplTest {
 
         // When
         // removeToken 메소드를 호출합니다.
-        pushNotificationService.removeToken(userId, token);
+        pushNotificationService.removeToken(token);
 
         // Then
         // delete 메소드가 한 번 호출되었는지 검증합니다.
