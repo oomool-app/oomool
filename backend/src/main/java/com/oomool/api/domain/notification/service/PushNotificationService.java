@@ -17,10 +17,9 @@ public interface PushNotificationService {
     /**
      * 푸시 알림 토큰을 삭제한다.
      *
-     * @param userId 유저 pk
      * @param token 푸시 알림 토큰
      */
-    void removeToken(int userId, String token);
+    void removeToken(String token);
 
     /**
      * 유저의 모든 푸시 알림 토큰을 조회한다.
