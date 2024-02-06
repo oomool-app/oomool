@@ -1,6 +1,7 @@
 package com.oomool.api.domain.player.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,29 @@ public class PlayerServiceImpl implements PlayerService {
             .player(playerMapper.entityToPlayerDto(player))
             .manitti(playerMapper.entityToPlayerDto(manitti))
             .build();
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> guessMyManittoPlayer(String roomUid, int userId, PlayerDto guessMyManitto) {
+
+        // 내가 추측하는 마니또 플레이어
+        Player myManitto = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
+
+        // 내가 추측하는 마니또의 UserId와 내 실제 마니또의 UserId 값이 일치한지 확인한다.
+        boolean guess = false;
+        if (guessMyManitto.getUserId() == myManitto.getUser().getId()) {
+            guess = true; // 일치하면 "참"
+        }
+
+        // 내가 추측한 마니또를 맞췄는지 여부를 DB에 넣기
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);
+        player.updateGuess(guess);
+
+        return Map.of(
+            "guess", guess,
+            "manitto", playerMapper.entityToPlayerDto(myManitto)
+        );
     }
 
     /**

@@ -9,7 +9,9 @@ import com.oomool.api.domain.player.entity.Player;
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
     Player findById(int authorId);
 
-    Player findByRoom_RoomUidAndUser_Id(String roomUid, int userId);
+    Player findByRoomRoomUidAndUserId(String roomUid, int userId);
+
+    Player findByRoomRoomUidAndManittiId(String roomUid, int userId);
 
     Player findByUserId(int userId);
 }
