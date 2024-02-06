@@ -40,9 +40,9 @@
 </template>
 
 <script setup lang="ts">
-import { FETCH_FCM_TOKEN } from '@/api/fcmToken';
 import { useUserStore } from '~/stores/userStore';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 import {
   type IGetRoomListInput,
   type IGetTempRoomListInput,
@@ -53,7 +53,6 @@ useBodyColor('#61339B');
 const userStore = useUserStore();
 const router = useRouter();
 const { $api } = useNuxtApp();
-const { token, fetchToken } = useFCM();
 
 const rooms = ref();
 const temprooms = ref();
@@ -100,14 +99,17 @@ const getTempRoomList = async (): Promise<void> => {
   }
 };
 
-const message = ref<string>('');
+onBeforeMount(async () => {
+  const storedUser = userStore.getStoredUser();
+  if (storedUser == null) {
+    await router.push('/login');
+  }
 
-onMounted(async () => {
+  await getRoomList();
+  await getTempRoomList();
   if (Notification.permission === 'default') {
     await router.push({ path: '/notification' });
   }
-  await getRoomList();
-  await getTempRoomList();
 });
 </script>
 
