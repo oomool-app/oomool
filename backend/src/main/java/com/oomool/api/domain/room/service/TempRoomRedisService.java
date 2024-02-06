@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
+import com.oomool.api.domain.room.exception.NotTempRoomMasterException;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.global.util.CustomDateUtil;
@@ -84,23 +85,38 @@ public class TempRoomRedisService {
     }
 
     /**
-     * 플레이어는 대기방을 퇴장 or 방장은 대기방을 삭제한다.
+     * 방장은 대기방을 삭제한다.
      *
      * @param inviteCode 대기방 초대코드
-     * @param player 플레이어 정보
+     * @param masterUserId 방장의 유저아이디
      * */
-    public String deleteTempRoom(String inviteCode, PlayerDto player) {
+    public String deleteTempRoom(String inviteCode, int masterUserId) {
 
-        // 유저가 방장인지 정보 조회하기
-        int masterId = Integer.parseInt(getTempRoomSettingValue(inviteCode, "masterId")); // hash 조회
-        if (isMasterInTempRoom(masterId, player.getUserId())) {
-            deleteTempRoomByMaster(inviteCode);
-            return inviteCode + "대기방을 삭제 완료했습니다.";
+        // 방장의 권한이 아닐경우 (플레이어일 경우)
+        if (!isMasterInTempRoom(inviteCode, masterUserId)) {
+            throw new NotTempRoomMasterException("플레이어는 대기방을 삭제할 수 없습니다.");
         }
+        // 방장 일 경우 - 삭제 권한 존재
+        deleteTempRoomByMaster(inviteCode);
+        return inviteCode + " 대기방 삭제를 완료했습니다";
+    }
 
+    /**
+     * 플레이어는 대기방을 퇴장한다.
+     *
+     *
+     * @param inviteCode 초대코드
+     * @param userId 유저 ID
+     * */
+    public String exitTempRoom(String inviteCode, int userId) {
+
+        // 유저가 초대코드의 방장 권한이 있다면 퇴장할 수 없다.
+        if (isMasterInTempRoom(inviteCode, userId)) {
+            throw new NotTempRoomMasterException("방장은 대기방에서 퇴장할 수 없습니다.");
+        }
         // 유저가 방장이 아닌 경우 방을 나간다.
-        deleteTempRoomByPlayer(inviteCode, player.getUserId());
-        return inviteCode + "대기방에서 퇴장하셨습니다.";
+        deleteTempRoomByPlayer(inviteCode, userId);
+        return "퇴장이 완료되었습니다.";
     }
 
     // ================    비즈니스 Layer   ==================
@@ -108,11 +124,13 @@ public class TempRoomRedisService {
     /**
      * 방장인지 플레이어인지 검증한다.
      *
-     * @param masterId 대기방의 방장의 유저 아이디
-     * @param playerId 플레이어의 유저 아이디
+     * @param inviteCode 초대코드
+     * @param playerUserId 플레이어의 유저 아이디
      * */
-    public boolean isMasterInTempRoom(int masterId, int playerId) {
-        if (masterId == playerId) {
+    public boolean isMasterInTempRoom(String inviteCode, int playerUserId) {
+        // 초대코드에 대한 방장 권한 조회
+        int masterId = Integer.parseInt(getTempRoomSettingValue(inviteCode, "masterId")); // hash 조회
+        if (masterId == playerUserId) {
             return true;
         }
         return false;
@@ -228,7 +246,7 @@ public class TempRoomRedisService {
     public void deleteTempRoomByMaster(String inviteCode) {
 
         // 방 존재 여부 확인
-        boolean exists = redisTemplate.hasKey("roomSetting:" + inviteCode);
+        boolean exists = Boolean.TRUE.equals(redisTemplate.hasKey("roomSetting:" + inviteCode));
         if (!exists) {
             throw new IllegalArgumentException("유효하지 않은 초대코드 입니다.");
         }
