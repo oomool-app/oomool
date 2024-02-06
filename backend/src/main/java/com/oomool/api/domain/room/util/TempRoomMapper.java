@@ -54,6 +54,15 @@ public class TempRoomMapper {
     }
 
     /**
+     * Redis 대기방에 있는 플레이어를 조회한다.
+     *
+     * @param playerJson
+     * */
+    public PlayerDto objectToPlayerDto(Object playerJson) throws JsonProcessingException {
+        return objectMapper.readValue((String)playerJson, PlayerDto.class);
+    }
+
+    /**
      * Redis에 SettingRoomDto를 Map<String, Object> 형식으로 저장하기 위한 mapper
      *
      * @param settingOptionDto 방 설정 Dto

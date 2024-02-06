@@ -1,6 +1,7 @@
 package com.oomool.api.domain.room.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -8,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,8 @@ public class TempRoomRedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final TempRoomMapper tempRoomMapper;
+
+    // ================    Service Layer   ==================
 
     /**
      * 방장은 대기방을 Redis에 생성한다.
@@ -82,6 +84,43 @@ public class TempRoomRedisService {
     }
 
     /**
+     * 플레이어는 대기방을 퇴장 or 방장은 대기방을 삭제한다.
+     *
+     * @param inviteCode 대기방 초대코드
+     * @param player 플레이어 정보
+     * */
+    public String deleteTempRoom(String inviteCode, PlayerDto player) {
+
+        // 유저가 방장인지 정보 조회하기
+        int masterId = Integer.parseInt(getTempRoomSettingValue(inviteCode, "masterId")); // hash 조회
+        if (isMasterInTempRoom(masterId, player.getUserId())) {
+            deleteTempRoomByMaster(inviteCode);
+            return inviteCode + "대기방을 삭제 완료했습니다.";
+        }
+
+        // 유저가 방장이 아닌 경우 방을 나간다.
+        deleteTempRoomByPlayer(inviteCode, player.getUserId());
+        return inviteCode + "대기방에서 퇴장하셨습니다.";
+    }
+
+    // ================    비즈니스 Layer   ==================
+
+    /**
+     * 방장인지 플레이어인지 검증한다.
+     *
+     * @param masterId 대기방의 방장의 유저 아이디
+     * @param playerId 플레이어의 유저 아이디
+     * */
+    public boolean isMasterInTempRoom(int masterId, int playerId) {
+        if (masterId == playerId) {
+            return true;
+        }
+        return false;
+    }
+
+    // ================      Redis CRUD     ==================
+
+    /**
      * Redis에 대기방 설정 정보를 저장 한다. (일시적 저장)
      *
      * @param inviteCode 대기방 초대코드
@@ -109,8 +148,8 @@ public class TempRoomRedisService {
     public void saveTempRoomPlayer(String inviteCode, PlayerDto playerDto) {
         // 유저 기준 참여하고 있는 대기방 현황이 필요
         saveUserTempRoom(inviteCode, playerDto.getUserId());
-        ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        listOps.rightPush("roomPlayers:" + inviteCode, tempRoomMapper.playerDtoToString(playerDto));
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        hashOps.put("roomPlayers:" + inviteCode, playerDto.getUserId(), tempRoomMapper.playerDtoToString(playerDto));
     }
 
     /**
@@ -140,10 +179,9 @@ public class TempRoomRedisService {
      *
      * @param inviteCode 초대코드
      * */
-    public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
-        ListOperations<String, Object> listOps = redisTemplate.opsForList();
-        List<Object> playerJsonList = listOps.range("roomPlayers:" + inviteCode, 0, -1);
-        return tempRoomMapper.objectToPlayerDtoList(playerJsonList);
+    public Map<Integer, Object> getTempRoomPlayerMap(String inviteCode) {
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        return hashOps.entries("roomPlayers:" + inviteCode);
     }
 
     /**
@@ -172,8 +210,7 @@ public class TempRoomRedisService {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
         Set<Object> inviteCodeSet = setOps.members("userInviteTemp:" + userId);
 
-        assert inviteCodeSet != null;
-        if (inviteCodeSet.isEmpty()) {
+        if (inviteCodeSet == null || inviteCodeSet.isEmpty()) {
             throw new NoSuchElementException(userId + "에 해당하는 대기방이 존재하지 않습니다."); // 추후 수정해야함
         }
 
@@ -181,6 +218,51 @@ public class TempRoomRedisService {
             .filter(object -> object instanceof String)
             .map(object -> (String)object)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Redis에 invitecode를 삭제한다. - 대기방 전체 삭제
+     *
+     * @param inviteCode inviteCode
+     * */
+    public void deleteTempRoomByMaster(String inviteCode) {
+
+        // 방 존재 여부 확인
+        boolean exists = redisTemplate.hasKey("roomSetting:" + inviteCode);
+        if (!exists) {
+            throw new IllegalArgumentException("유효하지 않은 초대코드 입니다.");
+        }
+
+        // redis에 저장한 player InviteCode 관리하는 set
+        for (Integer userId : getTempRoomPlayerMap(inviteCode).keySet()) {
+            deleteUserTempRoom(inviteCode, userId); // userInviteTemp에서 관리하는 inviteKey 삭제하기
+        }
+        redisTemplate.delete("roomSetting:" + inviteCode);
+        redisTemplate.delete("roomPlayers:" + inviteCode);
+    }
+
+    /**
+     * Redis에 inviteCode에 해당하는 Player가 나간다. - 대기방 퇴장
+     *
+     * @param inviteCode 초대코드
+     * @param userId 플레이어에 참여하고 있는 UserId
+     * */
+    public void deleteTempRoomByPlayer(String inviteCode, int userId) {
+
+        // 1. 유저 기준 - 참여 대기방 삭제
+        deleteUserTempRoom(inviteCode, userId);
+        // 2. 방 기준 - 참여 플레이어 삭제
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        hashOps.delete("roomPlayers:" + inviteCode, userId);
+    }
+
+    /**
+     * 유저 기준으로 참여하고 있는 InviteCode를 관리하는 Set을 삭제한다.
+     * saveUserTempRoom
+     * */
+    public void deleteUserTempRoom(String inviteCode, int userId) {
+        SetOperations<String, Object> setOps = redisTemplate.opsForSet();
+        setOps.remove("userInviteTemp:" + userId, inviteCode);
     }
 
     // ================    조회 한 값 변환 (Convert)   ==================
@@ -192,6 +274,19 @@ public class TempRoomRedisService {
      * */
     public SettingOptionDto getSettingOptionDtoByInviteCode(String inviteCode) {
         return tempRoomMapper.mapToSettingOptionDto(getTempRoomSetting(inviteCode));
+    }
+
+    /**
+     * 조회한 HashMap을 List PlayerDto 로 변환한다.
+     *
+     * @param inviteCode 초대코드
+     * */
+    public List<PlayerDto> getTempRoomPlayerList(String inviteCode) throws JsonProcessingException {
+        List<PlayerDto> playerDtoList = new ArrayList<>();
+        for (Map.Entry<Integer, Object> playerJson : getTempRoomPlayerMap(inviteCode).entrySet()) {
+            playerDtoList.add(tempRoomMapper.objectToPlayerDto(playerJson.getValue()));
+        }
+        return playerDtoList;
     }
 
 }
