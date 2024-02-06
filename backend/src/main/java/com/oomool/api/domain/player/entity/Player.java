@@ -22,11 +22,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Data
+@Getter
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class Player {
     private PlayerType playerType; // [master, player]
 
     @Column(nullable = true)
-    private boolean guess;
+    private Boolean guess = null;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "avatar_id")
@@ -68,5 +68,9 @@ public class Player {
 
     @OneToMany(mappedBy = "author")
     private List<Feed> feeds = new ArrayList<>(); // 양방향 연관관계
+
+    public void updateGuess(boolean guess) {
+        this.guess = guess;
+    }
 
 }

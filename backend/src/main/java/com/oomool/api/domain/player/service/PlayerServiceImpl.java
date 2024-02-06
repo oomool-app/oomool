@@ -1,12 +1,12 @@
 package com.oomool.api.domain.player.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.oomool.api.domain.player.dto.ManittiDto;
-import com.oomool.api.domain.player.dto.ManittiPairDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.player.repository.PlayerRepository;
@@ -35,17 +35,40 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto getPlayerByUserId(String roomUid, int userId) {
-        return playerMapper.entityToPlayerDto(playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, userId));
+        return playerMapper.entityToPlayerDto(playerRepository.findByRoomRoomUidAndUserId(roomUid, userId));
     }
 
     @Override
-    public ManittiPairDto getManittiPlayerProfile(String roomUid, int userId) {
-        Player player = playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, userId);                 // "나"의 프로필 조회
-        Player manitti = playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, player.getManittiId()); // "마니띠"의 프로필 조회
-        return ManittiPairDto.builder()
-            .player(playerMapper.entityToPlayerDto(player))
-            .manitti(playerMapper.entityToPlayerDto(manitti))
-            .build();
+    public Map<String, Object> getManittiPlayerProfile(String roomUid, int userId) {
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);                 // "나"의 프로필 조회
+        Player manitti = playerRepository.findByRoomRoomUidAndUserId(roomUid, player.getManittiId()); // "마니띠"의 프로필 조회
+        return Map.of(
+            "player", playerMapper.entityToPlayerDto(player),
+            "manitti", playerMapper.entityToPlayerDto(manitti)
+        );
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> guessMyManittoPlayer(String roomUid, int userId, PlayerDto guessMyManitto) {
+
+        // 내가 추측하는 마니또 플레이어
+        Player myManitto = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
+
+        // 내가 추측하는 마니또의 UserId와 내 실제 마니또의 UserId 값이 일치한지 확인한다.
+        boolean guess = false;
+        if (guessMyManitto.getUserId() == myManitto.getUser().getId()) {
+            guess = true; // 일치하면 "참"
+        }
+
+        // 내가 추측한 마니또를 맞췄는지 여부를 DB에 넣기
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);
+        player.updateGuess(guess);
+
+        return Map.of(
+            "guess", guess,
+            "manitto", playerMapper.entityToPlayerDto(myManitto)
+        );
     }
 
     /**
