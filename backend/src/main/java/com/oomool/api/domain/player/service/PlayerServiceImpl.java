@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.oomool.api.domain.player.dto.ManittiDto;
-import com.oomool.api.domain.player.dto.ManittiPairDto;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.player.repository.PlayerRepository;
@@ -36,17 +35,17 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto getPlayerByUserId(String roomUid, int userId) {
-        return playerMapper.entityToPlayerDto(playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, userId));
+        return playerMapper.entityToPlayerDto(playerRepository.findByRoomRoomUidAndUserId(roomUid, userId));
     }
 
     @Override
-    public ManittiPairDto getManittiPlayerProfile(String roomUid, int userId) {
-        Player player = playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, userId);                 // "나"의 프로필 조회
-        Player manitti = playerRepository.findByRoom_RoomUidAndUser_Id(roomUid, player.getManittiId()); // "마니띠"의 프로필 조회
-        return ManittiPairDto.builder()
-            .player(playerMapper.entityToPlayerDto(player))
-            .manitti(playerMapper.entityToPlayerDto(manitti))
-            .build();
+    public Map<String, Object> getManittiPlayerProfile(String roomUid, int userId) {
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);                 // "나"의 프로필 조회
+        Player manitti = playerRepository.findByRoomRoomUidAndUserId(roomUid, player.getManittiId()); // "마니띠"의 프로필 조회
+        return Map.of(
+            "player", playerMapper.entityToPlayerDto(player),
+            "manitti", playerMapper.entityToPlayerDto(manitti)
+        );
     }
 
     @Override
