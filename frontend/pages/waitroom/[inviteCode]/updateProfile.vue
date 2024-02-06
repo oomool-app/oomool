@@ -47,7 +47,9 @@
 </template>
 
 <script setup lang="ts">
+// import { useRouter } from 'vue-router';
 const route = useRoute();
+// const router = useRouter();
 
 const colors: string[] = [
   '#FFD8CC',
@@ -105,6 +107,31 @@ function getRandomAvatar(): string {
 
 // 링크에서 갖고 있는 초대코드 받아와서 다시 라우터링크에서 사용
 const inviteCode = route.params.inviteCode;
+
+// const background = ref("");
+// const avatar = ref("");
+// const username = ref("");
+// const nickname = ref("");
+
+// const updateProfile(): void => {
+//   const profile = {
+//     background: randomColor.value,
+//     avatar: randomAvatar.value,
+//     nickname: username.value,
+//   };
+
+//   if(username.value.length > 10){
+//     alert("닉네임은 10자를 넘길 수 없습니다.");
+//     return;
+//   }
+
+//   if(username.value === ""){
+//     alert("닉네임을 입력해주세요");
+//     return;
+//   }
+
+//   router.push({ path: `/waitroom/${inviteCode}` });
+// }
 </script>
 <style scoped>
 .box {
