@@ -36,7 +36,7 @@
       </div>
       <div class="flex p-2">
         <div
-          class="flex justify-center bg-background rounded-xl w-1/4 font-bold text-primary m-1"
+          class="flex items-center justify-center bg-background rounded-xl w-auto font-bold text-primary m-1 p-2"
         >
           <div>
             <UsersIcon></UsersIcon>
@@ -47,18 +47,18 @@
             }}
           </div>
         </div>
-        <div class="bg-amber-400 rounded-xl m-1 w-2/6">
-          <div class="flex justify-center items-center text-primary font-bold">
-            <div
-              v-if="
-                getWaitRoomData?.data.players.length !==
-                getWaitRoomData?.data.setting.max_member
-              "
-            >
-              대기 중
-            </div>
-            <div v-else>시작 대기</div>
+        <div
+          class="flex justify-center items-center text-primary font-bold bg-amber-400 rounded-xl m-1 p-0.5 w-auto"
+        >
+          <div
+            v-if="
+              getWaitRoomData?.data.players.length !==
+              getWaitRoomData?.data.setting.max_member
+            "
+          >
+            대기 중
           </div>
+          <div v-else>시작 대기</div>
         </div>
       </div>
     </div>
@@ -144,7 +144,9 @@ const getData = async (): Promise<void> => {
   const input = route.params.inviteCode;
   if (typeof input === 'string') {
     getWaitRoomData.value = await $api.make.getWaitRoom(input);
-    console.log(getWaitRoomData);
+    if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
+      auth.value = true;
+    }
   }
 };
 
