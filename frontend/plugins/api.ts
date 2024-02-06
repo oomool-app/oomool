@@ -6,7 +6,7 @@ import RoomsModule from '~/repository/modules/rooms';
 import PlayersModule from '~/repository/modules/players';
 import PushNotificationModule from '~/repository/modules/pushNotifications';
 import FeedsModule from '~/repository/modules/feeds';
-
+import MakeModule from '~/repository/modules/waitroom';
 
 /** ApiInstance interface provides us with good typing */
 interface IApiInstance {
@@ -15,6 +15,8 @@ interface IApiInstance {
   rooms: RoomsModule;
   players: PlayersModule;
   feeds: FeedsModule;
+  pushNotifications: PushNotificationModule;
+  make: MakeModule;
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -36,6 +38,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     rooms: new RoomsModule(apiFetcher),
     pushNotifications: new PushNotificationModule(apiFetcher),
     feeds: new FeedsModule(apiFetcher),
+    make: new MakeModule(apiFetcher),
   };
 
   return {
