@@ -15,3 +15,14 @@ export interface IGetRoomDetailResponse {
   };
   status: string;
 }
+
+export interface IGetRoomUidResponse {
+  data: {
+    roomUid: string;
+  };
+  status: string;
+}
+
+export interface ICreateRoomUidInput {
+  invite_code: string;
+}
