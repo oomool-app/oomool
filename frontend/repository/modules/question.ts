@@ -1,8 +1,6 @@
 import HttpFactory from '../factory';
 import {
-  type IGetAllQuestionsByRoomUidInput,
   type IGetAllQuestionsByRoomUidResponse,
-  type IGetDailyQuestionInput,
   type IGetDailyQuestionResponse,
   type IRegistQuestionToRoomInput,
   type IRegistQuestionToRoomResponse,
@@ -12,12 +10,10 @@ class QuestionModule extends HttpFactory {
   private readonly RESOURCE = '/questions';
 
   // 데일리 질문 조회
-  async getDailyQuestion(
-    roomUid: IGetDailyQuestionInput,
-  ): Promise<IGetDailyQuestionResponse> {
+  async getDailyQuestion(roomUid: string): Promise<IGetDailyQuestionResponse> {
     return await this.getCall<IGetDailyQuestionResponse>(
       'GET',
-      `${this.RESOURCE}/${roomUid.roomUid}/daily`,
+      `${this.RESOURCE}/${roomUid}/daily`,
     );
   }
 
@@ -34,11 +30,11 @@ class QuestionModule extends HttpFactory {
 
   // 문답방 전체 질문 조회
   async getAllQuestionsByRoomUid(
-    roomUid: IGetAllQuestionsByRoomUidInput,
+    roomUid: string,
   ): Promise<IGetAllQuestionsByRoomUidResponse> {
     return await this.getCall<IGetAllQuestionsByRoomUidResponse>(
       'GET',
-      `${this.RESOURCE}/${roomUid.roomUid}`,
+      `${this.RESOURCE}/${roomUid}`,
     );
   }
 }
