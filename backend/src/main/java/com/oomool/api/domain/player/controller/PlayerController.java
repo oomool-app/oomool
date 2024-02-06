@@ -5,10 +5,13 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.player.service.PlayerServiceImpl;
 import com.oomool.api.global.util.ResponseHandler;
 
@@ -40,6 +43,14 @@ public class PlayerController {
         return ResponseHandler.generateResponse(HttpStatus.OK,
             playerService.getManittiPlayerProfile(roomUid, userId)
         );
+    }
+
+    @Operation(summary = "나의 마니또가 누구일지 예측", description = "'나'는 나의 마니또를 추측할 수 있고, 나의 마니또의 프로필을 조회합니다.")
+    @PatchMapping("/{roomUID}/{userId}/guess")
+    public ResponseEntity<?> guessMyManitto(@PathVariable("roomUID") String roomUid,
+        @PathVariable("userId") int userId, @RequestBody PlayerDto guessMyManitto) {
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            playerService.guessMyManittoPlayer(roomUid, userId, guessMyManitto));
     }
 
 }
