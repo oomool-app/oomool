@@ -22,7 +22,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException exception) throws IOException {
-        log.info("OAuth2AuthenticationFail!! : {}", exception.getCause());
+        log.error("OAuth2AuthenticationFail!! : {}", exception.getCause());
         response.sendRedirect("http://localhost:8080/login");
     }
 }

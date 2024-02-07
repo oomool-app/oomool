@@ -2,6 +2,7 @@ package com.oomool.api.domain.auth.handler;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+
+    @Value("${frontend.redirect.uri}")
+    private String redirectUrl;
 
     /**
      * 인증이 성공했을 때 호출되는 메서드로, 실제로 어떤 동작을 할지를 결정
@@ -68,7 +72,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      * 리디렉션 대상 URL을 결정하는 메서드
      */
     private String makeRedirectUrl(String token) {
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/oauth2/redirect")
+        return UriComponentsBuilder.fromUriString(redirectUrl)
             .queryParam("token", token)
             .build()
             .toUriString();

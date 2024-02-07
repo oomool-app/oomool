@@ -25,4 +25,5 @@ public interface OAuth2UserInfo {
 
     // 프로필 이미지 url로 확장성을 위해 일단 생성.
     String getProfileImageUrl();
+
 }

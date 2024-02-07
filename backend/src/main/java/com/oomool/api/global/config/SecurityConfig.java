@@ -39,7 +39,6 @@ public class SecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
                 .requestMatchers(("/oauth2/redirect")).permitAll() // redirect url
-                .requestMatchers(("/oauth2/access-token")).hasRole("USER")
                 .requestMatchers(("/swagger-ui/**")).permitAll() // swagger 접근 all
                 .requestMatchers(("/v3/**")).permitAll()
                 .requestMatchers(("/**")).permitAll()
