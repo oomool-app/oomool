@@ -1,73 +1,72 @@
 <template>
-  <div class="box flex flex-col h-screen bg-primary">
-    <div class="flex flex-col p-6">
-      <div class="flex justify-between">
-        <BackButton color="white"></BackButton>
-        <Popover>
-          <PopoverTrigger class="text-white">
-            <SettingButton color="white"></SettingButton>
-          </PopoverTrigger>
-          <PopoverContent>
-            <ul>
-              <li>
-                <NuxtLink :to="`${route.params.inviteCode}/updateRoom`"
-                  >방설정하기</NuxtLink
-                >
-              </li>
-              <li>
-                <NuxtLink to="/">퇴장하기</NuxtLink>
-              </li>
-            </ul>
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div class="flex">
-        <div class="text-white">
-          {{ getWaitRoomData?.data.setting.start_date }}
+  <div class="box grid grid-rows-[4rem,3rem,3rem,3.5rem] bg-primary h-screen">
+    <div class="flex justify-between items-center px-6 pt-6">
+      <BackButton color="white"></BackButton>
+      <Popover>
+        <PopoverTrigger class="text-white">
+          <SettingButton color="white"></SettingButton>
+        </PopoverTrigger>
+        <PopoverContent>
+          <ul>
+            <li>
+              <NuxtLink :to="`${route.params.inviteCode}/updateRoom`"
+                >방설정하기</NuxtLink
+              >
+            </li>
+            <li>
+              <NuxtLink to="/">퇴장하기</NuxtLink>
+            </li>
+          </ul>
+        </PopoverContent>
+      </Popover>
+    </div>
+    <div class="flex items-center text-sm text-white px-6">
+      {{ getWaitRoomData?.data.setting.start_date }} ~
+      {{ getWaitRoomData?.data.setting.end_date }}
+    </div>
+    <div class="flex items-center text-white px-6">
+      <FeedHeader
+        :header-name="getWaitRoomData?.data.setting.title"
+      ></FeedHeader>
+    </div>
+    <div class="grid grid-cols-[5rem,4.5rem] gap-3 text-sm px-6 my-4">
+      <div
+        class="flex justify-center items-center bg-background rounded-xl font-bold text-primary"
+      >
+        <UsersIcon></UsersIcon>
+        <div>
+          &nbsp;{{ getWaitRoomData?.data.players.length }} /
+          {{ getWaitRoomData?.data.setting.max_member }}
         </div>
-        <div class="text-white">
-          {{ getWaitRoomData?.data.setting.end_date }}
-        </div>
       </div>
-      <div class="text-white">
-        <FeedHeader
-          :header-name="getWaitRoomData?.data.setting.title"
-        ></FeedHeader>
-      </div>
-      <div class="flex p-2">
+      <div
+        class="flex justify-center items-center text-primary font-bold bg-amber-400 rounded-xl"
+      >
         <div
-          class="flex items-center justify-center bg-background rounded-xl w-auto font-bold text-primary m-1 p-2"
+          v-if="
+            getWaitRoomData?.data.players.length !==
+            getWaitRoomData?.data.setting.max_member
+          "
         >
-          <div>
-            <UsersIcon></UsersIcon>
-          </div>
-          <div>
-            {{ getWaitRoomData?.data.players.length }}/{{
-              getWaitRoomData?.data.setting.max_member
-            }}
-          </div>
+          대기 중
         </div>
-        <div
-          class="flex justify-center items-center text-primary font-bold bg-amber-400 rounded-xl m-1 p-0.5 w-auto"
-        >
-          <div
-            v-if="
-              getWaitRoomData?.data.players.length !==
-              getWaitRoomData?.data.setting.max_member
-            "
-          >
-            대기 중
-          </div>
-          <div v-else>시작 대기</div>
-        </div>
+        <div v-else>시작 대기</div>
       </div>
     </div>
-    <div class="flex flex-col grow bg-background rounded-t-md">
-      <ScrollArea class="h-80">
-        <div v-for="user in getWaitRoomData?.data.players" :key="user.user_id">
-          <WaitingUser :user="user"></WaitingUser>
+    <div class="grid grid-rows-[auto,3rem] bg-background rounded-t-xl p-6">
+      <ScrollArea class="pt-1 pb-3">
+        <div
+          v-for="user in getWaitRoomData?.data.players"
+          :key="user.user_id"
+          class="grid grid-cols-[auto,3rem] border-b-2"
+        >
+          <WaitingUser
+            :user="user"
+            :master="getWaitRoomData?.data.master_id"
+          ></WaitingUser>
+          <div class="flex justify-center items-center">x</div>
         </div>
-        <Dialog>
+        <Dialog class="flex justify-center items-center text-lg py-2">
           <DialogTrigger>
             <div
               v-if="
@@ -79,40 +78,52 @@
             </div>
           </DialogTrigger>
           <DialogContent
-            class="border-none bg-white rounded-t-xl relative h-56 bottom-28"
+            class="border-none bg-white rounded-xl relative h-56 bottom-28"
           >
-            <DialogHeader>
-              <DialogTitle>방 초대하기</DialogTitle>
-              <DialogDescription>
-                <div>{{ getWaitRoomData?.data.invite_code }}</div>
-              </DialogDescription>
-            </DialogHeader>
-
-            <DialogFooter>
-              <div class="flex">
-                <Button> <ShareIcon></ShareIcon>공유하기 </Button>
-                <Button class="bg-neutral-600 hover:bg-neutral-500">
-                  <CopyIcon></CopyIcon>복사하기
-                </Button>
+            <div class="grid grid-rows-[2.5rem,4rem,auto]">
+              <div class="flex justify-center items-center text-2xl font-bold">
+                방 초대하기
               </div>
-            </DialogFooter>
+              <div
+                class="flex justify-center items-center text-2xl font-bold text-primary"
+              >
+                {{ getWaitRoomData?.data.invite_code }}
+              </div>
+              <div class="flex justify-around items-center">
+                <div>
+                  <Button> <ShareIcon></ShareIcon>공유하기 </Button>
+                </div>
+                <div>
+                  <Button class="bg-neutral-600 hover:bg-neutral-500">
+                    <CopyIcon></CopyIcon>복사하기
+                  </Button>
+                </div>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </ScrollArea>
-      <div
-        v-if="
-          getWaitRoomData?.data.players.length ===
-            getWaitRoomData?.data.setting.max_member && auth
-        "
-        class="flex justify-center"
-      >
-        <Button class="w-1/2" @click="createRoom"> 시작 </Button>
-      </div>
-      <div v-else class="flex justify-center">
-        <Button class="w-1/2" disabled>
-          <Loader2 class="w-4 h-4 animate-spin" />
-          시작 대기중
-        </Button>
+      <div class="w-full h-full rounded-full">
+        <div
+          v-if="
+            getWaitRoomData?.data.players.length ===
+              getWaitRoomData?.data.setting.max_member && auth
+          "
+          class="h-full w-full rounded-full text-lg"
+        >
+          <Button
+            class="h-full w-full rounded-full text-lg"
+            @click="createRoom"
+          >
+            시작
+          </Button>
+        </div>
+        <div v-else class="h-full">
+          <Button class="h-full w-full rounded-full text-lg" disabled>
+            <Loader2 class="animate-spin" />
+            시작 대기중
+          </Button>
+        </div>
       </div>
     </div>
   </div>
@@ -172,21 +183,8 @@ const createRoom = async (): Promise<void> => {
     }
     await router.push('/');
   } catch (error) {
-    console.error(error);
+    alert('잘못된 접근');
   }
-  // const roomData = await $fetch('https://api-dev.oomool.site/rooms', {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     invite_code: inviteCode,
-  //   }),
-  // });
-  // const roomId = ref();
-  // if (roomData !== null && roomData !== undefined) {
-  //   roomId.value = roomData.data.roomUid;
-  // }
-  // await $fetch(`https://api-dev.oomool.site/questions/${roomId.value}`, {
-  //   method: 'POST',
-  // });
 };
 </script>
 <style scoped>
