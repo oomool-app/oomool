@@ -100,11 +100,15 @@ const getTempRoomList = async (): Promise<void> => {
   }
 };
 
-const message = ref<string>('');
+const isSupported = (): boolean => {
+  return 'Notification' in window && 'serviceWorker' in navigator;
+};
 
 onMounted(async () => {
-  if (Notification.permission === 'default') {
-    await router.push({ path: '/notification' });
+  if (isSupported()) {
+    if (Notification.permission === 'default') {
+      await router.push({ path: '/notification' });
+    }
   }
   await getRoomList();
   await getTempRoomList();
