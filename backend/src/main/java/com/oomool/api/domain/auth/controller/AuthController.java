@@ -34,7 +34,7 @@ public class AuthController {
     /**
      * 로그아웃 시 리프레시 토큰 삭제
      */
-    @PostMapping("token/logout")
+    @PostMapping("/token/logout")
     public ResponseEntity<StatusResponseDto> logout(@RequestHeader("Authorization") final String accessToken) {
 
         // 엑세스 토큰으로 현재 Redis 정보 삭제

@@ -22,12 +22,12 @@ public class OAuth2Attribute {
     // 서비스에 따라 OAuth2Attribute 객체를 생성하는 메서드
     public static OAuth2Attribute of(String provider, String attributeKey,
         Map<String, Object> attributes) {
-        switch (provider) {
-            case "kakao":
-                return ofKakao(provider, "email", attributes);
-            default:
-                throw new RuntimeException();
+
+        if (provider.equals("kakao")) {
+            return ofKakao(provider, "email", attributes);
         }
+
+        throw new RuntimeException();
     }
 
     /*

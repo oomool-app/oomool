@@ -2,6 +2,9 @@ package com.oomool.api.domain.auth.dto;
 
 import java.util.Map;
 
+import lombok.Getter;
+
+@Getter
 public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 
     private final Map<String, Object> attributes;
@@ -11,7 +14,7 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
     private final String name;
     private final String firstName;
     private final String lastName;
-    private final String nickName;
+    private final String nickname;
     private final String profileImageUrl;
 
     public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
@@ -27,61 +30,16 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
         this.name = null;
         this.firstName = null;
         this.lastName = null;
-        this.nickName = (String)kakaoProfile.get("nickname");
+        this.nickname = (String)kakaoProfile.get("nickname");
 
         this.profileImageUrl = null;
 
         this.attributes.put("id", id);
-        this.attributes.put("email", this.email);
+        this.attributes.put("email", email);
     }
 
     @Override
     public OAuth2Provider getProvider() {
         return OAuth2Provider.KAKAO;
-    }
-
-    @Override
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getFirstName() {
-        return firstName;
-    }
-
-    @Override
-    public String getLastName() {
-        return lastName;
-    }
-
-    @Override
-    public String getNickname() {
-        return nickName;
-    }
-
-    @Override
-    public String getProfileImageUrl() {
-        return profileImageUrl;
     }
 }
