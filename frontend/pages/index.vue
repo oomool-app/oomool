@@ -101,7 +101,6 @@
 </template>
 
 <script setup lang="ts">
-import { FETCH_FCM_TOKEN } from '@/api/fcmToken';
 import { useUserStore } from '~/stores/userStore';
 import { useRouter } from 'vue-router';
 import {
@@ -114,7 +113,6 @@ useBodyColor('#61339B');
 const userStore = useUserStore();
 const router = useRouter();
 const { $api } = useNuxtApp();
-const { token, fetchToken } = useFCM();
 
 const rooms = ref();
 const temprooms = ref();
@@ -179,11 +177,11 @@ const selected2: Ref<boolean> = ref(false);
 const selected3: Ref<boolean> = ref(false);
 
 const select1 = async (): Promise<void> => {
+  await getRoomList();
+  rooms.value = inProgressRooms(rooms.value);
   selected1.value = true;
   selected2.value = false;
   selected3.value = false;
-  await getRoomList();
-  rooms.value = inProgressRooms(rooms.value);
 };
 
 const select2 = async (): Promise<void> => {
@@ -193,11 +191,11 @@ const select2 = async (): Promise<void> => {
 };
 
 const select3 = async (): Promise<void> => {
+  await getRoomList();
+  rooms.value = notProgressRooms(rooms.value);
   selected1.value = false;
   selected2.value = false;
   selected3.value = true;
-  await getRoomList();
-  rooms.value = notProgressRooms(rooms.value);
 };
 
 const isSupported = (): boolean => {

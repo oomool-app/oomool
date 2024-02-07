@@ -39,36 +39,26 @@
 
       <!--시작대기-->
       <div v-else-if="!startDateIsBeforeToday">
-        <Popover>
-          <PopoverTrigger as-child>
-            <CardHeader class="px-3.5 pt-3.5 pb-4">
-              <div
-                class="flex bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
-              >
-                아직 준비 중이에요!
-              </div>
-            </CardHeader>
-            <CardContent class="px-3 pt-0">
-              <div class="text-white text-xl not-italic h-3">
-                {{ props.rooms?.setting?.title }}
-              </div>
-            </CardContent>
-          </PopoverTrigger>
-          <PopoverContent>
-            게임이 시작되지 않았습니다.
+        <CardHeader class="px-3.5 pt-3.5 pb-4">
+          <div
+            class="flex flex-col bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
+          >
+            아직 게임이 시작되지 않았어요
             <div v-if="dayBeforeStart >= 1">
-              {{ dayBeforeStart }}일 후에 시작됩니다.
+              <h1 class="text-primary pr-2">{{ dayBeforeStart }}</h1>
+              일 후에 시작됩니다.
             </div>
-            <div v-else-if="hourBeforeStart >= 1">
-              {{ hourBeforeStart }}시간 후에 시작됩니다.
+            <div v-else class="flex flex-row">
+              <h1 class="text-primary pr-2">내일</h1>
+              게임이 시작됩니다!
             </div>
-            <div v-else>{{ minBeforeStart }}분 후에 시작됩니다.</div>
-            <Button
-              class="bg-[#F1D302] text-black w-14 h-6 text-center align-middle text-xs rounded-full absolute right-2"
-              >D-7</Button
-            >
-          </PopoverContent>
-        </Popover>
+          </div>
+        </CardHeader>
+        <CardContent class="px-3 pt-0">
+          <div class="text-white text-xl not-italic h-3">
+            {{ props.rooms?.setting?.title }}
+          </div>
+        </CardContent>
       </div>
 
       <!--종료됨-->
@@ -117,22 +107,47 @@ const props = defineProps<{
   rooms: Room;
 }>();
 
-const today: Date = new Date();
+// 변수들을 저장할 ref 변수들 선언
+const startDateIsBeforeToday = ref(false);
+const endDateIsAfterToday = ref(false);
+const dayBeforeStart = ref(0);
+const dayBeforeEnd = ref(0);
 
-const startDateIsBeforeToday =
-  new Date(props.rooms.setting.start_date as string) < today;
-const endDateIsAfterToday =
-  new Date(props.rooms.setting.end_date as string) > today;
-const timeBeforeStart =
-  new Date(props.rooms.setting.start_date as string).getTime() -
-  today.getTime();
-const dayBeforeStart = Math.floor(timeBeforeStart / (1000 * 60 * 60 * 24));
-const minBeforeStart = Math.floor(timeBeforeStart / 1000 / 60);
-const hourBeforeStart = Math.floor(timeBeforeStart / (1000 * 60 * 60));
+const getTime = (): void => {
+  // 현재 시각 불러오기
+  const today: Date = new Date();
 
-const timeBeforeEnd =
-  new Date(props.rooms.setting.end_date as string).getTime() - today.getTime();
-const dayBeforeEnd = Math.floor(timeBeforeEnd / (1000 * 60 * 60 * 24));
-const minBeforeEnd = Math.floor(timeBeforeEnd / 1000 / 60);
-const hourBeforeEnd = Math.floor(timeBeforeEnd / (1000 * 60 * 60));
+  // 시작일
+  const startDate = new Date(props.rooms.setting.start_date as string);
+
+  // 종료일
+  const endDate = new Date(props.rooms.setting.end_date as string);
+
+  // 기본이 9시로 설정되어 있으므로 0시로 맞춰줘야 함
+  startDate.setHours(0);
+  endDate.setHours(0);
+
+  // 게임 시작일이 지났는지
+  startDateIsBeforeToday.value = startDate < today;
+
+  // 게임 종료일이 아직 안왔는지
+  endDateIsAfterToday.value = endDate > today;
+
+  // 시작일까지 얼마나 남았는지
+  const timeBeforeStart = startDate.getTime() - today.getTime();
+
+  // 시작일까지 몇일 남았는지
+  dayBeforeStart.value = Math.floor(timeBeforeStart / (1000 * 60 * 60 * 24));
+
+  // 종료일까지 남은 시간
+  const timeBeforeEnd = endDate.getTime() - today.getTime();
+
+  // 종료까지 몇일 남았는지
+  dayBeforeEnd.value = Math.floor(timeBeforeEnd / (1000 * 60 * 60 * 24));
+};
+
+onBeforeMount(() => {
+  // 페이지가 마운트될 때 getTime 함수 실행
+  getTime();
+});
 </script>
