@@ -1,5 +1,7 @@
 package com.oomool.api.domain.notification.entity;
 
+import static jakarta.persistence.FetchType.*;
+
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.global.entity.MutableTimeEntity;
 
@@ -25,7 +27,7 @@ public class PushNotificationToken extends MutableTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
