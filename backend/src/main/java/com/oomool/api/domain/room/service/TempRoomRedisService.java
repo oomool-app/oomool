@@ -24,7 +24,9 @@ import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TempRoomRedisService {
@@ -79,8 +81,11 @@ public class TempRoomRedisService {
     public TempRoomDto getTempRoom(String inviteCode) throws JsonProcessingException {
 
         Map<String, Object> map = getTempRoomSetting(inviteCode);
-
+        log.error("inviteCode map 확인 |  createdAt :: {}  -  masterId :: {}", (String)map.get("createdAt"),
+            Integer.parseInt((String)map.get("masterId")));
+        log.error("parse check | {}", CustomDateUtil.parseDateTime((String)map.get("createdAt")));
         return TempRoomDto.builder()
+            .inviteCode(inviteCode)
             .inviteCode(inviteCode)
             .createdAt(CustomDateUtil.parseDateTime((String)map.get("createdAt")))
             .masterId(Integer.parseInt((String)map.get("masterId")))
