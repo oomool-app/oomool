@@ -31,7 +31,7 @@
           <Carousel
             :autoplay="4000"
             :pause-autoplay-on-hover="true"
-            class="mb-4 w-11/12"
+            class="mb-4 w-full"
           >
             <Slide v-for="item in questions" :key="item.sequence">
               <div class="w-3/4 carousel__item">
@@ -65,20 +65,19 @@
         </div>
       </div>
     </div>
-    <div>{{ questions }}</div>
     <div class="footer-container flex justify-center mt-8 mb-8">
       <div class="w-3/4 p-3 flex justify-between bg-purple-200 rounded-xl">
         <div class="w-full pr-2 flex flex-col">
           <div class="text-gray-400 pb-4">
-            <p class="text-sm font-bold">김성수와 아이들</p>
-            <p style="font-size: 0.65rem">2024-02-08 ~ 2024-02-16</p>
+            <p class="text-sm font-bold">{{ roomName }}</p>
+            <p style="font-size: 0.65rem">{{ startDate }} ~ {{ endDate }}</p>
           </div>
           <div class="w-full flex flex-col items-end">
             <p class="font-semibold">당신의 마니또</p>
-            <p class="text-xl font-bold">김성수</p>
+            <p class="text-xl font-bold">{{ manittoName }}</p>
           </div>
         </div>
-        <img class="w-20 h-auto" src="/img/sangwooGhost.png" alt="" />
+        <img class="w-20 h-auto" :src="manittoAvatar" alt="" />
       </div>
     </div>
   </div>
@@ -89,23 +88,54 @@ import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import { type RoomQuestionList } from '../../../repository/modules/interface/question.interface';
 const { $api } = useNuxtApp();
 const route = useRoute();
-
+const userStore = useUserStore();
+const roomUid = route.params.roomId as string;
+const roomName = ref();
+const startDate = ref();
+const endDate = ref();
 // 전체 질문 모음
 const questions = ref<RoomQuestionList[]>();
+const manittoName = ref();
+const manittoAvatar = ref();
 // 방 아이디로 전체 질문 가져오기
 const getAllQuestions = async (): Promise<void> => {
   try {
-    const roomUid = route.params.roomId as string;
     const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
     questions.value = response.data.room_question_list;
-    console.log(response);
   } catch (error) {
     console.log(error);
   }
 };
 
+// 방 정보 상세 조회
+const getRoomDetail = async (): Promise<void> => {
+  try {
+    const response = await $api.rooms.getRoomDetail(roomUid);
+    roomName.value = response.data.setting.title;
+    startDate.value = response.data.setting.start_date;
+    endDate.value = response.data.setting.end_date;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// 내 마니또 조회
+const getMyManitto = async (): Promise<void> => {
+  try {
+    const userId = userStore.getStoredUser()?.id;
+    if (userId !== null && userId !== undefined) {
+      const response = await $api.players.getMyManitto({ roomUid, userId });
+      manittoName.value = response.data.manitto.player_nickname;
+      manittoAvatar.value = response.data.manitto.player_avatar_url;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 onMounted(async () => {
   await getAllQuestions();
+  await getRoomDetail();
+  await getMyManitto();
 });
 </script>
 <style scoped>
