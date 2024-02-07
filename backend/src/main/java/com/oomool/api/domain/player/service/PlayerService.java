@@ -17,14 +17,6 @@ public interface PlayerService {
     List<PlayerDto> getPlayerDtoList(String roomUid);
 
     /**
-     * 나의 플레이어 프로필을 조회한다.
-     *
-     * @param roomUid 문답방 코드
-     * @param userId 유저 아이디
-     * */
-    PlayerDto getPlayerByUserId(String roomUid, int userId);
-
-    /**
      * User ID를 기준으로 나의 마니띠의 Player 프로필을 가져온다.
      *
      * @param roomUid 문답방 코드
@@ -33,13 +25,21 @@ public interface PlayerService {
     Map<String, Object> getManittiPlayerProfile(String roomUid, int userId);
 
     /**
-     * 문답방의 나를 "마니띠"로 갖는 마니또를 조회한다.
+     * 나의 "마니또"를 조회한다. = 나를 "마니띠"로 갖는 플레이어를 조회한다.
      *
      * @param roomUid 문답방 코드
      * @param userId 유저 아이디
-     * @param guessMyManitto 마니또라고 추측하는 사람의 프로필
      * */
-    Map<String, Object> guessMyManittoPlayer(String roomUid, int userId, PlayerDto guessMyManitto);
+    PlayerDto getManittoPlayerProfile(String roomUid, int userId);
+
+    /**
+     * 마니또의 추측 결과를 저장한다.
+     *
+     * @param roomUid 문답방 코드
+     * @param userId 유저 아이디
+     * @param guessResult 추측 여부 결과
+     * */
+    void saveGuessResult(String roomUid, int userId, boolean guessResult);
 
     /**
      * 마니띠 정보 가져오기
