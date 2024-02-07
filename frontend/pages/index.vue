@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col justify-center pl-6 pr-6 gap-3 z-0">
+      <div class="flex flex-col justify-center pl-6 pr-6 pb-10 gap-3 z-0">
         <div v-if="selected1" class="gap-3 space-y-8 pt-3">
           <div v-for="room in rooms" :key="room.title">
             <RoomCard :rooms="room"></RoomCard>
