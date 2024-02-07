@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.controller;
+package com.oomool.api.domain.auth.controller;
 
 import java.util.Optional;
 
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oomool.api.domain.user.auth.jwt.JwtService;
-import com.oomool.api.domain.user.auth.jwt.RefreshToken;
-import com.oomool.api.domain.user.auth.jwt.StatusResponseDto;
+import com.oomool.api.domain.auth.jwt.JwtService;
+import com.oomool.api.domain.auth.jwt.RefreshToken;
+import com.oomool.api.domain.auth.jwt.StatusResponseDto;
 import com.oomool.api.domain.user.dto.response.TokenResponseStatus;
 import com.oomool.api.domain.user.repository.RefreshTokenRepository;
 import com.oomool.api.domain.user.service.RefreshTokenService;

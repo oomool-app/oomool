@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.dto;
+package com.oomool.api.domain.auth.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

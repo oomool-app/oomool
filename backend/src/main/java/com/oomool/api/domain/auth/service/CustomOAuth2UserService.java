@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.service;
+package com.oomool.api.domain.auth.service;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,11 +12,11 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.oomool.api.domain.auth.dto.OAuth2Attribute;
+import com.oomool.api.domain.auth.dto.OAuth2UserInfo;
+import com.oomool.api.domain.auth.dto.OAuth2UserInfoFactory;
 import com.oomool.api.domain.auth.entity.SocialLogin;
 import com.oomool.api.domain.auth.repository.OAuthRepository;
-import com.oomool.api.domain.user.auth.dto.OAuth2Attribute;
-import com.oomool.api.domain.user.auth.dto.OAuth2UserInfo;
-import com.oomool.api.domain.user.auth.dto.OAuth2UserInfoFactory;
 import com.oomool.api.domain.user.dto.Role;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;

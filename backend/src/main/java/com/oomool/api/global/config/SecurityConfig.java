@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.config;
+package com.oomool.api.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +9,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.oomool.api.domain.user.auth.handler.OAuth2AuthenticationFailureHandler;
-import com.oomool.api.domain.user.auth.handler.OAuth2AuthenticationSuccessHandler;
-import com.oomool.api.domain.user.auth.jwt.JwtAuthorizationFilter;
-import com.oomool.api.domain.user.auth.jwt.JwtExceptionFilter;
-import com.oomool.api.domain.user.auth.service.CustomOAuth2UserService;
+import com.oomool.api.domain.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.oomool.api.domain.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.oomool.api.domain.auth.jwt.JwtAuthorizationFilter;
+import com.oomool.api.domain.auth.jwt.JwtExceptionFilter;
+import com.oomool.api.domain.auth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,13 +36,11 @@ public class SecurityConfig {
                 sessions -> sessions.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS)) // 세션 사용 x, 사용자 지정 토큰 방식 사용(jwt)
             .authorizeHttpRequests(requests -> requests
-                // .requestMatchers("/login").permitAll()
-                // .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
-                // .requestMatchers(("/oauth2/redirect")).permitAll() // redirect url
-                // .requestMatchers(("/oauth2/access-token")).hasRole("USER")
-                // .requestMatchers(("/oauth2/access-token")).permitAll()
-                // .requestMatchers(("/test/**")).permitAll()
-                .requestMatchers(("/**")).permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
+                .requestMatchers(("/oauth2/redirect")).permitAll() // redirect url
+                .requestMatchers(("/oauth2/access-token")).hasRole("USER")
+                // .requestMatchers(("/**")).permitAll()
                 .anyRequest().authenticated()) // 나머지 요청은 모두 인증이 필요
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))

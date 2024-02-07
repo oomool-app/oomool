@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.jwt;
+package com.oomool.api.domain.auth.jwt;
 
 import java.security.Key;
 import java.util.Arrays;

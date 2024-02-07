@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.oomool.api.domain.user.auth.jwt.RefreshToken;
+import com.oomool.api.domain.auth.jwt.RefreshToken;
 
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {

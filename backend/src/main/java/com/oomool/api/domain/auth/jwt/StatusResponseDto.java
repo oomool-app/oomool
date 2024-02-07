@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.jwt;
+package com.oomool.api.domain.auth.jwt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
