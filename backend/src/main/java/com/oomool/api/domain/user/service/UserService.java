@@ -44,7 +44,9 @@ public class UserService {
     }
 
     public UserDto searchUserEmail(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("해당하는 유저가 없습니다"));
+
         UserDto userDto = UserDto.builder()
             .id(user.getId())
             .email(user.getEmail())
@@ -58,7 +60,8 @@ public class UserService {
      * 유저 Email로 조회 후 id를 리턴
      * */
     public int getUserIdByEmail(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("해당하는 유저가 없습니다"));
         return user.getId();
     }
 
