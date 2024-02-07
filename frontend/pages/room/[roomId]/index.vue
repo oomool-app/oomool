@@ -1,19 +1,19 @@
 <template>
   <div id="top-container">
-    <div class="bg-[#61339b] rounded-b-2xl h-32 p-6 pb-8 drop-shadow-xl">
+    <div class="bg-[#61339b] rounded-b-2xl h-32 p-6 pb-28 drop-shadow-xl">
       <div class="flex justify-between">
         <BackButton color="white" />
+        <div
+          class="d-day border text-primary border-white bg-white h-9 w-14 rounded-3xl text-center font-bold py-1"
+        >
+          D-{{ dDay }}
+        </div>
       </div>
       <div class="flex justify-between mt-6">
         <FeedHeader
           class="text-white text-3xl w-3/4 whitespace-nowrap"
           :header-name="teamName"
         ></FeedHeader>
-        <div
-          class="d-day border text-primary border-white bg-white h-9 w-14 rounded-xl text-center font-bold py-1"
-        >
-          D-{{ dDay }}
-        </div>
       </div>
     </div>
     <div class="bottom-container p-4 pt-6">
@@ -83,7 +83,6 @@
       <div class="members-container mb-6">
         <div class="flex justify-between">
           <ContentHeader header-name="멤버 목록" />
-          <TotalButton :link="`${roomUid}/members`" text="전체보기" />
         </div>
         <div class="flex overflow-auto">
           <div v-for="member in members" :key="member.user_id">
@@ -125,15 +124,16 @@ const getDDay = async (): Promise<void> => {
     const today: any = new Date();
     if (endDate.value !== undefined) {
       const endDateObj = new Date(endDate.value);
-
+      endDateObj.setHours(0);
       const timeDiff = endDateObj.getTime() - today.getTime();
-
       const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
       dDay.value = remainingDays;
     }
   } catch (error) {
     console.log(error);
+  }
+  if (dDay.value === 0) {
+    dDay.value = 'Day';
   }
 };
 
