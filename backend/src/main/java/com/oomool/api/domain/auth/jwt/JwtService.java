@@ -168,4 +168,11 @@ public class JwtService {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(getSignInKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
 }
