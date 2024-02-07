@@ -37,7 +37,7 @@ public class PlayerController {
     }
 
     @Operation(summary = "플레이어의 마니띠 프로필 조회", description = "'나'와 나의 마니띠 프로필을 조회합니다.")
-    @GetMapping("/{roomUID}/{userId}")
+    @GetMapping("/{roomUID}/{userId}/manitti")
     public ResponseEntity<?> getPlayerManitti(@PathVariable("roomUID") String roomUid,
         @PathVariable("userId") int userId) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
@@ -45,12 +45,14 @@ public class PlayerController {
         );
     }
 
-    @Operation(summary = "나의 마니또가 누구일지 예측", description = "'나'는 나의 마니또를 추측할 수 있고, 나의 마니또의 프로필을 조회합니다.")
-    @PatchMapping("/{roomUID}/{userId}/guess")
-    public ResponseEntity<?> guessMyManitto(@PathVariable("roomUID") String roomUid,
-        @PathVariable("userId") int userId, @RequestBody PlayerDto guessMyManitto) {
+    @Operation(summary = "플레이어의 마니또 프로필 조회", description = "'나'는 나의 마니또 결과를 조회합니다.")
+    @GetMapping("/{roomUID}/{userId}/manitto")
+    public ResponseEntity<?> getMyManittoProfile(@PathVariable("roomUID") String roomUid,
+        @PathVariable("userId") int userId) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            playerService.guessMyManittoPlayer(roomUid, userId, guessMyManitto));
+            Map.of(
+                "manitto", playerService.getManittoPlayerProfile(roomUid, userId)
+            ));
     }
 
     @Operation(summary = "플레이어가 예측한 결과(성공, 실패) 저장", description = "나는 마니또를 예측하고 그 결과를 저장합니다.")

@@ -33,7 +33,15 @@ public interface PlayerService {
     Map<String, Object> getManittiPlayerProfile(String roomUid, int userId);
 
     /**
-     * 문답방의 나를 "마니띠"로 갖는 마니또를 조회한다.
+     * 나의 "마니또"를 조회한다. = 나를 "마니띠"로 갖는 플레이어를 조회한다.
+     *
+     * @param roomUid 문답방 코드
+     * @param userId 유저 아이디
+     * */
+    PlayerDto getManittoPlayerProfile(String roomUid, int userId);
+
+    /**
+     * 마니또의 추측 결과를 저장한다.
      *
      * @param roomUid 문답방 코드
      * @param userId 유저 아이디
