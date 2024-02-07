@@ -35,7 +35,7 @@ public class RedisService {
      * @param prefix REDIS KEY
      * @param map MAP<String, Object>
      * */
-    public void saveAllHashOperationByString(String prefix, Map<String, Object> map) {
+    public void saveAllHashOperation(String prefix, Map<String, Object> map) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
         hashOps.putAll(prefix, map);
     }
@@ -49,7 +49,7 @@ public class RedisService {
      * @param key [String] key
      * @param value [Object] value
      * */
-    public void saveHashOperationByString(String prefix, String key, Object value) {
+    public void saveHashOperation(String prefix, String key, Object value) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
         hashOps.put(prefix, key, value);
     }
@@ -76,9 +76,17 @@ public class RedisService {
      * @param key [String] 조회할 key값
      * @return Redis prefix 를 갖는 Map
      * */
-    public Object getValueHashOperationByString(String prefix, String key) {
+    public String getValueHashOperation(String prefix, String key) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
-        return hashOps.get(prefix, key);
+        return (String)hashOps.get(prefix, key);
+    }
+
+    /**
+     * prefix 전체 삭제
+     *
+     * */
+    public void deleteKey(String prefix) {
+        redisTemplate.delete(prefix);
     }
 
     /**
@@ -90,7 +98,7 @@ public class RedisService {
      * @param key [Integer] key
      * @param value [Object] value
      * */
-    public void saveHashOperationByInteger(String prefix, int key, Object value) {
+    public void saveHashOperation(String prefix, int key, Object value) {
         HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
         hashOps.put(prefix, key, value);
     }
@@ -116,7 +124,7 @@ public class RedisService {
      * @param prefix REDIS KEY
      * @param key [Integer] key
      * */
-    public void deleteKeyOperationByInteger(String prefix, int key) {
+    public void deleteKeyOperation(String prefix, int key) {
         HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
         hashOps.delete(prefix, key);
     }
@@ -152,10 +160,20 @@ public class RedisService {
      * prefix에 대한 값을 삭제한다.
      * <p>
      * @param prefix REDIS KEY
+     * @param value inviteCode
      * */
-    public void deleteOperation(String prefix) {
+    public void deleteSetOperation(String prefix, String value) {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
-        setOps.remove(prefix);
+        setOps.remove(prefix, value);
+    }
+
+    /**
+     *  Set Operation<String, Object> <p>
+     *  redis Set에 Object가 있는지 여부 확인
+     * */
+    public boolean hasValueOperation(String prefix, String value) {
+        SetOperations<String, Object> setOps = redisTemplate.opsForSet();
+        return Boolean.TRUE.equals(setOps.isMember(prefix, value));
     }
 
 }
