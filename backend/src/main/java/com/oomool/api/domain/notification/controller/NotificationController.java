@@ -48,7 +48,7 @@ public class NotificationController {
         return ResponseHandler.generateResponse(HttpStatus.OK, String.valueOf(hasNewNotification));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(summary = "알림 저장", description = "유저의 알림을 저장합니다.")
     public ResponseEntity<?> saveNotification(@RequestBody NotificationSaveRequestDto requestDto) {
         notificationService.saveNotification(requestDto);
