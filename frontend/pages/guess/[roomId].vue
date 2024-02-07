@@ -9,7 +9,8 @@
         <AlertDialogContent v-if="whoIsCheck !== undefined">
           <AlertDialogHeader>
             <AlertDialogTitle
-              >{{ manito }}님으로 최종결정하시겠습니까?</AlertDialogTitle
+              >{{ selectedManitto }}님으로
+              최종결정하시겠습니까?</AlertDialogTitle
             >
             <AlertDialogDescription>
               한번 결정하게 되면, 마니또 결과를 변경할 수 없습니다!
@@ -44,21 +45,22 @@
     </div>
     <div class="users flex flex-wrap justify-center">
       <div
-        v-for="user in users"
-        :key="user.id"
+        v-for="member in members"
+        :key="member.user_id"
         :v-model="whoIsCheck"
         class="m-2 rounded-lg"
         :class="{
           'bg-gradient-to-t from-[#61339B]  to-[#A8BDF9]':
-            whoIsCheck === user.id,
+            whoIsCheck === member.user_id,
         }"
-        @click="selectManito(user.id, user.name)"
+        @click="selectManito(member.user_id, member.player_nickname)"
       >
         <ManitoCard
-          :user="user"
+          v-if="member.user_id !== userId"
+          :member="member"
           :class="{
-            'text-white': whoIsCheck === user.id,
-            'text-primary': whoIsCheck !== user.id,
+            'text-white': whoIsCheck === member.user_id,
+            'text-primary': whoIsCheck !== member.user_id,
           }"
           :see="see"
         ></ManitoCard>
@@ -67,60 +69,71 @@
   </div>
 </template>
 <script setup lang="ts">
-const users = ref([
-  {
-    id: 1,
-    name: '박세정',
-    background: '#FF33A1',
-    profileUrl: '/img/bearGhost.png',
-  },
-  {
-    id: 2,
-    name: '김성수',
-    background: '#FF5733',
-    profileUrl: '/img/sangwooGhost.png',
-  },
-  {
-    id: 3,
-    name: '김현지',
-    background: '#FFD700',
-    profileUrl: '/img/rabbitGhost.png',
-  },
-  {
-    id: 4,
-    name: '전은평',
-    background: '#33A1FF',
-    profileUrl: '/img/musicGhost.png',
-  },
-  {
-    id: 5,
-    name: '김병현',
-    background: '#607D8B',
-    profileUrl: '/img/catGhost.png',
-  },
-  {
-    id: 6,
-    name: '정필모',
-    background: '#795548',
-    profileUrl: '/img/sangwooGhost.png',
-  },
-]);
+const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
+const { $api } = useNuxtApp();
+const members = ref();
+const manittoId = ref();
+const roomUid = route.params.roomId as string;
+const userId = ref();
+// 전체 유저 정보 조회
+const getAllMembersByRoomUid = async (): Promise<void> => {
+  const response = await $api.rooms.getRoomDetail(roomUid);
+  members.value = response.data.players;
+};
+
+// 내 마니또 조회
+const getMyManitto = async (): Promise<void> => {
+  try {
+    const userId = userStore.getStoredUser()?.id;
+    if (userId !== undefined && userId !== null) {
+      const response = await $api.players.getMyManitto({ roomUid, userId });
+      manittoId.value = response.data.manitto.user_id;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// 결정하기 버튼 클릭 시 예측 정보 저장하기
+const goToFinal = async (): Promise<void> => {
+  const req = { guess: false };
+  const userId = userStore.getStoredUser()?.id;
+  try {
+    if (whoIsCheck.value === manittoId.value) {
+      req.guess = true;
+    }
+    if (userId !== undefined && userId !== null) {
+      const response = await $api.players.saveResultExpectedManitto(
+        roomUid,
+        userId,
+        req,
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  await router.replace({ path: `/final/${roomUid}` });
+};
+
+onMounted(async () => {
+  userId.value = userStore.getStoredUser()?.id;
+  await getAllMembersByRoomUid();
+  await getMyManitto();
+});
+
 const see = ref(true);
-const manito = ref<string | undefined>('');
+const selectedManitto = ref<string | undefined>('');
 const whoIsCheck = ref<number | undefined>(undefined);
 const selectManito = (id: number, name: string): void => {
   if (whoIsCheck.value !== id) {
     whoIsCheck.value = id;
-    manito.value = name;
+    selectedManitto.value = name;
   } else if (whoIsCheck.value === id) {
     whoIsCheck.value = undefined;
-    manito.value = '';
+    selectedManitto.value = '';
   }
-};
-
-const goToFinal = async (): Promise<void> => {
-  await router.replace({ path: '/final/1' });
 };
 </script>
 <style scoped>

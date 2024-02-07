@@ -3,6 +3,10 @@ import {
   type IGetMyManittiInput,
   type IGetMyManittiResponse,
   type IGetAllMemebersByRoomUidResponse,
+  type IGetMyManittoInput,
+  type IGetMyManittoResponse,
+  type ISaveResultExpectedManittoInput,
+  type ISaveResultExpectedManittoResponse,
 } from './interface/players.interface';
 
 class PlayersModule extends HttpFactory {
@@ -12,7 +16,28 @@ class PlayersModule extends HttpFactory {
   async getMyManitti(data: IGetMyManittiInput): Promise<IGetMyManittiResponse> {
     return await this.getCall<IGetMyManittiResponse>(
       'GET',
-      `${this.RESOURCE}/${data.roomUid}/${data.userId}`,
+      `${this.RESOURCE}/${data.roomUid}/${data.userId}/manitti`,
+    );
+  }
+
+  // 내 마니또 조회
+  async getMyManitto(data: IGetMyManittoInput): Promise<IGetMyManittoResponse> {
+    return await this.getCall<IGetMyManittoResponse>(
+      'GET',
+      `${this.RESOURCE}/${data.roomUid}/${data.userId}/manitto`,
+    );
+  }
+
+  // 마니또 예측 결과 저장
+  async saveResultExpectedManitto(
+    roomUid: string,
+    userId: number,
+    req: ISaveResultExpectedManittoInput,
+  ): Promise<ISaveResultExpectedManittoResponse> {
+    return await this.otherCall<ISaveResultExpectedManittoResponse>(
+      'POST',
+      `${this.RESOURCE}/${roomUid}/${userId}/guess`,
+      req,
     );
   }
 

@@ -11,8 +11,10 @@
     <div class="img-container">
       <input
         id="upload-image"
+        ref="imageFile"
         accept="image/*"
         hidden
+        files
         type="file"
         class="h-10 px-4 py-2"
         @input="previewImage()"
@@ -65,21 +67,21 @@
     </div>
     <div class="input-container flex flex-col justify-center items-center">
       <TodayQuestion
-        class="mt-4 text-xl font-extrabold"
-        :question="question"
+        class="mt-6 text-xl font-extrabold w-11/12"
+        :question="dailyQuestion"
       ></TodayQuestion>
       <textarea
-        v-model="answer"
-        class="w-11/12 h-40 mt-4 rounded-md outline-primary"
+        v-model="content"
+        class="w-11/12 h-40 mt-6 rounded-md outline-primary"
         placeholder=" 마니띠를 떠올리며 오늘의 질문에 답변해 주세요!"
       ></textarea>
     </div>
     <div class="input-container flex justify-center">
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button class="mt-6">등록하기</Button>
+          <Button class="mt-6 mb-6">등록하기</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent v-if="answer !== ''">
+        <AlertDialogContent v-if="content !== ''">
           <AlertDialogHeader>
             <AlertDialogTitle>답변을 등록하시겠습니까?</AlertDialogTitle>
           </AlertDialogHeader>
@@ -90,7 +92,7 @@
             >
           </AlertDialogFooter>
         </AlertDialogContent>
-        <AlertDialogContent v-else-if="answer === ''">
+        <AlertDialogContent v-else-if="content === ''">
           <AlertDialogHeader>
             <AlertDialogTitle>답변 내용을 입력해 주세요!</AlertDialogTitle>
           </AlertDialogHeader>
@@ -104,8 +106,50 @@
 </template>
 
 <script setup lang="ts">
-const question = ref('내 친구가 좋아할만한 음악이나 장르가 어떻게 되나요?');
+const { $api } = useNuxtApp();
+const route = useRoute();
+const userStore = useUserStore();
+const roomUid = route.params.roomId as string;
+const dailyQuestion = ref();
+const content = ref();
+const sequence = ref();
+const roomQuestionId = ref();
+const imageFile = ref();
+const userId = ref();
+// 데일리 질문 조회 및 오늘의 sequence 번호 조회하기
+const getDailyQuestion = async (): Promise<void> => {
+  const response = await $api.question.getDailyQuestion(roomUid);
+  dailyQuestion.value = response.data.question;
+  sequence.value = response.data.sequence;
+};
+
+// 답변 등록
+const writeFeedAnswer = async (): Promise<void> => {
+  const data = {
+    content: content.value,
+    author_id: userId.value,
+    room_question_id: roomQuestionId.value,
+    file_list: imageFile.value,
+  };
+  const response = await $api.feeds.writeFeedAnswer(data);
+  console.log(data);
+  console.log(response.data);
+};
+
+// sequence 번호로 오늘의 room_question_id 조회하기
+const getRoomRequestionId = async (): Promise<void> => {
+  const data = { roomUid, sequence: sequence.value };
+  const response = await $api.feeds.getAllFeedsByRoomUidAndSequence(data);
+  roomQuestionId.value = response.data.room_question_id;
+};
+onMounted(async () => {
+  userId.value = userStore.getStoredUser()?.id;
+  await getDailyQuestion();
+  await getRoomRequestionId();
+});
+
 const isUploaded = ref(false);
+// 이미지 업로드 미리보기
 const previewImage = (): void => {
   const input = document.getElementById(
     'upload-image',
@@ -113,12 +157,13 @@ const previewImage = (): void => {
   if (input?.files?.[0] != null) {
     const reader = new FileReader();
     reader.onload = (e) => {
+      console.log(e.target);
       if (e?.target != null && typeof e.target.result === 'string') {
         const previewElement = document.getElementById(
           'preview',
         ) as HTMLImageElement;
         previewElement.src = e.target.result;
-        console.log(e.target);
+        imageFile.value = e.target.result;
         isUploaded.value = true;
       }
     };
@@ -132,14 +177,31 @@ const previewImage = (): void => {
     isUploaded.value = false;
   }
 };
+// 답변 등록
+const registAnswer = async (): Promise<void> => {
+  // await writeFeedAnswer();
+};
+
+// const onSubmit = async (): Promise<void> => {
+//   const formData = new FormData();
+
+//   formData.append('file', file.value[0]);
+//   formData.append('content', content.value);
+//   await axios.post('', formData, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//   });
+//   alert('글 작성이 완료되었습니다.');
+//   router.push({ path: '/' });
+// };
+
+// 이미지 제거
 const removeImage = (): void => {
   const previewElement = document.getElementById('preview') as HTMLImageElement;
   previewElement.src = '';
   isUploaded.value = false;
 };
-
-const answer = ref('');
-const registAnswer = (): void => {};
 </script>
 <style scoped>
 input[type='file']::file-selector-button {
