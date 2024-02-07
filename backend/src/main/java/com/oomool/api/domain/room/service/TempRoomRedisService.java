@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,6 +45,10 @@ public class TempRoomRedisService {
         String inviteCode = UniqueCodeGenerator.generateRandomString(15);  // 대기방 초대코드 생성기
 
         saveTempRoomSetting(inviteCode, settingOptionDto, masterUserId); // USER DTO 는 master 권한을 갖는다.
+
+        // TODO :: 임시로 inviteCode존재 여부를 Redis에 저장한다.
+        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        valueOps.set("startCheck:" + inviteCode, "false"); // 아직 전환 전
 
         Map<String, Object> settingOption = getTempRoomSetting(inviteCode);
         return Map.of(
@@ -354,6 +359,12 @@ public class TempRoomRedisService {
             playerDtoList.add(tempRoomMapper.objectToPlayerDto(playerJson.getValue()));
         }
         return playerDtoList;
+    }
+
+    //=========== TODO :: [임시 코드] 대기방 생성 여부를 Check 합니다. ==============/
+    public String startCheck(String inviteCode) {
+        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        return (String)valueOps.get("startCheck:" + inviteCode);
     }
 
 }
