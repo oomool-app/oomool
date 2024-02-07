@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:3000", "https://dev.oomool.site", "https://api-dev.oomool.site")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH", "TRACE")
-            .allowedHeaders("Authorization");
+            .allowedHeaders("Content-Type", "Authorization")
+            .exposedHeaders("*");
     }
 }
