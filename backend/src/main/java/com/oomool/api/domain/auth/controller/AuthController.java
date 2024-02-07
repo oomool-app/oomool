@@ -50,7 +50,6 @@ public class AuthController {
 
         // 액세스 토큰으로 Refresh 토큰 객체를 조회
         Optional<RefreshToken> refreshToken = tokenRepository.findByAccessToken(accessToken);
-        log.info("refreshToken : " + refreshToken);
 
         // RefreshToken이 존재하고 유효하다면 실행
         if (refreshToken.isPresent() && jwtService.isTokenValid(refreshToken.get().getRefreshToken())) {
@@ -61,7 +60,6 @@ public class AuthController {
                 jwtService.getRole(resultToken.getRefreshToken()));
             // 액세스 토큰의 값을 수정해준다.
             resultToken.updateAccessToken(newAccessToken);
-            log.info("newAccessToken : " + newAccessToken);
             tokenRepository.save(resultToken);
             // 새로운 액세스 토큰을 반환해준다.
             return ResponseEntity.ok(TokenResponseStatus.addStatus(200, newAccessToken));
@@ -81,6 +79,7 @@ public class AuthController {
     // 로그인 성공 시 redirect api
     @GetMapping("/redirect")
     public String createRedirect(@RequestParam("token") String token) {
+        log.info("accessToken : {}", jwtService.getClaims(token).getExpiration());
         return token;
     }
 

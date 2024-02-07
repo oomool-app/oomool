@@ -40,7 +40,11 @@ public class SecurityConfig {
                 .requestMatchers(("/oauth2/token/**")).permitAll() // 토큰 발급을 위한 경로는 모두 허용
                 .requestMatchers(("/oauth2/redirect")).permitAll() // redirect url
                 .requestMatchers(("/oauth2/access-token")).hasRole("USER")
-                // .requestMatchers(("/**")).permitAll()
+                .requestMatchers(("/swagger-ui/**")).permitAll() // swagger 접근 all
+                .requestMatchers(("/v3/**")).permitAll()
+                .requestMatchers(("/**")).permitAll()
+                // .requestMatchers(("/temp/**"), ("/questions/**"), ("/players/**")).hasRole("USER")
+                // .requestMatchers(("/push-notifications/**"), ("/feeds/**"), ("/users/")).hasRole("USER")
                 .anyRequest().authenticated()) // 나머지 요청은 모두 인증이 필요
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))

@@ -32,7 +32,7 @@ public class RefreshToken implements Serializable {
     private String refreshToken;
 
     public void updateAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+        this.accessToken = "Bearer " + accessToken;
     }
 
 }
