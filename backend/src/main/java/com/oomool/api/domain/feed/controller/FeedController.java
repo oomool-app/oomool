@@ -1,7 +1,6 @@
 package com.oomool.api.domain.feed.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +9,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
+import com.oomool.api.domain.feed.dto.ReceiveAnswerDto;
+import com.oomool.api.domain.feed.dto.ReceiveModifyDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.service.FeedService;
 import com.oomool.api.global.util.ResponseHandler;
@@ -52,16 +50,13 @@ public class FeedController {
 
      */
     @Operation(summary = "오늘 질문 답변", description = "사용자가 오늘 질문에 대해 답변합니다.")
-    @PostMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
-    public ResponseEntity<?> saveQuestionAnswer(@RequestParam("content") String content,
-        @RequestParam("author_id") String authorId,
-        @RequestParam("room_question_id") String roomQuestionId,
-        @RequestPart(value = "file_list", required = false) List<MultipartFile> fileList) throws IOException {
-
+    @PostMapping("/daily")
+    public ResponseEntity<?> saveQuestionAnswer(ReceiveAnswerDto receiveAnswerDto) throws IOException {
         // 피드 답변 등록하기
-        FeedAnswerDto feedAnswerDto = feedService.saveQuestionAnswer(Integer.parseInt(roomQuestionId),
-            content, fileList,
-            Integer.parseInt(authorId));
+        FeedAnswerDto feedAnswerDto = feedService.saveQuestionAnswer(receiveAnswerDto.getRoomQuestionId(),
+            receiveAnswerDto.getContent(), receiveAnswerDto.getFileList(),
+            receiveAnswerDto.getAuthorId());
+
         return ResponseHandler.generateResponse(HttpStatus.CREATED, feedAnswerDto);
     }
 
@@ -69,11 +64,10 @@ public class FeedController {
      * 피드 질문 답변 수정
      */
     @Operation(summary = "피드 질문 답변을 수정", description = "등록한 질문을 수정합니다.")
-    @PatchMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
-    public ResponseEntity<?> modifyQuestionAnswer(@RequestParam("content") String content,
-        @RequestParam("feed_id") String feedId,
-        @RequestPart(value = "file_list", required = false) List<MultipartFile> fileList) throws IOException {
-        feedService.modifyQuestionAnswer(content, Integer.parseInt(feedId), fileList);
+    @PatchMapping("/daily")
+    public ResponseEntity<?> modifyQuestionAnswer(ReceiveModifyDto receiveModifyDto) throws IOException {
+        feedService.modifyQuestionAnswer(receiveModifyDto.getContent(), receiveModifyDto.getFeedId(),
+            receiveModifyDto.getFileList());
         return ResponseHandler.generateResponse(HttpStatus.OK, "데일리 피드 질문 답변 수정 성공!");
     }
 }
