@@ -41,6 +41,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public Map<String, Object> getManittiPlayerProfile(String roomUid, int userId) {
         Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);                 // "나"의 프로필 조회
+        // PlayerDto 는 manittiId를 가지지 않기 때문에 Service에서 조회한다.
         Player manitti = playerRepository.findByRoomRoomUidAndUserId(roomUid, player.getManittiId()); // "마니띠"의 프로필 조회
         return Map.of(
             "player", playerMapper.entityToPlayerDto(player),
@@ -49,17 +50,10 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    @Transactional
-    public Map<String, Object> guessMyManittoPlayer(String roomUid, int userId, PlayerDto guessMyManitto) {
-
-        // 내가 추측하는 마니또 플레이어
+    public PlayerDto getManittoPlayerProfile(String roomUid, int userId) {
         Player myManitto = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
-
-        // 내가 추측하는 마니또의 UserId와 내 실제 마니또의 UserId 값이 일치한지 확인한다.
-        boolean guess = false;
-        if (guessMyManitto.getUserId() == myManitto.getUser().getId()) {
-            guess = true; // 일치하면 "참"
-        }
+        return playerMapper.entityToPlayerDto(myManitto);
+    }
 
     @Override
     @Transactional
