@@ -28,9 +28,12 @@ public class PlayerServiceImpl implements PlayerService {
     private final GameRoomServiceImpl gameRoomService;
 
     @Override
-    public List<PlayerDto> getPlayerDtoList(String roomUid) {
+    public Map<String, Object> getPlayerDtoList(String roomUid) {
         GameRoom gameRoom = gameRoomService.getGameRoom(roomUid);
-        return playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
+        List<PlayerDto> playerDtoList = playerMapper.entityToPlayerDtoList(gameRoom.getPlayers());
+        return Map.of(
+            "players", playerDtoList
+        );
     }
 
     @Override
@@ -45,9 +48,13 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto getManittoPlayerProfile(String roomUid, int userId) {
+    public Map<String, Object> getManittoPlayerProfile(String roomUid, int userId) {
         Player myManitto = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
-        return playerMapper.entityToPlayerDto(myManitto);
+        Boolean guess = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId).getGuess();
+        return Map.of(
+            "guess", guess != null ? guess.toString() : "null",
+            "manitto", playerMapper.entityToPlayerDto(myManitto)
+        );
     }
 
     @Override
