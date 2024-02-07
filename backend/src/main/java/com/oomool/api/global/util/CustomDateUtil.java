@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CustomDateUtil {
 
     // date Format
@@ -13,6 +16,7 @@ public class CustomDateUtil {
 
     // String to LocalDateTime
     public static LocalDateTime parseDateTime(String dateTimeString) {
+        log.error("CustomDetailUtil parseDateTime :: {}", dateTimeString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return LocalDateTime.parse(dateTimeString, formatter);
     }
