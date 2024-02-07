@@ -37,9 +37,9 @@ public interface PlayerService {
      *
      * @param roomUid 문답방 코드
      * @param userId 유저 아이디
-     * @param guessMyManitto 마니또라고 추측하는 사람의 프로필
+     * @param guessResult 추측 여부 결과
      * */
-    Map<String, Object> guessMyManittoPlayer(String roomUid, int userId, PlayerDto guessMyManitto);
+    void saveGuessResult(String roomUid, int userId, boolean guessResult);
 
     /**
      * 마니띠 정보 가져오기
