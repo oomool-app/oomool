@@ -7,14 +7,14 @@
     />
 
     <div class="flex-col w-[77%]">
-      <div class="flex justify-between">
+      <div class="flex justify-between pr-1">
         <p class="font-semibold inline-block mb-1">
           <span class="text-primary font-extrabold">{{
             props.feeds.manitti_dto.nickname
           }}</span
           >의 마니또
         </p>
-        <p>20분 전</p>
+        <p class="text-sm mt-1">{{ createdHour }}:{{ createdMin }}</p>
       </div>
       <div
         class="p-3 border border-gray-400 rounded-r-xl rounded-bl-xl bg-[#F1EBFC]"
@@ -34,4 +34,9 @@ import type Feed from '~/repository/modules/interface/feeds.interface';
 const props = defineProps<{
   feeds: Feed;
 }>();
+
+const createdHour = String(
+  new Date(props.feeds.created_at).getHours(),
+).padStart(2, '0');
+const createdMin = new Date(props.feeds.created_at).getMinutes();
 </script>
