@@ -31,6 +31,7 @@
 const IsSuccess = ref(true);
 const route = useRoute();
 const roomUid = route.params.roomId;
+const { $api } = useNuxtApp();
 </script>
 <style scoped>
 .go-to-result {

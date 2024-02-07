@@ -1,15 +1,11 @@
 <template>
   <div class="flex justify-evenly pt- pb-6 pl-4 pr-4">
     <div class="flex-col w-[77%]">
-      <p class="text-right mb-1">수정하기</p>
+      <p class="text-sm text-right text-primary mr-1">수정하기</p>
       <div
         class="chat-box p-3 border border-purple-500 rounded-l-xl rounded-br-xl bg-[#d8c7f9]"
       >
-        <img
-          class="rounded-lg mb-2"
-          :src="props.feeds.feed_image_dto_list[0]"
-          alt=""
-        />
+        <img class="rounded-lg mb-2" alt="" />
         {{ props.feeds.content }}
       </div>
     </div>

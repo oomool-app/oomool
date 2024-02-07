@@ -10,9 +10,10 @@
 
 <script setup lang="ts">
 const router = useRouter();
-const roomId = ref<number>(2);
+const route = useRoute();
+const roomUid = route.params.roomId as string;
 const goToResult = async (): Promise<void> => {
-  await router.push({ path: `/final/${roomId.value}/result1` });
+  await router.push({ path: `/final/${roomUid}/result1` });
 };
 </script>
 <style scoped>
