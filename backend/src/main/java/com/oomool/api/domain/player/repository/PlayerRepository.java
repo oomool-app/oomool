@@ -12,7 +12,5 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     Player findByRoomRoomUidAndUserId(String roomUid, int userId);
 
     Player findByRoomRoomUidAndManittiId(String roomUid, int userId);
-
-    Player findByUserId(int userId);
 }
 
