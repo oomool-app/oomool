@@ -77,3 +77,24 @@ export interface IGetWaitRoomResponse {
   };
   status: string;
 }
+
+export interface IGetUpdateSettingResponse {
+  data: {
+    setting: {
+      title: string;
+      start_date: string;
+      end_date: string;
+      question_type: string;
+      max_member: number;
+    };
+  };
+  status: string;
+}
+
+export interface IUpdateSettingInput {
+  title: string;
+  start_date: string;
+  end_date: string;
+  question_type: string;
+  max_member: number;
+}

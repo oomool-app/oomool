@@ -5,6 +5,8 @@ import {
   type IJoinWaitRoomInput,
   type IGetJoinWaitRoomResponse,
   type IGetWaitRoomResponse,
+  type IGetUpdateSettingResponse,
+  type IUpdateSettingInput,
 } from './interface/waitroom.interface';
 
 class MakeModule extends HttpFactory {
@@ -38,6 +40,18 @@ class MakeModule extends HttpFactory {
     return await this.getCall<IGetWaitRoomResponse>(
       'GET',
       `${this.RESOURCE}/${inviteCode}`,
+    );
+  }
+
+  // 대기방의 정보 변경
+  async updateRoomSetting(
+    inviteCode: string,
+    roomSetting: IUpdateSettingInput,
+  ): Promise<IGetUpdateSettingResponse> {
+    return await this.otherCall<IGetUpdateSettingResponse>(
+      'PATCH',
+      `${this.RESOURCE}/${inviteCode}/setting`,
+      roomSetting,
     );
   }
 }
