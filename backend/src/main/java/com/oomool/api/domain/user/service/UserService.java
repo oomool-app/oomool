@@ -82,13 +82,17 @@ public class UserService {
         List<Map<String, Object>> tempRoomSettingList = new ArrayList<>();
         for (String inviteCode : tempRoomList) {
             Map<String, Object> tempRoomSetting = tempRoomRedisService.getTempRoomSetting(inviteCode);
+            System.out.println(tempRoomSetting.toString());
+            String createdAt = (String)tempRoomSetting.get("createdAt");
             int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
             SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
             tempRoomSettingList.add(
                 Map.of(
                     "invite_code", inviteCode,
                     "master_id", masterId,
-                    "setting", settingOptionDto)
+                    "created_at", createdAt,
+                    "setting", settingOptionDto
+                )
             );
         }
         return tempRoomSettingList;
@@ -110,12 +114,15 @@ public class UserService {
                 .filter(roomQuestion -> roomQuestion.getDate().equals(LocalDate.now()))
                 .findFirst()
                 .map(roomQuestionMapper::entityToDailyQuestionDto).orElse(null);
-            // 필요 컬럼 넣기
-            Map<String, Object> mainMap = new HashMap<>();
-            mainMap.put("room_uid", gameRoom.getRoomUid());
-            mainMap.put("daily_question", dailyQuestionDto);
-            mainMap.put("setting", settingOptionDto);
-            gameRoomList.add(mainMap);
+
+            // 필요한 컬럼 넣기
+            Map<String, Object> gameRoomMap = new HashMap<>();
+            gameRoomMap.put("room_uid", gameRoom.getRoomUid());
+            gameRoomMap.put("daily_question", dailyQuestionDto);
+            gameRoomMap.put("created_at", gameRoom.getCreatedAt());
+            gameRoomMap.put("setting", settingOptionDto);
+            // 최종 결과 만들기
+            gameRoomList.add(gameRoomMap);
         }
         return gameRoomList;
     }
