@@ -3,6 +3,8 @@ package com.oomool.api.domain.room.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,9 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final AvatarServiceImpl avatarService;
     private final PlayerMapper playerMapper;
 
+    // TODO :: 임시 연관관계 추가
+    private final RedisTemplate<String, Object> redisTemplate;
+
     @Override
     public String createGameRoom(String inviteCode) throws Exception {
 
@@ -51,6 +56,10 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         // 마니또 매칭 결과
         Map<Integer, Integer> matchMap = MatchManitti.matchPair(playerDtoList);
+
+        // TODO :: [임시코드] 대기방 상태 확인을 위한 임시 코드
+        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        valueOps.set("startCheck:" + inviteCode, roomUid);
 
         // Player Entity 객체로 변환
         for (PlayerDto playerDto : playerDtoList) {
