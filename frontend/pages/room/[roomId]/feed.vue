@@ -51,11 +51,11 @@
       <img class="w-5/6" src="/img/emptyGhost.png" alt="" />
     </div>
     <div v-else-if="feeds !== undefined" class="feed-container">
-      <div v-for="feed in feeds" :key="feed.author_id">
-        <div v-if="feed.author_id === userId">
+      <div v-for="feed in feeds" :key="feed.user_id">
+        <div v-if="feed.user_id === userId">
           <FeedPageMine :feeds="feed"></FeedPageMine>
         </div>
-        <div v-else-if="feed.author_id !== userId">
+        <div v-else-if="feed.user_id !== userId">
           <FeedPageOthers :feeds="feed"></FeedPageOthers>
         </div>
       </div>
@@ -66,7 +66,9 @@
 import type Feed from '../../../repository/modules/interface/feeds.interface';
 const { $api } = useNuxtApp();
 const route = useRoute();
-const userId = useUserStore().getStoredUser()?.id;
+const userStore = useUserStore();
+const userId = ref();
+const roomQuestionId = ref();
 const roomUid = route.params.roomId as string;
 const question = ref();
 let sequence: any;
@@ -76,7 +78,6 @@ const getDailyQuestion = async (): Promise<void> => {
     const response = await $api.question.getDailyQuestion(roomUid);
     question.value = response.data.question;
     sequence = response.data.sequence;
-    console.log(sequence);
   } catch (error) {
     console.error(error);
   }
@@ -88,6 +89,7 @@ const feeds = ref<Feed[] | undefined>();
 // 오늘의 질문에 대한 모든 피드 조회
 const getAllFeedsByRoomUidAndSequence = async (): Promise<void> => {
   try {
+    userId.value = userStore.getStoredUser()?.id;
     if (sequence !== undefined) {
       const response = await $api.feeds.getAllFeedsByRoomUidAndSequence({
         roomUid,
@@ -95,6 +97,7 @@ const getAllFeedsByRoomUidAndSequence = async (): Promise<void> => {
       });
       console.log(response);
       feeds.value = response.data.room_feed_dto_list;
+      roomQuestionId.value = response.data.room_question_id;
     }
   } catch (error) {
     console.error(error);
