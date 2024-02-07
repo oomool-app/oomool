@@ -19,12 +19,6 @@
             {{ props.temprooms.setting.title }}
           </div>
         </CardContent>
-        <CardFooter class="px-3 pb-3 pl-4">
-          <Button
-            class="bg-[#6D6D6D] text-black w-14 h-6 text-center align-middle text-xs rounded-full"
-            >대기방</Button
-          >
-        </CardFooter>
       </div>
     </Card>
   </div>
