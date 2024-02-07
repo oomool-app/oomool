@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.oomool.api.domain.player.entity.Player;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 연관관계 참조
     private final TempRoomRedisService tempRoomRedisService;
@@ -77,6 +80,8 @@ public class UserService {
      * */
     public List<Map<String, Object>> getTempRoomList(int userId) {
 
+        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+
         // 참여하고 있는 inviteCode 정보 조회
         List<String> tempRoomList = tempRoomRedisService.getUserInviteTempRoomList(userId);
         List<Map<String, Object>> tempRoomSettingList = new ArrayList<>();
@@ -84,10 +89,16 @@ public class UserService {
             Map<String, Object> tempRoomSetting = tempRoomRedisService.getTempRoomSetting(inviteCode);
             int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
             SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
+
+            String recentlyView = (String)hashOps.get("tempView:" + userId, inviteCode);
+            if (recentlyView == null) {
+                recentlyView = "null";
+            }
             tempRoomSettingList.add(
                 Map.of(
                     "invite_code", inviteCode,
                     "master_id", masterId,
+                    "recently_view", recentlyView,
                     "setting", settingOptionDto)
             );
         }
@@ -100,6 +111,9 @@ public class UserService {
      * @param userId 유저 아이디
      * */
     public List<Map<String, Object>> getGameRoomList(int userId) {
+
+        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+
         List<Map<String, Object>> gameRoomList = new ArrayList<>();
         // 참여하고 있는 roomUid 정보 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
@@ -111,8 +125,14 @@ public class UserService {
                 .findFirst()
                 .map(roomQuestionMapper::entityToDailyQuestionDto).orElse(null);
             // 필요 컬럼 넣기
+
+            String recentlyView = (String)hashOps.get("gameView:" + userId, gameRoom.getRoomUid());
+            if (recentlyView == null) {
+                recentlyView = "null";
+            }
             Map<String, Object> mainMap = new HashMap<>();
             mainMap.put("room_uid", gameRoom.getRoomUid());
+            mainMap.put("recently_view", recentlyView);
             mainMap.put("daily_question", dailyQuestionDto);
             mainMap.put("setting", settingOptionDto);
             gameRoomList.add(mainMap);
