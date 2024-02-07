@@ -34,11 +34,6 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto getPlayerByUserId(String roomUid, int userId) {
-        return playerMapper.entityToPlayerDto(playerRepository.findByRoomRoomUidAndUserId(roomUid, userId));
-    }
-
-    @Override
     public Map<String, Object> getManittiPlayerProfile(String roomUid, int userId) {
         Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);                 // "나"의 프로필 조회
         // PlayerDto 는 manittiId를 가지지 않기 때문에 Service에서 조회한다.
