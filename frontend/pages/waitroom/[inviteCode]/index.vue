@@ -162,12 +162,10 @@ const router = useRouter();
 const auth = ref<boolean>(false);
 const getWaitRoomData = ref<IGetWaitRoomResponse>();
 const userInfo = ref();
-const userItem = localStorage.getItem('user');
 const scrollHeight = ref<number>(0);
-if (userItem !== null) {
-  userInfo.value = JSON.parse(userItem);
-}
 onMounted(async (): Promise<void> => {
+  const userStore = useUserStore();
+  userInfo.value = userStore.getStoredUser();
   scrollHeight.value = window.innerHeight * 0.5;
   await getData();
 });
