@@ -79,9 +79,9 @@
     <div class="input-container flex justify-center">
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button class="mt-6 mb-6">등록하기</Button>
+          <Button class="mt-6 mb-6" @click="check()">등록하기</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent v-if="content !== ''">
+        <AlertDialogContent v-if="!isEmpty">
           <AlertDialogHeader>
             <AlertDialogTitle>답변을 등록하시겠습니까?</AlertDialogTitle>
           </AlertDialogHeader>
@@ -92,7 +92,7 @@
             >
           </AlertDialogFooter>
         </AlertDialogContent>
-        <AlertDialogContent v-else-if="content === ''">
+        <AlertDialogContent v-else-if="isEmpty">
           <AlertDialogHeader>
             <AlertDialogTitle>답변 내용을 입력해 주세요!</AlertDialogTitle>
           </AlertDialogHeader>
@@ -175,6 +175,13 @@ const previewImage = (): void => {
     ) as HTMLImageElement;
     previewElement.src = '';
     isUploaded.value = false;
+  }
+};
+
+const isEmpty = ref(false);
+const check = (): void => {
+  if (content.value.trim() === '') {
+    isEmpty.value = true;
   }
 };
 // 답변 등록
