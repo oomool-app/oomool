@@ -20,28 +20,25 @@
 
     <div
       class="w-20 h-20 mb-4 rounded-full flex justify-center items-center"
-      :style="{ backgroundColor: props.user.background }"
+      :style="{ backgroundColor: props.member.player_background_color }"
     >
       <img
         class="w-12 h-16"
-        :src="`${props.user.profileUrl}`"
+        :src="`${props.member.player_avatar_url}`"
         alt="프로필 이미지"
       />
     </div>
-    <span class="name inline-block font-semibold">{{ props.user.name }}</span>
+    <span class="name inline-block font-semibold">{{
+      props.member.player_nickname
+    }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-interface User {
-  id: number;
-  name: string;
-  profileUrl: string;
-  background: string;
-}
+import type Player from '~/repository/modules/interface/players.interface';
 
 const props = defineProps<{
-  user: User;
+  member: Player;
   see: boolean;
 }>();
 </script>
