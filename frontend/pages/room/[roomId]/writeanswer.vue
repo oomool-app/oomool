@@ -178,9 +178,11 @@ const previewImage = (): void => {
   }
 };
 
-const isEmpty = ref(false);
+const isEmpty = ref(true);
 const check = (): void => {
-  if (content.value.trim() === '') {
+  if (content.value.trim() !== '') {
+    isEmpty.value = false;
+  } else {
     isEmpty.value = true;
   }
 };

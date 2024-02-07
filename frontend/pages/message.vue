@@ -11,12 +11,6 @@
     <div
       class="body-container max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
     >
-      <button
-        class="bg-white p-3 rounded-xl text-black font-bold"
-        @click="router.push('/firebase/test')"
-      >
-        Firebase Test Page
-      </button>
       <div v-for="message in messages" :key="message.messageid">
         <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
       </div>
@@ -64,6 +58,23 @@ const messages = [
     readtime: '2024-01-30',
   },
 ];
+
+// const getAllNotifications = async (): Promise<void> => {
+//   try {
+//     const storedUser = userStore.getStoredUser();
+
+//     if (storedUser != null) {
+//       const userId: IGetAllNotificationsInput = {
+//         userId: storedUser.id,
+//       };
+//       const response = await $api.notifications.getAllNotifications(userId);
+//       messages.value = response.data;
+//       console.log(messages);
+//     }
+//   } catch (error) {
+//     console.error('Error while fetching room list:', error);
+//   }
+// };
 </script>
 <style scoped>
 .top-container {
