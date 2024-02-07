@@ -17,14 +17,6 @@ public interface PlayerService {
     List<PlayerDto> getPlayerDtoList(String roomUid);
 
     /**
-     * 나의 플레이어 프로필을 조회한다.
-     *
-     * @param roomUid 문답방 코드
-     * @param userId 유저 아이디
-     * */
-    PlayerDto getPlayerByUserId(String roomUid, int userId);
-
-    /**
      * User ID를 기준으로 나의 마니띠의 Player 프로필을 가져온다.
      *
      * @param roomUid 문답방 코드
