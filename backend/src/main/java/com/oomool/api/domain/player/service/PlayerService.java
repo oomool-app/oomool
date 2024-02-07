@@ -49,5 +49,5 @@ public interface PlayerService {
     /**
      * 작성자 정보 가져오기
      */
-    Player getPlayerInfo(int authorId);
+    Player getPlayerInfo(String roomUid, int authorId);
 }

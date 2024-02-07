@@ -110,7 +110,8 @@ public class FeedServiceImpl implements FeedService {
         List<MultipartFile> fileList, int authorId) throws IOException {
 
         RoomQuestion roomQuestion = roomQuestionService.getRoomQuestionById(roomQuestionId);
-        Player player = playerService.getPlayerInfo(authorId);
+        String roomUid = roomQuestion.getRoom().getRoomUid();
+        Player player = playerService.getPlayerInfo(roomUid, authorId);
 
         // 피드 저장
         Feed registFeed = Feed.builder()

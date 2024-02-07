@@ -106,8 +106,8 @@ public class PlayerServiceImpl implements PlayerService {
      * 작성자 정보 가져오기
      */
     @Override
-    public Player getPlayerInfo(int authorId) {
-        Player player = playerRepository.findByUserId(authorId);
+    public Player getPlayerInfo(String roomUid, int authorId) {
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, authorId);
         return player;
     }
 }
