@@ -23,7 +23,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <div v-if="MessageNotRead">
+      <div v-show="!MessageNotRead">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -40,6 +40,37 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '~/stores/userStore';
+import { type ICheckUnreadNotificationInput } from '../repository/modules/interface/notifications.interface';
+
+useBodyColor('#61339B');
+
+const userStore = useUserStore();
+const { $api } = useNuxtApp();
+
 // 메시지 읽음 여부 가져올 변수
-const MessageNotRead = true;
+const MessageNotRead = ref(false);
+
+const checkUnreadNotifications = async (): Promise<void> => {
+  try {
+    const storedUser = userStore.getStoredUser();
+
+    if (storedUser != null) {
+      const userId: ICheckUnreadNotificationInput = {
+        userId: storedUser.id,
+      };
+
+      const response =
+        await $api.notifications.checkUnreadNotifications(userId);
+      MessageNotRead.value = response.data;
+      console.log(MessageNotRead.value);
+    }
+  } catch (error) {
+    console.error('Error while fetching room list:', error);
+  }
+};
+
+onBeforeMount(async () => {
+  await checkUnreadNotifications();
+});
 </script>
