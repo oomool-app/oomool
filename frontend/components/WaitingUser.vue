@@ -1,27 +1,34 @@
 <template>
-  <div class="flex justify-start items-center m-2">
-    <div>
+  <div class="grid grid-cols-[3rem,auto] gap-3 m-2">
+    <div class="flex justify-center items-center">
       <div
-        class="flex justify-center items-center border rounded-full w-8 h-8"
-        :class="props.user.player_background_color"
+        class="flex justify-center items-center border rounded-full w-12 h-12"
+        :style="{ backgroundColor: props.user.player_background_color }"
       >
-        <img :src="`${props.user.player_avatar_url}`" alt="프로필 이미지" />
+        <img
+          class="w-9 h-9"
+          :src="`${props.user.player_avatar_url}`"
+          alt="프로필 이미지"
+        />
       </div>
     </div>
-    <div class="m-1">
-      {{ props.user.player_nickname }}
+    <div class="flex items-center text-xl font-extrabold">
+      <div v-if="props.master === props.user.user_id">방장</div>
+      <div>
+        {{ props.user.player_nickname }}
+      </div>
+      <Popover class="flex justify-center items-center text-gray-500">
+        <PopoverTrigger>
+          <InfoIcon />
+        </PopoverTrigger>
+        <PopoverContent>
+          <div>
+            <p>{{ props.user.user_id }}</p>
+            <p>{{ props.user.user_email }}</p>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
-    <Popover>
-      <PopoverTrigger>
-        <InfoIcon class="text-purple-800" />
-      </PopoverTrigger>
-      <PopoverContent>
-        <div>
-          <p>{{ props.user.user_id }}</p>
-          <p>{{ props.user.user_email }}</p>
-        </div>
-      </PopoverContent>
-    </Popover>
   </div>
 </template>
 
@@ -36,5 +43,6 @@ interface User {
 
 const props = defineProps<{
   user: User;
+  master?: number;
 }>();
 </script>
