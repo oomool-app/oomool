@@ -1,7 +1,5 @@
 package com.oomool.api.domain.player.controller;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +28,7 @@ public class PlayerController {
     @Operation(summary = "플레이어 전체 조회", description = "현재 문답방에 참여하고 있는 전체 플레이어 정보를 조회합니다.")
     @GetMapping("/{roomUID}")
     public ResponseEntity<?> getPlayerList(@PathVariable("roomUID") String roomUid) {
-        return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of(
-                "players", playerService.getPlayerDtoList(roomUid)
-            ));
+        return ResponseHandler.generateResponse(HttpStatus.OK, playerService.getPlayerDtoList(roomUid));
     }
 
     @Operation(summary = "플레이어의 마니띠 프로필 조회", description = "'나'와 나의 마니띠 프로필을 조회합니다.")
@@ -49,10 +44,7 @@ public class PlayerController {
     @GetMapping("/{roomUID}/{userId}/manitto")
     public ResponseEntity<?> getMyManittoProfile(@PathVariable("roomUID") String roomUid,
         @PathVariable("userId") int userId) {
-        return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of(
-                "manitto", playerService.getManittoPlayerProfile(roomUid, userId)
-            ));
+        return ResponseHandler.generateResponse(HttpStatus.OK, playerService.getManittoPlayerProfile(roomUid, userId));
     }
 
     @Operation(summary = "플레이어가 예측한 결과(성공, 실패) 저장", description = "나는 마니또를 예측하고 그 결과를 저장합니다.")
