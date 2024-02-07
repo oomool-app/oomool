@@ -44,11 +44,11 @@
       </p>
     </div>
     <div
-      v-if="feeds === undefined"
+      v-if="feeds?.length === 0"
       class="feed-container flex flex-col items-center m-6 mt-10"
     >
       <p class="m-12 font-semibold">아직 답변해 준 친구들이 없어요..</p>
-      <img class="w-5/6" src="/img/emptyGhost.png" alt="" />
+      <img class="w-5/6" src="/img/emptyGhost.png" alt="빈피드" />
     </div>
     <div v-else-if="feeds !== undefined" class="feed-container">
       <div v-for="feed in feeds" :key="feed.user_id">
