@@ -38,15 +38,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = authentication.getName();
         String role = authentication.getAuthorities().toString();
 
-        log.info("tmp 1 : {}", role);
-
         String url = makeRedirectUrl(jwtService.generateToken(email, role));
+
         String token = jwtService.generateToken(email, role); // 액세스 토큰
 
         String refreshToken = jwtService.generateRefreshToken(email, role); // 리프레시 토큰 생성
 
         // redis에 저장
-        refreshTokenService.saveTokenInfo(email, refreshToken, token);
+        refreshTokenService.saveTokenInfo(email, refreshToken, "Bearer " + token);
 
         // 응답 헤더에 액세스 토큰 반환
         addTokenToHeader(response, token);

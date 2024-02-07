@@ -44,7 +44,6 @@ public class User {
     @Enumerated
     private Role role;
 
-    // private String role;
     @OneToMany(mappedBy = "user")
     @JsonBackReference // 순환참조 방지
     private List<SocialLogin> socialLoginList;

@@ -48,8 +48,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 카카오 access token을 이용해 서드파티 서버로부터 사용자 정보를 받아온다.(userRequest는 accessToken을 가지고 있다.)
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-        log.info("userRe : {}", userRequest);
-
         // 클라이언트 등록 ID(google, naver, kakao)와 사용자 이름 속성을 가져온다.
         String registrationId = userRequest.getClientRegistration()
             .getRegistrationId();
@@ -75,11 +73,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 사용자 정보가 DB에 이미 저장되어 있는지 확인
         User existingUser = userRepository.findByEmailAndProvider(email, registrationId);
 
-        // 유저가 존재하지 않을 때 userAttribute의 exist 값을 false로 넣는다.
         if (existingUser == null) {
-
-            userAttribute.put("exist", false);
-            // 회원의 권한(회원이 존재하지 않으므로 기본권한인 ROLE_USER를 넣어준다.)
 
             User newUser = new User();
             newUser.setUsername(oAuth2UserInfo.getNickname());
@@ -102,12 +96,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 userAttribute, "email");
         }
 
-        // 회원이 존재할 경우, userAttribute의 exist의 값을 true로 넣어준다.
-        userAttribute.put("exist", true);
         // 회원의 권한, 회원 속성, 속성 이름을 이용해 DefaultOAuth2User 객체를 생성해 반환한다.
-
-        log.info("getRole : {}", existingUser.getRole().getValue());
-
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority("ROLE_".concat(existingUser.getRole().getValue()))),
             userAttribute, "email");
