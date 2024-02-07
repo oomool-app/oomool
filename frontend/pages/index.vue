@@ -179,6 +179,7 @@ const selected3: Ref<boolean> = ref(false);
 const select1 = async (): Promise<void> => {
   await getRoomList();
   rooms.value = inProgressRooms(rooms.value);
+  // 진행 기준 정렬
   selected1.value = true;
   selected2.value = false;
   selected3.value = false;
@@ -193,10 +194,21 @@ const select2 = async (): Promise<void> => {
 const select3 = async (): Promise<void> => {
   await getRoomList();
   rooms.value = notProgressRooms(rooms.value);
+  // 진행 기준 정렬
   selected1.value = false;
   selected2.value = false;
   selected3.value = true;
 };
+
+// 생성일 기준 정렬 // created_at 데이터 추가 예정
+// const sortByCreatedat = (): void => {
+//   rooms.value.sort(
+//     (a: any, b: any) =>
+//       new Date(b.setting.created_at as string).getTime() -
+//       new Date(a.setting.created_at as string).getTime(),
+//   );
+//   console.log(rooms);
+// };
 
 const isSupported = (): boolean => {
   return 'Notification' in window && 'serviceWorker' in navigator;
@@ -210,6 +222,7 @@ onMounted(async () => {
   }
   await getRoomList();
   await getTempRoomList();
+  // await sortByCreatedat();
   await select1();
 });
 </script>
