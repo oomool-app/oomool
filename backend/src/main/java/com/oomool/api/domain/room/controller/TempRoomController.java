@@ -93,4 +93,12 @@ public class TempRoomController {
         );
     }
 
+    // Temp Start Call
+    @Operation(summary = "[테스트용] 대기방에서 시작방 전환을 알립니다.", description = "대기방에서 시작방으로 전환되었는지 결과 리턴")
+    @GetMapping("/{inviteCode}/check")
+    public ResponseEntity<?> callStartPoint(@PathVariable("inviteCode") String inviteCode) {
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            Map.of("startCheck", tempRoomRedisService.startCheck(inviteCode)));
+    }
+
 }
