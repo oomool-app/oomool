@@ -2,6 +2,8 @@ import HttpFactory from '../factory';
 import {
   type IGetAllFeedsByRoomUidAndSequenceInput,
   type IGetAllFeedsByRoomUidAndSequenceResponse,
+  type IWriteFeedAnswerInput,
+  type IWriteFeedAnswerResponse,
 } from './interface/feeds.interface';
 
 class FeedsModule extends HttpFactory {
@@ -14,6 +16,17 @@ class FeedsModule extends HttpFactory {
     return await this.getCall<IGetAllFeedsByRoomUidAndSequenceResponse>(
       'GET',
       `${this.RESOURCE}/${data.roomUid}/${data.sequence}`,
+    );
+  }
+
+  // 피드 답변 등록
+  async writeFeedAnswer(
+    data: IWriteFeedAnswerInput,
+  ): Promise<IWriteFeedAnswerResponse> {
+    return await this.otherCall<IWriteFeedAnswerResponse>(
+      'POST',
+      `${this.RESOURCE}/daily`,
+      data,
     );
   }
 }
