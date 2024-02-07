@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 const store = useMakeRoomStore();
-const reg = /[^\w\sㄱ-힣()0-9]/g;
+const reg = /[^\w\sㄱ-힣()0-9]/;
 const changeInput = (event: any): void => {
   store.name = event.target.value;
 };
