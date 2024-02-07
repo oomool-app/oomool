@@ -61,14 +61,11 @@ public class PlayerServiceImpl implements PlayerService {
             guess = true; // 일치하면 "참"
         }
 
-        // 내가 추측한 마니또를 맞췄는지 여부를 DB에 넣기
+    @Override
+    @Transactional
+    public void saveGuessResult(String roomUid, int userId, boolean guessResult) {
         Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, userId);
-        player.updateGuess(guess);
-
-        return Map.of(
-            "guess", guess,
-            "manitto", playerMapper.entityToPlayerDto(myManitto)
-        );
+        player.updateGuess(guessResult);
     }
 
     /**

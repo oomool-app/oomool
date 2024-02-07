@@ -5,13 +5,13 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oomool.api.domain.player.dto.PlayerDto;
+import com.oomool.api.domain.player.dto.GuessResultDto;
 import com.oomool.api.domain.player.service.PlayerServiceImpl;
 import com.oomool.api.global.util.ResponseHandler;
 
@@ -53,4 +53,11 @@ public class PlayerController {
             playerService.guessMyManittoPlayer(roomUid, userId, guessMyManitto));
     }
 
+    @Operation(summary = "플레이어가 예측한 결과(성공, 실패) 저장", description = "나는 마니또를 예측하고 그 결과를 저장합니다.")
+    @PostMapping("/{roomUID}/{userId}/guess")
+    public ResponseEntity<?> saveGuessResult(@PathVariable("roomUID") String roomUid,
+        @PathVariable("userId") int userId, @RequestBody GuessResultDto guessResult) {
+        playerService.saveGuessResult(roomUid, userId, guessResult.getGuess());
+        return ResponseHandler.generateResponse(HttpStatus.OK, "추측 결과를 저장했습니다.");
+    }
 }
