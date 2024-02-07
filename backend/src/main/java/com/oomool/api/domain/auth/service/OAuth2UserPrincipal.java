@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.service;
+package com.oomool.api.domain.auth.service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.oomool.api.domain.user.auth.dto.OAuth2UserInfo;
+import com.oomool.api.domain.auth.dto.OAuth2UserInfo;
 import com.oomool.api.domain.user.entity.User;
 
 public class OAuth2UserPrincipal implements OAuth2User, UserDetails {

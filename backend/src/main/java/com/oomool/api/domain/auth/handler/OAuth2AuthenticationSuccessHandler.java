@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.handler;
+package com.oomool.api.domain.auth.handler;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.oomool.api.domain.user.auth.jwt.JwtService;
+import com.oomool.api.domain.auth.jwt.JwtService;
 import com.oomool.api.domain.user.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;

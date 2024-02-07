@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.exception;
+package com.oomool.api.domain.auth.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

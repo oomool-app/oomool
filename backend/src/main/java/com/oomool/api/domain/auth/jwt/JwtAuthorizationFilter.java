@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.jwt;
+package com.oomool.api.domain.auth.jwt;
 
 import java.io.IOException;
 import java.util.List;
@@ -68,8 +68,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             .orElseThrow(IllegalStateException::new);
 
         log.info("접속 유저: {}", findUser);
-        log.info("접속 유저 권한 : {}", jwtService.getRole(token));
-
+        log.info("role :: {}", "ROLE_".concat(findUser.getRole().getValue()));
 
         // SecurityContext에 등록할 User 객체를 만들어준다.
         SecurityUserDto userDto = SecurityUserDto.builder()

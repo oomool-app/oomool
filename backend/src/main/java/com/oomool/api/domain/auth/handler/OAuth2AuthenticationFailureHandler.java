@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.handler;
+package com.oomool.api.domain.auth.handler;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.oomool.api.domain.user.auth.jwt;
+package com.oomool.api.domain.auth.jwt;
 
 import java.io.Serializable;
 
@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -15,6 +16,7 @@ import lombok.Getter;
  * @RedisHash는 Hash Collection을 명시하는 애너테이션입니다. RedisHash의 key는 value인 jwtToken과 @Id가 붙은 id 필드의 값을 합성하여 사용
  */
 @Getter
+@Builder
 @AllArgsConstructor
 @RedisHash(value = "jwtToken", timeToLive = 60 * 60 * 24 * 14)
 public class RefreshToken implements Serializable {

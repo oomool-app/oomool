@@ -1,8 +1,8 @@
-package com.oomool.api.domain.user.auth.dto;
+package com.oomool.api.domain.auth.dto;
 
 import java.util.Map;
 
-import com.oomool.api.domain.user.auth.exception.OAuth2AuthenticationProcessingException;
+import com.oomool.api.domain.auth.exception.OAuth2AuthenticationProcessingException;
 
 /**
  * 목적 : 소셜로그인 공급자 명에 따라 다른 로직 처리하기 위해
