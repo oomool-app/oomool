@@ -51,9 +51,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 클라이언트로부터 JWT 액세스 토큰 전달 받는다.
         final String token = resolveToken(request);
-
         if (!StringUtils.hasText(token)) {
-
+            // 로그인했을 때도 filter를 거치는데, token에 값이 없을 떄 문제가 되지 않도록 다음 필터로 이동시켜준다.
             doFilter(request, response, filterChain);
             return;
         }
@@ -71,11 +70,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("접속 유저: {}", findUser);
         log.info("접속 유저 권한 : {}", jwtService.getRole(token));
 
+
         // SecurityContext에 등록할 User 객체를 만들어준다.
         SecurityUserDto userDto = SecurityUserDto.builder()
             .userId(findUser.getId())
             .email(findUser.getEmail())
-            .role(jwtService.getRole(token))
+            .role("ROLE_".concat(findUser.getRole().getValue()))
             .nickname(findUser.getUsername())
             .build();
 
@@ -96,10 +96,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      */
     private String resolveToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return token.substring(7);
+
+        // 로그인하고 redirect 해줄 떄 filter가 실행되는데 이때 requestHeader에 token이 없으므로
+        // null로 넘어온다. 따라서, token이 null일 때도 filter가 작동해야 하므로.
+        if (!StringUtils.hasText(token)) {
+            return token;
         }
-        return token;
+
+        // request Header 토큰 앞에 반드시 Bearer가 붙어있어야 한다.
+        if (!token.startsWith("Bearer ")) {
+            throw new JwtException("유효하지 않는 JWT 입니다.");
+        }
+
+        return token.substring(7);
     }
 
     /**
