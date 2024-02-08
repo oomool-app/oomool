@@ -13,6 +13,7 @@ import com.oomool.api.domain.player.entity.Avatar;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.player.service.AvatarServiceImpl;
 import com.oomool.api.domain.player.util.PlayerMapper;
+import com.oomool.api.domain.room.constant.TempRoomPrefix;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
 import com.oomool.api.domain.room.entity.GameRoom;
@@ -48,7 +49,7 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public String createGameRoom(String inviteCode) throws Exception {
+    public Map<String, Object> createGameRoom(String inviteCode) throws Exception {
 
         String roomUid = UniqueCodeGenerator.generateRandomString(8);                               // 방 UUID 생성
         TempRoomDto tempRoomDto = tempRoomService.getTempRoomDetail(inviteCode);         // 초대코드로 임시방 정보 조회
@@ -79,14 +80,21 @@ public class GameRoomServiceImpl implements GameRoomService {
             Player player = playerMapper.dtoToEntity(roomUid, playerDto, gameRoom, user, avatar,
                 tempRoomDto.masterId(), matchMap.get(playerDto.getUserId()));
             gameRoom.getPlayers().add(player); // 문답방에 플레이어를 넣는다.
+
+            // 대기방 유저 목록에서 삭제
+            redisService.deleteSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + user.getId(), inviteCode);
         }
         gameRoomRepository.save(gameRoom);
 
-        // 대기방 삭제
-        redisService.deleteKey("roomSetting:" + inviteCode);
+        // invite Code에 대한 정보를 삭제한다. (대기방 삭제)
+        redisService.deleteKey(TempRoomPrefix.SETTING_OPTION + inviteCode);
+        redisService.deleteKey(TempRoomPrefix.PLAYERS + inviteCode);
 
         // 생성된 문답방 코드 return
-        return roomUid;
+        return Map.of(
+            "roomUid", roomUid,
+            "message", inviteCode + " 대기방이 삭제되었습니다."
+        );
     }
 
     @Override
