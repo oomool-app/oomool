@@ -1,6 +1,5 @@
 package com.oomool.api.domain.room.util;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,7 +69,7 @@ public class TempRoomMapper {
     /**
      * Redis 대기방에 있는 플레이어를 조회한다.
      *
-     * @param playerJson
+     * @param playerJson Json에 Serlialize 된 Json 객체
      * */
     public PlayerDto objectToPlayerDto(Object playerJson) {
         try {
