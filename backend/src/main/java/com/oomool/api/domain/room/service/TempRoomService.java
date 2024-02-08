@@ -64,4 +64,13 @@ public interface TempRoomService {
     SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto);
 
+    /**
+     * // 비즈니스
+     * 방장인지 검증한다.
+     *
+     * @param inviteCode 초대코드
+     * @param userId 유저 아이디
+     * */
+    boolean validateTempRoomMaster(String inviteCode, int userId);
+
 }

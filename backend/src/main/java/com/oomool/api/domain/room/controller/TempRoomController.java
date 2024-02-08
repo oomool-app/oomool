@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomRequestDto;
-import com.oomool.api.domain.room.service.TempRoomRedisService;
+import com.oomool.api.domain.room.service.TempRoomService;
 import com.oomool.api.domain.user.service.UserService;
 import com.oomool.api.global.util.ResponseHandler;
 
@@ -33,63 +32,66 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "대기방", description = "대기방을 생성하는 API를 명세합니다.")
 public class TempRoomController {
 
-    private final TempRoomRedisService tempRoomRedisService;
+    private final TempRoomService tempRoomService;
     private final UserService userService;
 
     @Operation(summary = "대기방 생성 기능", description = "대기방을 생성합니다.")
     @PostMapping
-    public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) throws JsonProcessingException {
+    public ResponseEntity<?> createTempRoom(@RequestBody TempRoomRequestDto request) {
 
         int masterId = userService.getUserIdByEmail(request.getMaster().getEmail());
 
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            tempRoomRedisService.createTempRoom(request.getSetting(), masterId));
+            tempRoomService.createTempRoom(request.getSetting(), masterId));
     }
 
     @Operation(summary = "대기방 조회 기능")
     @GetMapping("/{inviteCode}")
-    public ResponseEntity<?> getTemRoom(@PathVariable("inviteCode") String inviteCode) throws JsonProcessingException {
+    public ResponseEntity<?> getTempRoom(@PathVariable("inviteCode") String inviteCode) {
 
-        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.getTempRoom(inviteCode));
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.getTempRoomDetail(inviteCode));
     }
 
     @Operation(summary = "대기방 입장")
     @PostMapping("/{inviteCode}/players")
     public ResponseEntity<?> joinTempRoom(@PathVariable("inviteCode") String inviteCode,
-        @RequestBody PlayerDto player) throws JsonProcessingException {
+        @RequestBody PlayerDto player) {
 
-        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.joinTempRoom(inviteCode, player));
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.joinTempRoom(inviteCode, player));
     }
 
     @Operation(summary = "대기방 삭제", description = "방장은 대기방을 삭제할 수 있다.")
     @DeleteMapping("/{inviteCode}")
     public ResponseEntity<?> deleteTempRoom(@PathVariable("inviteCode") String inviteCode,
         @RequestParam("id") int userId) {
-        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.deleteTempRoom(inviteCode, userId));
+
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.deleteTempRoom(inviteCode, userId));
     }
 
     @Operation(summary = "플레이어 퇴장 ", description = "플레이어는 대기방을 퇴장할 수 있다.")
     @DeleteMapping("/{inviteCode}/{userId}")
     public ResponseEntity<?> exitTempRoom(@PathVariable("inviteCode") String inviteCode,
         @PathVariable("userId") int userId) {
-        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomRedisService.exitTempRoom(inviteCode, userId));
+
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.exitTempRoom(inviteCode, userId));
     }
 
     @Operation(summary = "플레이어 프로필 수정", description = "플레이어는 대기방의 프로필을 수정할 수 있다.")
     @PutMapping("/{inviteCode}/profile")
     public ResponseEntity<?> modifyPlayerProfile(@PathVariable("inviteCode") String inviteCode,
-        @RequestBody PlayerDto playerDto) throws JsonProcessingException {
+        @RequestBody PlayerDto playerDto) {
+
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of("player", tempRoomRedisService.modifyPlayerProfile(inviteCode, playerDto)));
+            Map.of("player", tempRoomService.modifyPlayerProfile(inviteCode, playerDto)));
     }
 
     @Operation(summary = "대기방의 방 설정 옵션 수정하기", description = "방장은 대기방의 설정 옵션을 수정할 수 있다.")
     @PatchMapping("/{inviteCode}/setting")
     public ResponseEntity<?> modifyTempRoomSettingOption(@PathVariable("inviteCode") String inviteCode,
         @RequestBody SettingOptionDto settingOptionDto) {
-        //
+
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of("setting", tempRoomRedisService.modifyTempRoomSettingOption(inviteCode, settingOptionDto))
+            Map.of("setting", tempRoomService.modifyTempRoomSettingOption(inviteCode, settingOptionDto))
         );
     }
 
