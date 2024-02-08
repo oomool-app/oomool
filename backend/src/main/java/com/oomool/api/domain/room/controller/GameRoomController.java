@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oomool.api.domain.player.service.PlayerServiceImpl;
 import com.oomool.api.domain.room.dto.InviteCodeDto;
 import com.oomool.api.domain.room.service.GameRoomServiceImpl;
-import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,8 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class GameRoomController {
 
     private final GameRoomServiceImpl gameRoomService;
-    private final TempRoomRedisService tempRoomRedisService;
-    private final PlayerServiceImpl playerService;
 
     @Operation(summary = "문답방 생성 기능", description = "문답방을 생성합니다.")
     @PostMapping
