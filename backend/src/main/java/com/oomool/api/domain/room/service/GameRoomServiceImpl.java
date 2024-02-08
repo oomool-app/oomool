@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,9 +68,8 @@ public class GameRoomServiceImpl implements GameRoomService {
         // 마니또 매칭 결과
         Map<Integer, Integer> matchMap = MatchManittiUtil.matchPair(playerDtoList);
 
-        // TODO :: [임시코드] 대기방 상태 확인을 위한 임시 코드
-        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
-        valueOps.set("startCheck:" + inviteCode, roomUid);
+        // [임시 - StartCheck] - 대기방에서 시작 여부를 체킹
+        redisService.saveValueOperation(TempRoomPrefix.START_CHECK + inviteCode, roomUid);
 
         // Player Entity 객체로 변환
         for (PlayerDto playerDto : playerDtoList) {
