@@ -7,6 +7,7 @@ import {
   type IGetWaitRoomResponse,
   type IGetUpdateSettingResponse,
   type IUpdateSettingInput,
+  type IGetLongPollingResponse,
 } from './interface/waitroom.interface';
 
 class MakeModule extends HttpFactory {
@@ -52,6 +53,14 @@ class MakeModule extends HttpFactory {
       'PATCH',
       `${this.RESOURCE}/${inviteCode}/setting`,
       roomSetting,
+    );
+  }
+
+  // LongPulling
+  async getStartCheck(inviteCode: string): Promise<IGetLongPollingResponse> {
+    return await this.getCall<IGetLongPollingResponse>(
+      'GET',
+      `${this.RESOURCE}/${inviteCode}/check`,
     );
   }
 }

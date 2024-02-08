@@ -98,3 +98,10 @@ export interface IUpdateSettingInput {
   question_type: string;
   max_member: number;
 }
+
+export interface IGetLongPollingResponse {
+  data: {
+    startCheck: string;
+  };
+  stauts: string;
+}
