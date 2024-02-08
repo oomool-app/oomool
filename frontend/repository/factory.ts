@@ -19,7 +19,7 @@ class HttpFactory {
   async otherCall<T>(
     method: string,
     url: string,
-    data: object,
+    data: FormData | object,
     extras = {},
   ): Promise<T> {
     const $res: T = await this.$fetch(url, {
