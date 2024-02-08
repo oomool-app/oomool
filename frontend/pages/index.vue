@@ -5,8 +5,7 @@
       <img src="/img/logo.png" class="pl-4 w-40 h-auto" />
 
       <!--알림-->
-      <h1 class="text-2xl font-bold text-left pl-6 text-white"></h1>
-      <MessageButton as-child class="absolute right-5"></MessageButton>
+      <MessageButton as-child></MessageButton>
     </div>
 
     <!--방 만들기, 방 참여하기 버튼 -->
@@ -178,8 +177,11 @@ const selected3: Ref<boolean> = ref(false);
 
 const select1 = async (): Promise<void> => {
   await getRoomList();
-  rooms.value = inProgressRooms(rooms.value);
-  // 진행 기준 정렬
+  if (rooms.value != null) {
+    rooms.value = inProgressRooms(rooms.value);
+    // 생성일 기준 정렬
+    sortByCreatedat();
+  }
   selected1.value = true;
   selected2.value = false;
   selected3.value = false;
@@ -193,22 +195,24 @@ const select2 = async (): Promise<void> => {
 
 const select3 = async (): Promise<void> => {
   await getRoomList();
-  rooms.value = notProgressRooms(rooms.value);
-  // 진행 기준 정렬
+  if (rooms.value != null) {
+    rooms.value = notProgressRooms(rooms.value);
+    // 생성일 기준 정렬
+    sortByCreatedat();
+  }
   selected1.value = false;
   selected2.value = false;
   selected3.value = true;
 };
 
-// 생성일 기준 정렬 // created_at 데이터 추가 예정
-// const sortByCreatedat = (): void => {
-//   rooms.value.sort(
-//     (a: any, b: any) =>
-//       new Date(b.setting.created_at as string).getTime() -
-//       new Date(a.setting.created_at as string).getTime(),
-//   );
-//   console.log(rooms);
-// };
+// 생성일 기준 정렬
+const sortByCreatedat = (): void => {
+  rooms.value.sort(
+    (a: any, b: any) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime(),
+  );
+};
 
 const isSupported = (): boolean => {
   return 'Notification' in window && 'serviceWorker' in navigator;
@@ -222,7 +226,6 @@ onMounted(async () => {
   }
   await getRoomList();
   await getTempRoomList();
-  // await sortByCreatedat();
   await select1();
 });
 </script>
