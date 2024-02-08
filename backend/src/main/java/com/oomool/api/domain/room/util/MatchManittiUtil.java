@@ -9,14 +9,15 @@ import java.util.stream.Collectors;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 
-public class MatchManitti {
+public class MatchManittiUtil {
 
     /**
      * 마니띠를 매칭하는 유틸
      * - 마니띠를 매칭한다.
      * - 마니띠 매칭은 userId를 기준으로 한다.
      *
-     * @param playerDtoList*/
+     * @param playerDtoList 플레이어 DTO 리스트
+     *  */
     public static Map<Integer, Integer> matchPair(List<PlayerDto> playerDtoList) {
 
         // 매칭 닉네임 만 뽑기
