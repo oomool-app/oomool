@@ -20,7 +20,7 @@ export interface IGetAllMemebersByRoomUidResponse {
 
 export interface IGetMyManittoInput {
   roomUid: string;
-  userId: number;
+  userId: number | undefined;
 }
 
 export interface IGetMyManittoResponse {
