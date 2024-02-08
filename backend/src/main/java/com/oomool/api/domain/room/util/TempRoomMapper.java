@@ -3,6 +3,7 @@ package com.oomool.api.domain.room.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -58,14 +59,7 @@ public class TempRoomMapper {
      * @param playerJsonList redis에 serialization 된 json 객체
      * */
     public List<PlayerDto> objectToPlayerDtoList(List<Object> playerJsonList) {
-        List<PlayerDto> playerDtoList = new ArrayList<>();
-        if (playerJsonList != null) {
-            for (Object playerJson : playerJsonList) {
-                PlayerDto playerDto = objectToPlayerDto(playerJson);
-                playerDtoList.add(playerDto);
-            }
-        }
-        return playerDtoList;
+        return playerJsonList.stream().map(this::objectToPlayerDto).collect(Collectors.toList());
     }
 
     public List<PlayerDto> objectToPlayerDtoList(Map<Integer, Object> totalPlayerMap) {
