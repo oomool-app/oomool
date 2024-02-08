@@ -42,7 +42,7 @@ public interface PlayerService {
     /**
      * 마니띠 정보 가져오기
      * */
-    ManittiDto getManittiInfo(int authorId);
+    ManittiDto getManittiInfo(String roomUid, int authorId);
 
     /**
      * 작성자 정보 가져오기

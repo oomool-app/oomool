@@ -55,17 +55,7 @@ public class FeedServiceImpl implements FeedService {
         // 방 질문 ID로 모든 피드 목록 가져오기.
         int roomQuestionId = roomQuestionFeedDto.getRoomQuestionId();
 
-        List<Feed> feedAllList = feedRepository.findAll();
-
-        List<Feed> feedList = new ArrayList<>();
-
-        for (Feed feed : feedAllList) {
-            int roomQuestionIdCheck = feed.getRoomQuestion().getId();
-            // 방 질문 ID가 같은 값을 feedList에 담아준다.
-            if (roomQuestionIdCheck == roomQuestionId) {
-                feedList.add(feed);
-            }
-        }
+        List<Feed> feedList = feedRepository.findByRoomQuestionId(roomQuestionId);
 
         List<RoomFeedDto> roomFeedDtoList = new ArrayList<>();
 
@@ -76,7 +66,8 @@ public class FeedServiceImpl implements FeedService {
 
             // 작성자 ID를 가져와서 마니띠를 찾는다.
             int authorId = feed.getAuthor().getUser().getId();
-            ManittiDto manittiDto = playerService.getManittiInfo(authorId);
+
+            ManittiDto manittiDto = playerService.getManittiInfo(roomUid, authorId);
 
             RoomFeedDto roomFeedDto = RoomFeedDto
                 .builder()
@@ -110,7 +101,9 @@ public class FeedServiceImpl implements FeedService {
         List<MultipartFile> fileList, int authorId) throws IOException {
 
         RoomQuestion roomQuestion = roomQuestionService.getRoomQuestionById(roomQuestionId);
+
         String roomUid = roomQuestion.getRoom().getRoomUid();
+
         Player player = playerService.getPlayerInfo(roomUid, authorId);
 
         // 피드 저장
