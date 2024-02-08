@@ -21,7 +21,8 @@ public class RedisService {
      * prefix Key가 존재하는지 검증 <p>
      * - Hash 의 key의 Type과 무관하다.
      *
-     *
+     * @param prefix redis Key
+     * @return true / false
      * */
     public boolean hasKey(String prefix) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(prefix));
@@ -79,6 +80,32 @@ public class RedisService {
     public String getValueHashOperation(String prefix, String key) {
         HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
         return (String)hashOps.get(prefix, key);
+    }
+
+    /**
+     * Hash Operation <Stirng, String>
+     * redis Hash에 key, value를 기준으로 Object 반환
+     * <p>
+     * @param prefix
+     * @param key
+     * @return Object
+     * */
+    public Object getHashOperation(String prefix, String key) {
+        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+        return hashOps.get(prefix, key);
+    }
+
+    /**
+     * Hash Operation <Stirng, Integer>
+     * redis Hash에 key, value를 기준으로 Object 반환
+     * <p>
+     * @param prefix
+     * @param key
+     * @return Object
+     * */
+    public Object getHashOperation(String prefix, Integer key) {
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        return hashOps.get(prefix, key);
     }
 
     /**
@@ -170,6 +197,9 @@ public class RedisService {
     /**
      *  Set Operation<String, Object> <p>
      *  redis Set에 Object가 있는지 여부 확인
+     *  <p></p>
+     * @param prefix REDIS KEY
+     * @param value REDIS에 넣은 value
      * */
     public boolean hasValueOperation(String prefix, String value) {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
