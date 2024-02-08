@@ -11,7 +11,7 @@ public interface GameRoomService {
      *
      * @param inviteCode 초대코드
      * */
-    String createGameRoom(String inviteCode) throws Exception;
+    Map<String, Object> createGameRoom(String inviteCode) throws Exception;
 
     /**
      * 문답방 Entity를 조회한다.

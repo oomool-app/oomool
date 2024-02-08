@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
 import com.oomool.api.domain.question.util.RoomQuestionMapper;
+import com.oomool.api.domain.room.constant.TempRoomPrefix;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.room.util.GameRoomMapper;
@@ -79,7 +80,7 @@ public class UserService {
     public List<Map<String, Object>> getTempRoomList(int userId) {
 
         // 참여하고 있는 inviteCode 정보 조회
-        Set<Object> inviteCodeSet = redisService.getSetOperation("userInviteTemp:" + userId);
+        Set<Object> inviteCodeSet = redisService.getSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + userId);
         if (inviteCodeSet == null || inviteCodeSet.isEmpty()) {
             throw new BaseException(StatusCode.NOT_FOUND_TEMP_ROOM);
         }
@@ -91,7 +92,8 @@ public class UserService {
             String inviteCode = item.toString();
 
             // 대기방 정보로 변환
-            Map<String, Object> tempRoomSetting = redisService.getHashOperationByString("roomSetting:" + inviteCode);
+            Map<String, Object> tempRoomSetting = redisService.getHashOperationByString(
+                TempRoomPrefix.SETTING_OPTION + inviteCode);
             int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
             SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
 
