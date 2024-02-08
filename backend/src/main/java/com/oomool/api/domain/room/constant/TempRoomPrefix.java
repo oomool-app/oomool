@@ -8,4 +8,7 @@ public class TempRoomPrefix {
     public static String PLAYERS = "roomPlayers:"; // + inviteCode
     public static String USER_INVITE_TEMPROOM = "userInviteTemp:"; // + userId
 
+    // [임시] startCall key
+    public static String START_CHECK = "startCheck:";
+
 }

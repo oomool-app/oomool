@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -86,8 +87,8 @@ public class RedisService {
      * Hash Operation <Stirng, String>
      * redis Hash에 key, value를 기준으로 Object 반환
      * <p>
-     * @param prefix
-     * @param key
+     * @param prefix redis Key
+     * @param key 꺼내고 싶은 Hash의 key (String)
      * @return Object
      * */
     public Object getHashOperation(String prefix, String key) {
@@ -99,8 +100,8 @@ public class RedisService {
      * Hash Operation <Stirng, Integer>
      * redis Hash에 key, value를 기준으로 Object 반환
      * <p>
-     * @param prefix
-     * @param key
+     * @param prefix redis Key
+     * @param key 꺼내고 싶은 Hash의 key (Integer)
      * @return Object
      * */
     public Object getHashOperation(String prefix, Integer key) {
@@ -204,6 +205,29 @@ public class RedisService {
     public boolean hasValueOperation(String prefix, String value) {
         SetOperations<String, Object> setOps = redisTemplate.opsForSet();
         return Boolean.TRUE.equals(setOps.isMember(prefix, value));
+    }
+
+    /**
+     * Value Operation <String, Object>
+     * redis Value에 Object가 있는 지 확인
+     *
+     * @param prefix REDIS KEY
+     * */
+    public String getValueOperation(String prefix) {
+        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        return (String)valueOps.get(prefix);
+    }
+
+    /**
+     * Value Operation <String, Object>
+     * redis Value에 저장
+     *
+     * @param prefix REDIS KEY
+     * @param value 저장할 값
+     * */
+    public void saveValueOperation(String prefix, String value) {
+        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        valueOps.set(prefix, value);
     }
 
 }

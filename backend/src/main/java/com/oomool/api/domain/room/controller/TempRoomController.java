@@ -100,7 +100,7 @@ public class TempRoomController {
     @GetMapping("/{inviteCode}/check")
     public ResponseEntity<?> callStartPoint(@PathVariable("inviteCode") String inviteCode) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
-            Map.of("startCheck", tempRoomRedisService.startCheck(inviteCode)));
+            Map.of("startCheck", tempRoomService.startCheck(inviteCode)));
     }
 
 }
