@@ -137,13 +137,13 @@ const getTime = (): void => {
   const timeBeforeStart = startDate.getTime() - today.getTime();
 
   // 시작일까지 몇일 남았는지
-  dayBeforeStart.value = Math.floor(timeBeforeStart / (1000 * 60 * 60 * 24));
+  dayBeforeStart.value = Math.ceil(timeBeforeStart / (1000 * 60 * 60 * 24));
 
   // 종료일까지 남은 시간
   const timeBeforeEnd = endDate.getTime() - today.getTime();
 
   // 종료까지 몇일 남았는지
-  dayBeforeEnd.value = Math.floor(timeBeforeEnd / (1000 * 60 * 60 * 24));
+  dayBeforeEnd.value = Math.ceil(timeBeforeEnd / (1000 * 60 * 60 * 24));
 };
 
 onBeforeMount(() => {
