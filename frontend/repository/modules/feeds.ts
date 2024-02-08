@@ -2,7 +2,6 @@ import HttpFactory from '../factory';
 import {
   type IGetAllFeedsByRoomUidAndSequenceInput,
   type IGetAllFeedsByRoomUidAndSequenceResponse,
-  type IWriteFeedAnswerInput,
   type IWriteFeedAnswerResponse,
 } from './interface/feeds.interface';
 
@@ -20,9 +19,7 @@ class FeedsModule extends HttpFactory {
   }
 
   // 피드 답변 등록
-  async writeFeedAnswer(
-    data: IWriteFeedAnswerInput,
-  ): Promise<IWriteFeedAnswerResponse> {
+  async writeFeedAnswer(data: FormData): Promise<IWriteFeedAnswerResponse> {
     return await this.otherCall<IWriteFeedAnswerResponse>(
       'POST',
       `${this.RESOURCE}/daily`,
