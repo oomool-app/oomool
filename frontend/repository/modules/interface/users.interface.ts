@@ -42,6 +42,7 @@ export interface IGetTempRoomListResponse {
         max_member: number;
       };
       master_id: number;
+      created_at: string;
     };
   };
 }

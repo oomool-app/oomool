@@ -2,22 +2,18 @@ export interface IGetAllNotificationsInput {
   userId: number;
 }
 
+export default interface NotificationMessage {
+  room_uid: string;
+  type: string;
+  title: string;
+  body: string;
+  created_at: string;
+}
+
 export interface IGetAllNotificationsResponse {
   data: {
-    unread: {
-      room_uid: string;
-      type: string;
-      title: string;
-      body: string;
-      created_at: string;
-    };
-    read: {
-      room_uid: string;
-      type: string;
-      title: string;
-      body: string;
-      created_at: string;
-    };
+    unread?: NotificationMessage[];
+    read?: NotificationMessage[];
   };
 }
 

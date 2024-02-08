@@ -9,15 +9,12 @@
       'pb-3',
       'pl-3',
       'relative',
-      { 'bg-[#F1EBFC]': isReadtimePast },
     ]"
-    @click="$router.push({ path: `room/${messages.roomid}` })"
+    @click="$router.push({ path: `room/${messages.room_uid}` })"
   >
     <!--아이콘-->
     <div class="self-center pl-3 pr-3">
-      <div
-        v-if="props.messages.type == '생성' || props.messages.type == '종료'"
-      >
+      <div v-if="props.messages.type == 'system'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -73,7 +70,7 @@
     </div>
 
     <div class="col-span-6">
-      <div class="text-lg font-semibold">{{ props.messages.roomtitle }}</div>
+      <div class="text-lg font-semibold">{{ props.messages.title }}</div>
       <div class="mb-1 text-gray-500 text-sm w-64 dark:text-gray-400">
         {{ props.messages.title }}
       </div>
@@ -87,25 +84,13 @@
 </template>
 
 <script setup lang="ts">
-interface Message {
-  messageid: number;
-  type: string;
-  roomid: number;
-  roomtitle: string;
-  title: string;
-  createdtime: string;
-  readtime: string;
-}
-
+import type NotificationMessage from '~/repository/modules/interface/notifications.interface';
 const props = defineProps<{
-  messages: Message;
+  messages: NotificationMessage;
 }>();
 
-const isReadtimePast =
-  new Date(props.messages.readtime as string).getTime() < new Date().getTime();
 const timeFromCreate =
-  new Date().getTime() -
-  new Date(props.messages.createdtime as string).getTime();
+  new Date().getTime() - new Date(props.messages.created_at).getTime();
 const minFromCreate = Math.floor(timeFromCreate / 1000 / 60);
 const dayFromCreate = Math.floor(timeFromCreate / (1000 * 60 * 60 * 24));
 const hourFromCreate = Math.floor(timeFromCreate / (1000 * 60 * 60));
