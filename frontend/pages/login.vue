@@ -17,6 +17,46 @@
         alt="카카오 로그인 버튼"
       />
     </div>
+    <fieldset
+      class="form-group grid grid-cols-3 flex-wrap justify-center gap-4 pt-5"
+    >
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('kimsungsu@naver.com')"
+      >
+        로그인1
+      </button>
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('jeongpilmo@naver.com')"
+      >
+        로그인2
+      </button>
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('parksejeong@naver.com ')"
+      >
+        로그인3
+      </button>
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('kimhyunji@naver.com')"
+      >
+        로그인4
+      </button>
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('jeoneunpyeong@naver.com')"
+      >
+        로그인5
+      </button>
+      <button
+        class="bg-white p-3 rounded-xl text-black font-bold"
+        @click="handleLogin('kimbyeonghyung@naver.com')"
+      >
+        로그인6
+      </button>
+    </fieldset>
   </div>
 </template>
 
@@ -28,12 +68,32 @@ const router = useRouter();
 
 const config = useRuntimeConfig();
 
+// 임시로 오류 안나게 달아놓은 예전 함수
 const handleKakaoLogin = (): void => {
   // 카카오 로그인 URL로 리다이렉트
-  const kakaoLoginURL =
-    'https://api-dev.oomool.site/oauth2/authorization/kakao';
+  const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=d63ba3628c4ea2cff1e3eb9f0955f47f&redirect_uri=${config.public.oomoolSiteUrl}/oauth/kakao&response_type=code`;
   window.location.href = kakaoLoginURL;
 };
+
+// const handleKakaoLogin = async (): promise<void> => {
+// 카카오 로그인 URL로 리다이렉트
+// const kakaoLoginURL = fetch(
+//   `${config.public.oomoolApiUrl}/oauth2/authorization/kakao`,
+// ).then((data: any) => {
+//   console.log(data);
+// });
+
+// const response = fetch(kakaoLoginURL);
+
+// console.log('API 응답:', response);
+// userStore.setUser({
+//   id: response.headers.get('userid'),
+//   email: response.headers.get('useremail'),
+//   name: response.headers.get('usernickname'),
+// });
+// console.log(response.headers.get('userid'));
+// router.push('/');
+// };
 
 const handleLogin = async (email: string): Promise<void> => {
   console.log(email);
