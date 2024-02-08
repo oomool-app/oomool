@@ -2,6 +2,7 @@ package com.oomool.api.domain.auth.handler;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -19,10 +20,13 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    @Value("${frontend.redirect.uri}")
+    private String redirectUrl;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException exception) throws IOException {
         log.error("OAuth2AuthenticationFail!! : {}", exception.getCause());
-        response.sendRedirect("https://dev.oomool.site/login");
+        response.sendRedirect(redirectUrl + "/login");
     }
 }
