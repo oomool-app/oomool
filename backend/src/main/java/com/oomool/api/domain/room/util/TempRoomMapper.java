@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
+import com.oomool.api.domain.room.dto.TempRoomDto;
+import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,19 +40,37 @@ public class TempRoomMapper {
     }
 
     /**
+     *
+     * */
+    public TempRoomDto mapToTempRoomDto(Map<String, Object> tempRoomSetting, List<PlayerDto> playerDtoList) {
+        return TempRoomDto.builder()
+            .inviteCode((String)tempRoomSetting.get("inviteCode"))
+            .createdAt(CustomDateUtil.parseDateTime((String)tempRoomSetting.get("createdAt")))
+            .masterId(Integer.parseInt((String)tempRoomSetting.get("masterId")))
+            .setting(mapToSettingOptionDto(tempRoomSetting))
+            .players(playerDtoList)
+            .build();
+    }
+
+    /**
      * Redis 대기방에 있는 전체 플레이어 목록을 조회한다.
      *
      * @param playerJsonList redis에 serialization 된 json 객체
      * */
-    public List<PlayerDto> objectToPlayerDtoList(List<Object> playerJsonList) throws JsonProcessingException {
+    public List<PlayerDto> objectToPlayerDtoList(List<Object> playerJsonList) {
         List<PlayerDto> playerDtoList = new ArrayList<>();
         if (playerJsonList != null) {
             for (Object playerJson : playerJsonList) {
-                PlayerDto playerDto = objectMapper.readValue((String)playerJson, PlayerDto.class);
+                PlayerDto playerDto = objectToPlayerDto(playerJson);
                 playerDtoList.add(playerDto);
             }
         }
         return playerDtoList;
+    }
+
+    public List<PlayerDto> objectToPlayerDtoList(Map<Integer, Object> totalPlayerMap) {
+        return totalPlayerMap.values()
+            .stream().map(this::objectToPlayerDto).toList();
     }
 
     /**
@@ -58,8 +78,12 @@ public class TempRoomMapper {
      *
      * @param playerJson
      * */
-    public PlayerDto objectToPlayerDto(Object playerJson) throws JsonProcessingException {
-        return objectMapper.readValue((String)playerJson, PlayerDto.class);
+    public PlayerDto objectToPlayerDto(Object playerJson) {
+        try {
+            return objectMapper.readValue((String)playerJson, PlayerDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -82,11 +106,10 @@ public class TempRoomMapper {
         String playerJson;
         try {
             playerJson = objectMapper.writeValueAsString(playerDto);
+            return playerJson;
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            playerJson = "{}";
+            throw new RuntimeException(e);
         }
-        return playerJson;
     }
 
 }
