@@ -61,7 +61,7 @@ public interface TempRoomService {
      * @param inviteCode 초대코드
      * @param requestUpdateSettingOptionDto 방 설정 정보
      * */
-    public SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
+    SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto);
 
 }
