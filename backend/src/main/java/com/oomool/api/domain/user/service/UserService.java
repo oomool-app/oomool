@@ -23,7 +23,6 @@ import com.oomool.api.global.config.redis.RedisService;
 import com.oomool.api.global.exception.BaseException;
 import com.oomool.api.global.exception.StatusCode;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
