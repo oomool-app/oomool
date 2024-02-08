@@ -75,9 +75,16 @@
           <TotalButton :link="`${roomUid}/feed`" text="전체보기" />
         </div>
         <div
+          v-if="isCompleted"
           class="p-5 mt-5 mb-10 rounded-lg bg-gradient-to-r from-[#61339b] to-[#a8bdf9] border-primary border-2 text-white text-center font-semibold"
         >
           내 마니또가 답변을 등록했어요!
+        </div>
+        <div
+          v-if="!isCompleted"
+          class="p-5 mt-5 mb-10 rounded-lg bg-gradient-to-r from-[#61339b] to-[#a8bdf9] border-primary border-2 text-white text-center font-semibold"
+        >
+          아직 답변이 등록되지 않았어요..
         </div>
       </div>
       <div class="members-container mb-6">
@@ -95,6 +102,7 @@
 </template>
 
 <script setup lang="ts">
+import { type IGetMyManittoInput } from '~/repository/modules/interface/players.interface';
 const { $api } = useNuxtApp();
 const route = useRoute();
 const userStore = useUserStore();
@@ -161,11 +169,46 @@ const getMyManitti = async (): Promise<void> => {
   }
 };
 
+const sequence = ref();
+// 피드 질문 시퀀스 조회
+const getSequenceNumber = async (): Promise<void> => {
+  const response = await $api.question.getDailyQuestion(roomUid);
+  sequence.value = response.data.sequence;
+};
+
+// 내 마니또 조회
+const manittoId = ref();
+const getMyManitto = async (): Promise<void> => {
+  const userId = userStore.getStoredUser()?.id;
+  if (userId !== null) {
+    const data: IGetMyManittoInput = { roomUid, userId };
+    const response = await $api.players.getMyManitto(data);
+    manittoId.value = response.data.manitto.user_id;
+  }
+};
+
+const isCompleted = ref(false);
+// 피드 답변 전체 조회
+const getFeedAnswer = async (): Promise<void> => {
+  const data = { roomUid, sequence: sequence.value };
+  const response = await $api.feeds.getAllFeedsByRoomUidAndSequence(data);
+  const allAnswer = response.data.room_feed_dto_list;
+  for (let i = 0; i < allAnswer.length; i++) {
+    if (allAnswer[i].user_id === manittoId.value) {
+      isCompleted.value = true;
+      return;
+    }
+  }
+};
+
 onMounted(async () => {
   await getRoomDetail();
   await getDDay();
   await getDailyQuestion();
   await getMyManitti();
+  await getSequenceNumber();
+  await getMyManitto();
+  await getFeedAnswer();
 });
 
 const whoIsManitti = ref(false);
@@ -175,7 +218,6 @@ const discoverManitti = (): void => {
 const hideManitti = (): void => {
   whoIsManitti.value = false;
 };
-const roomId = ref(1);
 </script>
 <style scope>
 #top-container {
@@ -200,6 +242,24 @@ const roomId = ref(1);
 
 .members-container {
   animation: fade-in4 0.8s ease-in-out;
+}
+
+.btn {
+  animation: button 1s infinite;
+}
+@keyframes button {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+    background-color: #7b42c1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes fade-in {
