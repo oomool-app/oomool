@@ -23,6 +23,6 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException exception) throws IOException {
         log.error("OAuth2AuthenticationFail!! : {}", exception.getCause());
-        response.sendRedirect("http://localhost:8080/login");
+        response.sendRedirect("https://dev.oomool.site/login");
     }
 }
