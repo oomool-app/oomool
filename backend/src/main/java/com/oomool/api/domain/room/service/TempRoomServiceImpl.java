@@ -25,10 +25,11 @@ public class TempRoomServiceImpl implements TempRoomService {
     private final RedisService redisService;
     private final TempRoomMapper tempRoomMapper;
 
-    // PREFIX
-    private final String prefixSettingOption = "roomSetting:";
-    private final String prefixPlayers = "roomPlayers:";
-    private final String prefixUserTempRoom = "userInviteTemp:";
+    // Redis Hash Key PREFIX
+    // 뒤에 주석 까지 합쳐서 redisService의 key 가 됩니다.
+    private final String prefixSettingOption = "roomSetting:"; // + inviteCode
+    private final String prefixPlayers = "roomPlayers:"; // + inviteCode
+    private final String prefixUserTempRoom = "userInviteTemp:"; // + userId
 
     @Override
     public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) {
@@ -36,7 +37,7 @@ public class TempRoomServiceImpl implements TempRoomService {
         //  초대코드를 생성
         String inviteCode = UniqueCodeGenerator.generateRandomString(15);  // 대기방 초대코드 생성기
 
-        // Redis 에 넣을 추가정보 생성
+        // Redis 에 넣을 추가정보 생성 (방설정값 + 초대코드 + 생성 시각 + 방장아이디)
         Map<String, Object> settingRoomMap = tempRoomMapper.settingRoomDtoToMap(settingOptionDto);
         settingRoomMap.put("inviteCode", inviteCode);
         settingRoomMap.put("createdAt", CustomDateUtil.convertDateTimeToString(LocalDateTime.now()));
@@ -47,6 +48,7 @@ public class TempRoomServiceImpl implements TempRoomService {
 
         // Redis에 저장한 결과 조회
         Map<String, Object> settingOptionMap = redisService.getHashOperationByString(prefixSettingOption + inviteCode);
+
         return Map.of(
             "invite_code", settingOptionMap.get("inviteCode"),
             "create_at", settingOptionMap.get("createdAt"),
@@ -63,26 +65,22 @@ public class TempRoomServiceImpl implements TempRoomService {
             throw new BaseException(StatusCode.INVALID_INVITE_CODE);
         }
         // 이미 참여하고 있는지 확인
-        if (!redisService.hasValueOperation(prefixUserTempRoom + playerDto.getUserId(), inviteCode)) {
+        if (redisService.hasValueOperation(prefixUserTempRoom + playerDto.getUserId(), inviteCode)) {
             throw new BaseException(StatusCode.DUPLICATION_INVITE_CODE);
         }
 
         // 1. User 기준으로 inviteCode 를 관리하는 Redis에 저장한다.
         redisService.saveSetOperation(prefixUserTempRoom + playerDto.getUserId(), inviteCode);
 
-        // 2. inivteRoom을 기준으로 Player를 저장한다.
-        redisService.saveHashOperation(
-            prefixPlayers,
-            playerDto.getUserId(),
-            tempRoomMapper.playerDtoToString(playerDto)
-        );
+        // 2. inviteRoom을 기준으로 Player를 저장한다.
+        redisService.saveHashOperation(prefixPlayers + inviteCode, playerDto.getUserId(),
+            tempRoomMapper.playerDtoToString(playerDto));
 
         // 3. 현재까지 플레이어 결과 반환
         Map<Integer, Object> totalPlayerMap = redisService.getHashOperationByInteger(prefixPlayers + inviteCode);
         List<PlayerDto> playerDtoList = tempRoomMapper.objectToPlayerDtoList(totalPlayerMap);
-        return Map.ofEntries(
-            Map.entry("players", playerDtoList)
-        );
+
+        return Map.ofEntries(Map.entry("players", playerDtoList));
     }
 
     @Override
@@ -112,14 +110,18 @@ public class TempRoomServiceImpl implements TempRoomService {
         }
 
         // 방장의 권한이 아닐경우 (플레이어일 경우)
-        // TODO
+        if (!validateTempRoomMaster(inviteCode, userId)) {
+            throw new BaseException(StatusCode.NOT_MASTER_AUTH_TEMPROOM);
+        }
 
-        // redis에 저장한 player InviteCode를 관리하는 Set에서 key를 삭제한다.
-        Map<Integer, Object> playerMap = redisService.getHashOperationByInteger(prefixSettingOption + inviteCode);
-        // if (Integer userId : playerMap.keySet()) {
-        //     redisService.deleteSetOperation(prefixUserTempRoom + userId, inviteCode);
-        // }
-        // INVITECode에 대한 정보를 삭제한다.
+        // redis에 저장한 User 기준 InviteCode를 관리하는 Set에서 key를 삭제한다.
+        // 참여하고 있는 모든 플레이어의 유저 - 대기방 코드 삭제
+        Map<Integer, Object> playerMap = redisService.getHashOperationByInteger(prefixPlayers + inviteCode);
+        playerMap.keySet().forEach(
+            playerUserId ->
+                redisService.deleteSetOperation(prefixUserTempRoom + playerUserId, inviteCode));
+
+        // invite Code에 대한 정보를 삭제한다.
         redisService.deleteKey(prefixSettingOption + inviteCode);
         redisService.deleteKey(prefixPlayers + inviteCode);
         return inviteCode + " 대기방 삭제를 완료했습니다.";
@@ -129,6 +131,9 @@ public class TempRoomServiceImpl implements TempRoomService {
     public String exitTempRoom(String inviteCode, int userId) {
 
         // 유저가 초대코드의 방장 권한이 있다면 퇴장할 수 없다.
+        if (validateTempRoomMaster(inviteCode, userId)) {
+            throw new BaseException(StatusCode.FORBIDDEN, "플레이어는 방을 퇴장할 수 없습니다.");
+        }
 
         // 1. 유저 기준 참여하고 있는 대기방 초대코드 삭제 (value가 초대코드)
         redisService.deleteSetOperation(prefixUserTempRoom + userId, inviteCode);
@@ -141,12 +146,45 @@ public class TempRoomServiceImpl implements TempRoomService {
 
     @Override
     public PlayerDto modifyPlayerProfile(String inviteCode, PlayerDto requestUpdateProfileDto) {
-        return null;
+
+        // Redis에서 "수정" = 덮어쓰기
+        redisService.saveHashOperation(
+            prefixPlayers + inviteCode,
+            requestUpdateProfileDto.getUserId(),
+            tempRoomMapper.playerDtoToString(requestUpdateProfileDto)
+        );
+
+        Object updatePlayerJson = redisService.getHashOperation(prefixPlayers + inviteCode,
+            requestUpdateProfileDto.getUserId());
+        return tempRoomMapper.objectToPlayerDto(updatePlayerJson);
     }
 
     @Override
     public SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto) {
-        return null;
+
+        // TODO :: 방장 검증
+
+        Map<String, Object> requestUpdateSettingOptionMap = tempRoomMapper.settingRoomDtoToMap(
+            requestUpdateSettingOptionDto);
+        requestUpdateSettingOptionMap.forEach((settingKey, settingValue) -> {
+            if (settingValue != null) {
+                redisService.saveHashOperation(prefixSettingOption + inviteCode, settingKey, settingValue);
+            }
+        });
+
+        Map<String, Object> updateSettingOptionMap = redisService.getHashOperationByString(
+            prefixSettingOption + inviteCode);
+        return tempRoomMapper.mapToSettingOptionDto(updateSettingOptionMap);
     }
+
+    @Override
+    public boolean validateTempRoomMaster(String inviteCode, int userId) {
+        String masterId = redisService.getHashOperation(prefixSettingOption + inviteCode, "masterId").toString();
+        if (Integer.toString(userId).equals(masterId)) {
+            return true;
+        }
+        return false;
+    }
+
 }
