@@ -16,13 +16,6 @@ export interface IGetAllFeedsByRoomUidAndSequenceResponse {
   status: string;
 }
 
-export interface IWriteFeedAnswerInput {
-  content: string;
-  author_id: number;
-  room_question_id: number;
-  file_list: string[];
-}
-
 export interface IWriteFeedAnswerResponse {
   data: {
     feed_id: number;

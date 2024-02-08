@@ -17,7 +17,7 @@
         files
         type="file"
         class="h-10 px-4 py-2"
-        @input="previewImage()"
+        @input="previewImage"
       />
       <div class="flex flex-col justify-center items-center mt-4">
         <AlertDialog>
@@ -87,7 +87,7 @@
           </AlertDialogHeader>
           <AlertDialogFooter class="flex flex-row justify-evenly">
             <AlertDialogCancel class="w-20">아니요</AlertDialogCancel>
-            <AlertDialogAction class="w-20" @click="registAnswer()"
+            <AlertDialogAction class="w-20" @click="writeFeedAnswer()"
               >네</AlertDialogAction
             >
           </AlertDialogFooter>
@@ -108,6 +108,7 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const roomUid = route.params.roomId as string;
 const dailyQuestion = ref();
@@ -123,17 +124,22 @@ const getDailyQuestion = async (): Promise<void> => {
   sequence.value = response.data.sequence;
 };
 
+const formData = new FormData();
+
 // 답변 등록
 const writeFeedAnswer = async (): Promise<void> => {
-  const data = {
-    content: content.value,
-    author_id: userId.value,
-    room_question_id: roomQuestionId.value,
-    file_list: imageFile.value,
-  };
-  const response = await $api.feeds.writeFeedAnswer(data);
-  console.log(data);
-  console.log(response.data);
+  const data = formData;
+  formData.append('content', content.value as string);
+  formData.append('author_id', userId.value as string);
+  formData.append('room_question_id', roomQuestionId.value as string);
+  try {
+    await $api.feeds.writeFeedAnswer(data);
+    await router.replace({
+      path: '/room/' + roomUid + '/feed',
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // sequence 번호로 오늘의 room_question_id 조회하기
@@ -142,18 +148,14 @@ const getRoomRequestionId = async (): Promise<void> => {
   const response = await $api.feeds.getAllFeedsByRoomUidAndSequence(data);
   roomQuestionId.value = response.data.room_question_id;
 };
-onMounted(async () => {
-  userId.value = userStore.getStoredUser()?.id;
-  await getDailyQuestion();
-  await getRoomRequestionId();
-});
 
 const isUploaded = ref(false);
 // 이미지 업로드 미리보기
-const previewImage = (): void => {
+const previewImage = (e: any): void => {
   const input = document.getElementById(
     'upload-image',
   ) as HTMLInputElement | null;
+
   if (input?.files?.[0] != null) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -167,6 +169,8 @@ const previewImage = (): void => {
         isUploaded.value = true;
       }
     };
+    const file: Blob = e.target.files[0];
+    formData.append('file_list', file);
     reader.readAsDataURL(input.files[0]);
     input.value = '';
   } else {
@@ -186,24 +190,6 @@ const check = (): void => {
     isEmpty.value = true;
   }
 };
-// 답변 등록
-const registAnswer = async (): Promise<void> => {
-  // await writeFeedAnswer();
-};
-
-// const onSubmit = async (): Promise<void> => {
-//   const formData = new FormData();
-
-//   formData.append('file', file.value[0]);
-//   formData.append('content', content.value);
-//   await axios.post('', formData, {
-//     headers: {
-//       'Content-Type': 'multipart/form-data',
-//     },
-//   });
-//   alert('글 작성이 완료되었습니다.');
-//   router.push({ path: '/' });
-// };
 
 // 이미지 제거
 const removeImage = (): void => {
@@ -211,6 +197,12 @@ const removeImage = (): void => {
   previewElement.src = '';
   isUploaded.value = false;
 };
+
+onMounted(async () => {
+  userId.value = userStore.getStoredUser()?.id;
+  await getDailyQuestion();
+  await getRoomRequestionId();
+});
 </script>
 <style scoped>
 input[type='file']::file-selector-button {
