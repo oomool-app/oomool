@@ -20,9 +20,10 @@ public class RefreshTokenService {
     private final RefreshTokenRepository repository;
 
     @Transactional
-    public void saveTokenInfo(String email, String refreshToken, String accessToken) {
+    public void saveTokenInfo(String userId, String email, String refreshToken, String accessToken) {
         RefreshToken saveToken = RefreshToken
             .builder()
+            .userId(userId)
             .id(email)
             .accessToken(accessToken)
             .refreshToken(refreshToken)

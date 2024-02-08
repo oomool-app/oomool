@@ -56,8 +56,8 @@ public class AuthController {
             // RefreshToken 객체를 꺼내온다.
             RefreshToken resultToken = refreshToken.get();
             // 권한과 아이디를 추출해 새로운 액세스토큰을 만든다.
-            String newAccessToken = jwtService.generateToken(resultToken.getId(),
-                jwtService.getRole(resultToken.getRefreshToken()));
+            String newAccessToken = jwtService.generateToken(resultToken.getUserId(),
+                resultToken.getId(), jwtService.getRole(resultToken.getRefreshToken()));
             // 액세스 토큰의 값을 수정해준다.
             resultToken.updateAccessToken(newAccessToken);
             tokenRepository.save(resultToken);
