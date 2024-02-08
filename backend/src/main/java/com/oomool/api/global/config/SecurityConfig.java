@@ -43,10 +43,10 @@ public class SecurityConfig {
                 .requestMatchers(("/v3/**")).permitAll()
                 .requestMatchers(("/**")).permitAll()
                 // .requestMatchers(("/temp/**"), ("/questions/**"), ("/players/**")).hasRole("USER")
-                // .requestMatchers(("/push-notifications/**"), ("/feeds/**"), ("/users/")).hasRole("USER")
+                // .requestMatchers(("/push-notifications/**"), ("/feeds/**"), ("/users/**")).hasRole("USER")
                 .anyRequest().authenticated()) // 나머지 요청은 모두 인증이 필요
             .oauth2Login(oauth2 -> oauth2
-                .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
+                .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth/*"))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
