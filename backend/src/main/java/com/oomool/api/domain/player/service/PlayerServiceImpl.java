@@ -68,30 +68,22 @@ public class PlayerServiceImpl implements PlayerService {
      * 마니띠 정보 가져오기
      * */
     @Override
-    public ManittiDto getManittiInfo(int authorId) {
+    public ManittiDto getManittiInfo(String roomUid, int authorId) {
         // authorId로 manittiId 가져오기
-        Player playerByAuthorId = playerRepository.findById(authorId);
+        Player playerByAuthorId = playerRepository.findByRoomRoomUidAndUserId(roomUid, authorId);
 
         int manittiId = playerByAuthorId.getManittiId();
 
-        // manittiId로 manitti Info 가져오기
-        List<Player> playerList = playerRepository.findAll();
+        // userId와 manittiId 유저 정보를 가져온다.
+        Player player = playerRepository.findByRoomRoomUidAndUserId(roomUid, manittiId);
 
-        ManittiDto manittiDto = new ManittiDto();
+        ManittiDto manittiDto = ManittiDto
+            .builder()
+            .nickname(player.getNickname())
+            .avatarColor(player.getAvatarColor())
+            .url(player.getAvatar().getUrl())
+            .build();
 
-        for (Player player : playerList) {
-            int playerManittiCheck = player.getUser().getId();
-            if (playerManittiCheck == manittiId) {
-                manittiDto = ManittiDto
-                    .builder()
-                    .nickname(player.getNickname())
-                    .avatarColor(player.getAvatarColor())
-                    .url(player.getAvatar().getUrl())
-                    .build();
-
-                return manittiDto;
-            }
-        }
         return manittiDto;
     }
 
