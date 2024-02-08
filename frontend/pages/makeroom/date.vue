@@ -32,11 +32,7 @@ import { type IMakeRoomInput } from '~/repository/modules/interface/waitroom.int
 const { $api } = useNuxtApp();
 const store = useMakeRoomStore();
 const router = useRouter();
-const userItem = localStorage.getItem('user');
 const userInfo = ref();
-if (userItem !== null) {
-  userInfo.value = JSON.parse(userItem);
-}
 const check = async (event: any): Promise<void> => {
   const element = document.getElementById('check');
   if (element == null) {
@@ -67,6 +63,8 @@ const check = async (event: any): Promise<void> => {
 const move = async (): Promise<void> => {
   try {
     const input = ref<IMakeRoomInput>();
+    const userStore = useUserStore();
+    userInfo.value = userStore.getStoredUser();
     input.value = {
       setting: {
         title: store.name.trim(),
