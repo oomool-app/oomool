@@ -123,25 +123,15 @@ public class RoomQuestionServiceImpl implements RoomQuestionService {
      * 방질문 정보를 반환(방질문 ID, 질문 ID, sequence)
      */
     public RoomQuestionFeedDto getRoomQuestion(String roomUid, int sequence) {
-        List<RoomQuestion> roomQuestionList = roomQuestionReposiotry.findAll();
+        RoomQuestion roomQuestion = roomQuestionReposiotry.findByRoomRoomUidAndSequence(roomUid, sequence);
 
-        RoomQuestionFeedDto roomQuestionFeedDto = new RoomQuestionFeedDto();
+        RoomQuestionFeedDto roomQuestionFeedDto = RoomQuestionFeedDto
+            .builder()
+            .questionId(roomQuestion.getQuestion().getId())
+            .roomQuestionId(roomQuestion.getId())
+            .sequence(roomQuestion.getSequence())
+            .build();
 
-        for (RoomQuestion roomQuestion : roomQuestionList) {
-            String roomUidCheck = roomQuestion.getRoom().getRoomUid();
-            int sequenceCheck = roomQuestion.getSequence();
-
-            // 해당 roomUid와 sequence가 일치하는 데이터를 담아주고 return한다.
-            if (roomUidCheck.equals(roomUid) && sequenceCheck == sequence) {
-                roomQuestionFeedDto = RoomQuestionFeedDto
-                    .builder()
-                    .questionId(roomQuestion.getQuestion().getId())
-                    .roomQuestionId(roomQuestion.getId())
-                    .sequence(roomQuestion.getSequence())
-                    .build();
-                return roomQuestionFeedDto;
-            }
-        }
         return roomQuestionFeedDto;
     }
 
