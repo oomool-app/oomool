@@ -1,7 +1,9 @@
 <template>
   <NuxtPwaManifest />
-  <div class="w-full h-full m-0 p-0">
-    <NuxtPage />
+  <div class="flex justify-center items-center">
+    <div class="max-w-[43rem] max-h-screen m-0 p-0">
+      <NuxtPage />
+    </div>
   </div>
 </template>
 
