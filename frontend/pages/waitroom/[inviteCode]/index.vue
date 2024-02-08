@@ -3,7 +3,7 @@
     class="box h-screen grid grid-rows-[4rem,3rem,3rem,3.5rem,auto] bg-primary"
   >
     <div class="flex justify-between items-center px-6 pt-6">
-      <BackButton color="white"></BackButton>
+      <BackButton color="white" @click="check"></BackButton>
       <Popover>
         <PopoverTrigger class="text-white">
           <SettingButton color="white"></SettingButton>
@@ -11,12 +11,14 @@
         <PopoverContent>
           <ul>
             <li>
-              <NuxtLink :to="`${route.params.inviteCode}/updateRoom`"
+              <NuxtLink
+                :to="`${route.params.inviteCode}/updateRoom`"
+                @click="check"
                 >방설정하기</NuxtLink
               >
             </li>
             <li>
-              <NuxtLink to="/">퇴장하기</NuxtLink>
+              <NuxtLink to="/" @click="check">퇴장하기</NuxtLink>
             </li>
           </ul>
         </PopoverContent>
@@ -163,12 +165,39 @@ const auth = ref<boolean>(false);
 const getWaitRoomData = ref<IGetWaitRoomResponse>();
 const userInfo = ref();
 const scrollHeight = ref<number>(0);
+const polling = ref(true);
 onMounted(async (): Promise<void> => {
   const userStore = useUserStore();
   userInfo.value = userStore.getStoredUser();
   scrollHeight.value = window.innerHeight * 0.5;
   await getData();
+  await startCheck();
 });
+
+const startCheck = async (): Promise<void> => {
+  while (polling.value) {
+    try {
+      await checkpolling();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+};
+
+const checkpolling = async (): Promise<void> => {
+  const inviteCode = route.params.inviteCode;
+  if (typeof inviteCode !== 'string') {
+    return;
+  }
+  const data = await $api.make.getStartCheck(inviteCode);
+  if (data.data.startCheck === 'false') {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  } else {
+    polling.value = false;
+    alert(`${getWaitRoomData.value?.data.setting.title}방이 시작되었습니다!`);
+    await router.push('/');
+  }
+};
 
 const getData = async (): Promise<void> => {
   const input = route.params.inviteCode;
@@ -178,6 +207,10 @@ const getData = async (): Promise<void> => {
       auth.value = true;
     }
   }
+};
+
+const check = (): void => {
+  polling.value = false;
 };
 
 const copyInviteCode = async (): Promise<void> => {
