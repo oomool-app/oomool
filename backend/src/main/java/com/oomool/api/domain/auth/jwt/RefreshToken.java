@@ -31,6 +31,8 @@ public class RefreshToken implements Serializable {
 
     private String refreshToken;
 
+    private String userId;
+
     public void updateAccessToken(String accessToken) {
         this.accessToken = "Bearer " + accessToken;
     }
