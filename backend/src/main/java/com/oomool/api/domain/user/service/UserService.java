@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -23,6 +23,7 @@ import com.oomool.api.domain.user.repository.UserRepository;
 import com.oomool.api.global.config.redis.RedisService;
 import com.oomool.api.global.exception.BaseException;
 import com.oomool.api.global.exception.StatusCode;
+import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +49,7 @@ public class UserService {
 
     public UserDto searchUserEmail(String email) {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("해당하는 유저가 없습니다"));
+            .orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
 
         UserDto userDto = UserDto.builder()
             .id(user.getId())
@@ -63,7 +64,7 @@ public class UserService {
      * 유저 Email로 조회 후 id를 리턴
      * */
     public int getUserIdByEmail(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
         return user.getId();
     }
 
@@ -95,6 +96,7 @@ public class UserService {
             Map<String, Object> tempRoomSetting = redisService.getHashOperationByString(
                 TempRoomPrefix.SETTING_OPTION + inviteCode);
             int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
+            String createdAt = (String)tempRoomSetting.get("createdAt");
             SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
 
             tempRoomSettingList.add(
@@ -137,6 +139,7 @@ public class UserService {
             Map<String, Object> roomMap = new HashMap<>();
             roomMap.put("room_uid", gameRoom.getRoomUid());
             roomMap.put("daily_question", dailyQuestionDto);
+            roomMap.put("created_at", CustomDateUtil.convertDateTimeToString(gameRoom.getCreatedAt()));
             roomMap.put("setting", settingOptionDto);
             gameRoomList.add(roomMap);
         }

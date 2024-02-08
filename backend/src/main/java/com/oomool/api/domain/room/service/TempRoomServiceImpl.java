@@ -186,4 +186,10 @@ public class TempRoomServiceImpl implements TempRoomService {
         return false;
     }
 
+    @Override
+    public String startCheck(String inviteCode) {
+        // 임시
+        return redisService.getValueOperation(TempRoomPrefix.START_CHECK + inviteCode);
+    }
+
 }

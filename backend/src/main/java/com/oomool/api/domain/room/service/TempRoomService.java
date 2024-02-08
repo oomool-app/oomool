@@ -73,4 +73,11 @@ public interface TempRoomService {
      * */
     boolean validateTempRoomMaster(String inviteCode, int userId);
 
+    /**
+     * [임시 코드] 대기방 생성 여부를 Check 합니다. <p></p>
+     * // SSE 방식으로 변경예정
+     *
+     * @param inviteCode 초대코드
+     * */
+    String startCheck(String inviteCode);
 }
