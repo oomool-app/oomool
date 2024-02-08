@@ -9,7 +9,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex) {
-        return ResponseEntity.status(ex.getStatusCode().getHttpCode())
-            .body(new ErrorResponse(ex.getStatusCode().getHttpCode(), ex.getStatusCode().getMessage()));
+        return ResponseEntity.status(ex.getStatusCode().getStatusCode())
+            .body(new ErrorResponse(ex.getStatusCode().getStatusCode(), ex.getStatusCode().getMessage()));
     }
 }
