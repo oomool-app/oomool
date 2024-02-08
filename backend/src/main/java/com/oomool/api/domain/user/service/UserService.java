@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.springframework.stereotype.Service;
 
 import com.oomool.api.domain.player.entity.Player;
@@ -13,12 +14,14 @@ import com.oomool.api.domain.question.dto.DailyQuestionDto;
 import com.oomool.api.domain.question.util.RoomQuestionMapper;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
-import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.domain.room.util.GameRoomMapper;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
+import com.oomool.api.global.config.redis.RedisService;
+import com.oomool.api.global.exception.BaseException;
+import com.oomool.api.global.exception.StatusCode;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +32,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // 연관관계 참조
-    private final TempRoomRedisService tempRoomRedisService;
     private final TempRoomMapper tempRoomMapper;
     private final GameRoomMapper gameRoomMapper;
     private final RoomQuestionMapper roomQuestionMapper;
+
+    private final RedisService redisService;
 
     public int regist(UserDto userDto) {
         User user = new User();
@@ -61,7 +64,6 @@ public class UserService {
      * */
     public int getUserIdByEmail(String email) {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("해당하는 유저가 없습니다"));
         return user.getId();
     }
 
@@ -78,14 +80,22 @@ public class UserService {
     public List<Map<String, Object>> getTempRoomList(int userId) {
 
         // 참여하고 있는 inviteCode 정보 조회
-        List<String> tempRoomList = tempRoomRedisService.getUserInviteTempRoomList(userId);
+        Set<Object> inviteCodeSet = redisService.getSetOperation("userInviteTemp:" + userId);
+        if (inviteCodeSet == null || inviteCodeSet.isEmpty()) {
+            throw new BaseException(StatusCode.NOT_FOUND_TEMP_ROOM);
+        }
+
+        // List로 정보 반환
         List<Map<String, Object>> tempRoomSettingList = new ArrayList<>();
-        for (String inviteCode : tempRoomList) {
-            Map<String, Object> tempRoomSetting = tempRoomRedisService.getTempRoomSetting(inviteCode);
-            System.out.println(tempRoomSetting.toString());
-            String createdAt = (String)tempRoomSetting.get("createdAt");
+        // 참여하고 있는 대기방 순회
+        for (Object item : inviteCodeSet) {
+            String inviteCode = item.toString();
+
+            // 대기방 정보로 변환
+            Map<String, Object> tempRoomSetting = redisService.getHashOperationByString("roomSetting:" + inviteCode);
             int masterId = Integer.parseInt((String)tempRoomSetting.get("masterId"));
             SettingOptionDto settingOptionDto = tempRoomMapper.mapToSettingOptionDto(tempRoomSetting);
+
             tempRoomSettingList.add(
                 Map.of(
                     "invite_code", inviteCode,
@@ -104,25 +114,30 @@ public class UserService {
      * @param userId 유저 아이디
      * */
     public List<Map<String, Object>> getGameRoomList(int userId) {
-        List<Map<String, Object>> gameRoomList = new ArrayList<>();
+
         // 참여하고 있는 roomUid 정보 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+
+        // List로 정보 반환
+        List<Map<String, Object>> gameRoomList = new ArrayList<>();
+
+        // 유저가 "플레이어"로 참여하고 있는 리스트 순회
         for (Player player : user.getPlayerList()) {
             GameRoom gameRoom = player.getRoom(); // GameRoom
             SettingOptionDto settingOptionDto = gameRoomMapper.entityToSettingOptionDto(gameRoom);
+
+            // TODO :: 개선 해야할 작업
             DailyQuestionDto dailyQuestionDto = gameRoom.getRoomQuestionList().stream()
                 .filter(roomQuestion -> roomQuestion.getDate().equals(LocalDate.now()))
                 .findFirst()
                 .map(roomQuestionMapper::entityToDailyQuestionDto).orElse(null);
 
-            // 필요한 컬럼 넣기
-            Map<String, Object> gameRoomMap = new HashMap<>();
-            gameRoomMap.put("room_uid", gameRoom.getRoomUid());
-            gameRoomMap.put("daily_question", dailyQuestionDto);
-            gameRoomMap.put("created_at", gameRoom.getCreatedAt());
-            gameRoomMap.put("setting", settingOptionDto);
-            // 최종 결과 만들기
-            gameRoomList.add(gameRoomMap);
+            // 추가적인 필요 컬럼 넣기
+            Map<String, Object> roomMap = new HashMap<>();
+            roomMap.put("room_uid", gameRoom.getRoomUid());
+            roomMap.put("daily_question", dailyQuestionDto);
+            roomMap.put("setting", settingOptionDto);
+            gameRoomList.add(roomMap);
         }
         return gameRoomList;
     }
