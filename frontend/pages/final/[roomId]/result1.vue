@@ -1,7 +1,13 @@
 <template>
   <div class="h-screen flex flex-col items-center justify-center">
-    <ResultSuccessCard v-if="IsSuccess"></ResultSuccessCard>
-    <ResultFailCard v-if="!IsSuccess"></ResultFailCard>
+    <ResultSuccessCard
+      v-if="guessIsAlright === 'success'"
+      :manitto="manitto"
+    ></ResultSuccessCard>
+    <ResultFailCard
+      v-else-if="guessIsAlright === 'fail'"
+      :manitto="manitto"
+    ></ResultFailCard>
     <div class="mt-8 flex flex-col items-center mr-6">
       <NuxtLink :to="`/final/${roomUid}/result2`"
         ><p
@@ -28,10 +34,26 @@
 </template>
 
 <script setup lang="ts">
-const IsSuccess = ref(true);
 const route = useRoute();
-const roomUid = route.params.roomId;
+const roomUid = route.params.roomId as string;
 const { $api } = useNuxtApp();
+const manitto = ref();
+const guessIsAlright = ref();
+
+// 마니또 및 예측 여부 조회
+const getMyManitto = async (): Promise<void> => {
+  const userId = useUserStore().getStoredUser()?.id;
+  const response = await $api.players.getMyManitto({ roomUid, userId });
+  manitto.value = response.data.manitto;
+  if (response.data.guess === 'true') {
+    guessIsAlright.value = 'success';
+  } else {
+    guessIsAlright.value = 'fail';
+  }
+};
+onMounted(async () => {
+  await getMyManitto();
+});
 </script>
 <style scoped>
 .go-to-result {
