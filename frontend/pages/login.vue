@@ -7,16 +7,16 @@
       <img src="/img/logo.png" />
     </div>
     <!--카카오로그인 버튼-->
-    <div
+    <a
       id="kakao-login-button"
       class="bg-primary pt-16 pl-10 pr-10"
-      @click="handleKakaoLogin"
+      :href="$config.public.oomoolApiUrl + '/oauth2/authorization/kakao'"
     >
       <img
         src="//k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
         alt="카카오 로그인 버튼"
       />
-    </div>
+    </a>
     <fieldset
       class="form-group grid grid-cols-3 flex-wrap justify-center gap-4 pt-5"
     >
@@ -65,35 +65,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/userStore';
 const userStore = useUserStore();
 const router = useRouter();
-
 const config = useRuntimeConfig();
-
-// 임시로 오류 안나게 달아놓은 예전 함수
-const handleKakaoLogin = (): void => {
-  // 카카오 로그인 URL로 리다이렉트
-  const kakaoLoginURL = `https://kauth.kakao.com/oauth/authorize?client_id=d63ba3628c4ea2cff1e3eb9f0955f47f&redirect_uri=${config.public.oomoolSiteUrl}/oauth/kakao&response_type=code`;
-  window.location.href = kakaoLoginURL;
-};
-
-// const handleKakaoLogin = async (): promise<void> => {
-// 카카오 로그인 URL로 리다이렉트
-// const kakaoLoginURL = fetch(
-//   `${config.public.oomoolApiUrl}/oauth2/authorization/kakao`,
-// ).then((data: any) => {
-//   console.log(data);
-// });
-
-// const response = fetch(kakaoLoginURL);
-
-// console.log('API 응답:', response);
-// userStore.setUser({
-//   id: response.headers.get('userid'),
-//   email: response.headers.get('useremail'),
-//   name: response.headers.get('usernickname'),
-// });
-// console.log(response.headers.get('userid'));
-// router.push('/');
-// };
 
 const handleLogin = async (email: string): Promise<void> => {
   console.log(email);
