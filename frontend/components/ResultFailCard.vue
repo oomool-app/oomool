@@ -15,12 +15,19 @@
       >
         <img class="w-6 h-auto" src="/img/rabbitGhost.png" alt="" />
       </div>
-      <p class="text-xl font-bold text-white">김현지</p>
+      <p class="text-xl font-bold text-white">
+        {{ props.manitto.player_nickname }}
+      </p>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type Player from '~/repository/modules/interface/players.interface';
+const props = defineProps<{
+  manitto: Player;
+}>();
+</script>
 <style scoped>
 .card {
   box-shadow: 0.3rem 0.3rem 0.3rem #d00000;
