@@ -34,7 +34,7 @@
           required
         />
         <h1 class="pt-1 pb-5 text-xs font-bold flex justify-start text-primary">
-          중복, 공백을 포함한 10글자 이내의 영문, 한글, 숫자
+          중복, 공백을 포함한 6글자 이내의 영문, 한글, 숫자
         </h1>
       </div>
     </div>
@@ -104,15 +104,34 @@ function getRandomAvatar(): string {
   return avatarurls[randomAvatarIndex];
 }
 
-// 링크에서 갖고 있는 초대코드 받아와서 다시 라우터링크에서 사용
 const userInfo = ref();
 const nickname = ref();
 const userStore = useUserStore();
 const { $api } = useNuxtApp();
+
+const waitroom = ref();
+
+// 초대코드로 대기방 정보 가져오기
+const getWaitroomInfo = async (): Promise<void> => {
+  try {
+    const inviteCode = route.params.inviteCode;
+    if (typeof inviteCode === 'string') {
+      const response = await $api.make.getWaitRoom(inviteCode);
+      waitroom.value = response.data;
+      console.log(waitroom.value);
+    }
+  } catch (error) {
+    console.error('Error while fetching waitroom:', error);
+  }
+};
+
+// 방 참여하기
 const join = async (): Promise<void> => {
   try {
+    // 링크에서 갖고 있는 초대코드
     const input = ref<IJoinWaitRoomInput>();
     const inviteCode = route.params.inviteCode;
+
     input.value = {
       user_id: userInfo.value.id,
       user_email: userInfo.value.email,
@@ -120,6 +139,7 @@ const join = async (): Promise<void> => {
       player_background_color: randomColor.value,
       player_avatar_url: randomAvatar.value,
     };
+
     if (typeof inviteCode === 'string') {
       await $api.make.joinWaitRoom(input.value, inviteCode);
       await router.push(`/waitroom/${inviteCode}`);
@@ -128,10 +148,51 @@ const join = async (): Promise<void> => {
     alert('잘못된 접근!!');
   }
 };
+
+// 닉네임 유효성 검사
+const checkNicknameValidity = (): boolean => {
+  if (waitroom.value.players == null || waitroom.value.players === undefined) {
+    return true; // waitroom 정보가 없으면 닉네임 유효성 검사를 통과하도록 처리
+  } else {
+    const existingUserNicknames: string[] = (waitroom.value?.players ?? []).map(
+      (player: any) => player.player_nickname,
+    );
+
+    const isNicknameValid: boolean = /^[a-zA-Z0-9가-힣]{1,6}$/.test(
+      nickname.value as string,
+    );
+
+    const isNicknameUnique: boolean = !existingUserNicknames.includes(
+      String(nickname.value ?? ''),
+    );
+    if (!isNicknameValid) {
+      alert(
+        '유효하지 않은 닉네임입니다. 6글자 이내의 영문, 한글, 숫자만 입력 가능합니다.',
+      );
+      return false;
+    }
+
+    if (!isNicknameUnique) {
+      alert('이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.');
+      return false;
+    }
+  }
+  return true;
+};
+
 const setting = async (): Promise<void> => {
+  if (!checkNicknameValidity()) {
+    console.log('유효하지 않습니다');
+    return;
+  }
+  console.log('유효합니다');
   userInfo.value = userStore.getStoredUser();
   await join();
 };
+
+onMounted(async () => {
+  await getWaitroomInfo();
+});
 </script>
 <style scoped>
 .box {
