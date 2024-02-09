@@ -1,6 +1,7 @@
 package com.oomool.api.domain.feed.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -18,12 +19,13 @@ public interface FeedService {
      * 질문에 대합 답변 내용 저장(답변 내용, 이미지 파일)
      */
     FeedAnswerDto saveQuestionAnswer(int roomQuestionId, String content,
-        List<MultipartFile> fileList, int authorId) throws IOException;
+        List<MultipartFile> fileList, int authorId, ArrayList<String> imageUrlList) throws IOException;
 
     /**
      * 피드 답변을 수정합니다
      */
-    FeedAnswerDto modifyQuestionAnswer(String content, int feedId, List<MultipartFile> fileList) throws
+    FeedAnswerDto modifyQuestionAnswer(String content, int feedId,
+        List<MultipartFile> fileList, ArrayList<String> imageUrlList) throws
         IOException;
 
 }
