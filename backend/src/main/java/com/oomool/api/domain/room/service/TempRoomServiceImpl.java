@@ -44,6 +44,8 @@ public class TempRoomServiceImpl implements TempRoomService {
         // Redis에 저장한 결과 조회
         Map<String, Object> settingOptionMap = redisService.getHashOperationByString(
             TempRoomPrefix.SETTING_OPTION + inviteCode);
+        // [임시 - StartCheck] - 대기방에서 시작 여부를 체킹
+        redisService.saveValueOperation(TempRoomPrefix.START_CHECK + inviteCode, "false");
 
         return Map.of(
             "invite_code", settingOptionMap.get("inviteCode"),
