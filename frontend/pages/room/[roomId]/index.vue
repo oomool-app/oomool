@@ -16,6 +16,7 @@
         ></FeedHeader>
       </div>
     </div>
+
     <div class="bottom-container p-4 pt-6">
       <div class="my-manitti">
         <ContentHeader header-name="내 마니띠" />
@@ -28,7 +29,7 @@
             class="btn bg-primary w-40 h-10 text-white text-center py-1 text-xl rounded-full font-bold drop-shadow-2xl"
             @click="discoverManitti()"
           >
-            누구게?
+            ?
           </p>
           <p
             v-else-if="whoIsManitti"
@@ -42,7 +43,11 @@
       <div class="question-container">
         <div class="flex justify-between">
           <ContentHeader header-name="오늘의 질문" />
-          <NuxtLink :to="`${roomUid}/writeanswer`" class="text-sm py-1">
+          <NuxtLink
+            v-if="!didIAnswer"
+            :to="`${roomUid}/writeanswer`"
+            class="text-sm py-1"
+          >
             <div class="text-[#61339b] font-semibold">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -60,6 +65,30 @@
                 />
               </svg>
               답변하기
+            </div></NuxtLink
+          >
+          <NuxtLink
+            v-if="didIAnswer"
+            :to="`${roomUid}/modifyanswer`"
+            class="text-sm py-1"
+          >
+            <div class="text-[#61339b] font-semibold">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4 inline"
+              >
+                <path
+                  stroke="#61339b"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                />
+              </svg>
+              답변 수정하기
             </div></NuxtLink
           >
         </div>
@@ -88,8 +117,11 @@
         </div>
       </div>
       <div class="members-container mb-6">
-        <div class="flex justify-between">
+        <div class="flex justify-start items-baseline">
           <ContentHeader header-name="멤버 목록" />
+          <span class="text-lg inline-block ml-1 text-primary font-bold"
+            >({{ memberCnt }})</span
+          >
         </div>
         <div class="flex overflow-auto">
           <div v-for="member in members" :key="member.user_id">
@@ -106,24 +138,37 @@ import { type IGetMyManittoInput } from '~/repository/modules/interface/players.
 const { $api } = useNuxtApp();
 const route = useRoute();
 const userStore = useUserStore();
+// const userId = ref();
 const roomUid = route.params.roomId as string;
 const teamName = ref();
 const members = ref();
+const memberCnt = ref();
 const endDate = ref<Date | undefined>();
 const dDay = ref();
 const todayQuestion = ref();
 const manittiName = ref();
 const manittiAvatar = ref();
+const myNickname = ref();
+const myAvatar = ref();
+const myBackgroundColor = ref();
+const myProfile = ref();
 // 문답방 전체 정보 받아오기
 const getRoomDetail = async (): Promise<void> => {
-  try {
-    const response = await $api.rooms.getRoomDetail(roomUid);
-    members.value = response.data.players;
-    teamName.value = response.data.setting.title;
-    endDate.value = response.data.setting.end_date;
-  } catch (error) {
-    console.log(error);
+  const userId = userStore.getStoredUser()?.id;
+  const response = await $api.rooms.getRoomDetail(roomUid);
+  members.value = response.data.players;
+  teamName.value = response.data.setting.title;
+  endDate.value = response.data.setting.end_date;
+  memberCnt.value = members.value.length;
+
+  // 내 정보 받아오기
+  for (let i = 0; i < members.value.length; i++) {
+    if (members.value[i].user_id === userId) {
+      myProfile.value = members.value[i];
+      console.log(myProfile.value);
+    }
   }
+  console.log(members.value);
 };
 
 // D-day 계산
@@ -161,8 +206,12 @@ const getMyManitti = async (): Promise<void> => {
     const userId = userStore.getStoredUser()?.id;
     if (userId !== null && userId !== undefined) {
       const response = await $api.players.getMyManitti({ roomUid, userId });
+      console.log(response);
       manittiName.value = response.data.manitti.player_nickname;
       manittiAvatar.value = response.data.manitti.player_avatar_url;
+      myNickname.value = response.data.player.player_nickname;
+      myAvatar.value = response.data.player.player_avatar_url;
+      myBackgroundColor.value = response.data.player.player_background_color;
     }
   } catch (error) {
     console.error(error);
@@ -188,11 +237,20 @@ const getMyManitto = async (): Promise<void> => {
 };
 
 const isCompleted = ref(false);
+const didIAnswer = ref(false);
 // 피드 답변 전체 조회
 const getFeedAnswer = async (): Promise<void> => {
+  const userId = userStore.getStoredUser()?.id;
   const data = { roomUid, sequence: sequence.value };
   const response = await $api.feeds.getAllFeedsByRoomUidAndSequence(data);
   const allAnswer = response.data.room_feed_dto_list;
+  // 내가 답변 썼는지 여부 체크
+  for (let i = 0; i < allAnswer.length; i++) {
+    if (allAnswer[i].user_id === userId) {
+      didIAnswer.value = true;
+    }
+  }
+  // 내 마니또가 답변 썼는지 여부 체크
   for (let i = 0; i < allAnswer.length; i++) {
     if (allAnswer[i].user_id === manittoId.value) {
       isCompleted.value = true;
@@ -224,10 +282,6 @@ const hideManitti = (): void => {
   animation: fade-in 0.5s ease-in-out;
 }
 
-.btn:active {
-  background-color: #501b90;
-}
-
 .my-manitti {
   animation: fade-in 0.8s ease-in-out;
 }
@@ -245,16 +299,11 @@ const hideManitti = (): void => {
 }
 
 .btn {
-  animation: button 1s infinite;
+  animation: button 1.1s infinite;
 }
 @keyframes button {
-  0% {
-    transform: scale(1);
-  }
-
   50% {
     transform: scale(1.05);
-    background-color: #7b42c1;
   }
 
   100% {

@@ -25,8 +25,13 @@ export interface IWriteFeedAnswerResponse {
   status: string;
 }
 
+export interface IModifyFeedAnswerResponse {
+  data: string;
+  status: string;
+}
 export default interface Feed {
   user_id: number;
+  feed_id: number;
   content: string;
   created_at: Date;
   feed_image_dto_list: Image[];

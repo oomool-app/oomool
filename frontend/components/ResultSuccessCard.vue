@@ -15,16 +15,24 @@
     <p class="p-2 text-2xl font-bold text-white">당신의 마니또</p>
     <div class="w-28 flex items-center justify-around">
       <div
-        class="w-10 h-10 rounded-full bg-red-600 flex justify-center items-center"
+        class="w-10 h-10 rounded-full flex justify-center items-center"
+        :style="{ 'background-color': props.manitto.player_background_color }"
       >
-        <img class="w-6 h-auto" src="/img/rabbitGhost.png" alt="" />
+        <img class="w-6 h-auto" :src="props.manitto.player_avatar_url" alt="" />
       </div>
-      <p class="text-xl font-bold text-white">김현지</p>
+      <p class="text-xl font-bold text-white">
+        {{ props.manitto.player_nickname }}
+      </p>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type Player from '~/repository/modules/interface/players.interface';
+const props = defineProps<{
+  manitto: Player;
+}>();
+</script>
 <style scoped>
 .card {
   box-shadow: 0.3rem 0.3rem 0.3rem #01943f;

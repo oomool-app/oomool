@@ -20,8 +20,8 @@
         class="p-3 border border-gray-400 rounded-r-xl rounded-bl-xl bg-[#F1EBFC]"
       >
         <img
-          class="rounded-lg mb-2"
-          :src="props.feeds.feed_image_dto_list[0]"
+          class="w-full h-auto rounded-lg mb-2"
+          :src="$props.feeds.feed_image_dto_list[0].url"
           alt=""
         />
         {{ props.feeds.content }}
@@ -34,7 +34,7 @@ import type Feed from '~/repository/modules/interface/feeds.interface';
 const props = defineProps<{
   feeds: Feed;
 }>();
-
+console.log(props.feeds.manitti_dto.nickname);
 const createdHour = String(
   new Date(props.feeds.created_at).getHours(),
 ).padStart(2, '0');
