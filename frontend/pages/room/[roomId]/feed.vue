@@ -40,7 +40,7 @@
         alt="질문 유령"
       />
       <p class="question font-bold inline-block py-1">
-        "내 친구가 좋아할만한 음악 장르나 곡은 무엇일 것 같아요?"
+        &quot;{{ question }}&quot;
       </p>
     </div>
     <div
@@ -53,7 +53,7 @@
     <div v-else-if="feeds !== undefined" class="feed-container">
       <div v-for="feed in feeds" :key="feed.user_id">
         <div v-if="feed.user_id === userId">
-          <FeedPageMine :feeds="feed"></FeedPageMine>
+          <FeedPageMine :feeds="feed" :room-uid="roomUid"></FeedPageMine>
         </div>
         <div v-else-if="feed.user_id !== userId">
           <FeedPageOthers :feeds="feed"></FeedPageOthers>
@@ -95,7 +95,6 @@ const getAllFeedsByRoomUidAndSequence = async (): Promise<void> => {
         roomUid,
         sequence,
       });
-      console.log(response);
       feeds.value = response.data.room_feed_dto_list;
       roomQuestionId.value = response.data.room_question_id;
     }

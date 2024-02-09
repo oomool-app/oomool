@@ -3,6 +3,7 @@ import {
   type IGetAllFeedsByRoomUidAndSequenceInput,
   type IGetAllFeedsByRoomUidAndSequenceResponse,
   type IWriteFeedAnswerResponse,
+  type IModifyFeedAnswerResponse,
 } from './interface/feeds.interface';
 
 class FeedsModule extends HttpFactory {
@@ -22,6 +23,15 @@ class FeedsModule extends HttpFactory {
   async writeFeedAnswer(data: FormData): Promise<IWriteFeedAnswerResponse> {
     return await this.otherCall<IWriteFeedAnswerResponse>(
       'POST',
+      `${this.RESOURCE}/daily`,
+      data,
+    );
+  }
+
+  // 피드 답변 수정
+  async modifyFeedAnswer(data: FormData): Promise<IModifyFeedAnswerResponse> {
+    return await this.otherCall<IModifyFeedAnswerResponse>(
+      'PATCH',
       `${this.RESOURCE}/daily`,
       data,
     );

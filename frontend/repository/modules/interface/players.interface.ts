@@ -25,6 +25,7 @@ export interface IGetMyManittoInput {
 
 export interface IGetMyManittoResponse {
   data: {
+    guess: string;
     manitto: {
       user_id: number;
       user_email: string;
