@@ -1,7 +1,5 @@
 package com.oomool.api.domain.room.controller;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oomool.api.domain.player.service.PlayerServiceImpl;
 import com.oomool.api.domain.room.dto.InviteCodeDto;
 import com.oomool.api.domain.room.service.GameRoomServiceImpl;
-import com.oomool.api.domain.room.service.TempRoomRedisService;
 import com.oomool.api.global.util.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,15 +24,12 @@ import lombok.RequiredArgsConstructor;
 public class GameRoomController {
 
     private final GameRoomServiceImpl gameRoomService;
-    private final TempRoomRedisService tempRoomRedisService;
-    private final PlayerServiceImpl playerService;
 
     @Operation(summary = "문답방 생성 기능", description = "문답방을 생성합니다.")
     @PostMapping
     public ResponseEntity<?> createGameRoom(@RequestBody InviteCodeDto inviteCodeDto) throws Exception {
-
-        String roomUid = gameRoomService.createGameRoom(inviteCodeDto.getInviteCode());
-        return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("roomUid", roomUid));
+        return ResponseHandler.generateResponse(HttpStatus.OK,
+            gameRoomService.createGameRoom(inviteCodeDto.getInviteCode()));
     }
 
     @Operation(summary = "문답방 상세 정보 조회 기능", description = "문답방의 상세정보를 조회합니다.")

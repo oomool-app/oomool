@@ -1,4 +1,4 @@
-package com.oomool.api.global.config;
+package com.oomool.api.global.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
