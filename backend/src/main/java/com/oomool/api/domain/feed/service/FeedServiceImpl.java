@@ -71,6 +71,7 @@ public class FeedServiceImpl implements FeedService {
 
             RoomFeedDto roomFeedDto = RoomFeedDto
                 .builder()
+                .feedId(feedId)
                 .userId(authorId)
                 .content(feed.getContent()) // 답변 내용
                 .createdAt(feed.getCreatedAt()) // 생성 일자
