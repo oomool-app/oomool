@@ -25,7 +25,7 @@ public class ConvertFile {
     @Value("${file.path}")
     private String uploadPath;
 
-    public FeedImageDto convertFile(MultipartFile file) throws IOException {
+    public FeedImageDto convertFile(MultipartFile file, String imageUrl) throws IOException {
         // DB에 파일 저장
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
 
@@ -49,7 +49,7 @@ public class ConvertFile {
                 .fileName(saveFileName)
                 .folderName(today)
                 .originalName(originalFileName)
-                .url("임의의 임시 url")
+                .url(imageUrl)
                 .build();
 
             file.transferTo(new File(folder, saveFileName));
