@@ -99,7 +99,7 @@ public class FeedServiceImpl implements FeedService {
      * 질문에 대합 답변 내용 저장(답변 내용, 이미지 파일)
      */
     public FeedAnswerDto saveQuestionAnswer(int roomQuestionId, String content,
-        List<MultipartFile> fileList, int authorId) throws IOException {
+        List<MultipartFile> fileList, int authorId, ArrayList<String> imageUrlList) throws IOException {
 
         RoomQuestion roomQuestion = roomQuestionService.getRoomQuestionById(roomQuestionId);
 
@@ -120,10 +120,12 @@ public class FeedServiceImpl implements FeedService {
 
         if (fileList != null) {
             // 피드 이미지 저장
-            for (MultipartFile file : fileList) {
+            for (int i = 0; i < fileList.size(); i++) {
+                MultipartFile file = fileList.get(i);
+                String imageUrl = imageUrlList.get(i);
 
                 // 파일을 local에 저장하고 DTO에 담아서 반환해준다.
-                FeedImageDto feedImageDto = convertFile.convertFile(file);
+                FeedImageDto feedImageDto = convertFile.convertFile(file, imageUrl);
 
                 // DB에 파일 저장
                 FeedImage registFeedImage = new FeedImage();
@@ -157,7 +159,8 @@ public class FeedServiceImpl implements FeedService {
      * 해석하면 EntityManager가 없어서 안정적인 제거를 할 수 없다는 얘기임.
      */
     @Transactional
-    public FeedAnswerDto modifyQuestionAnswer(String content, int feedId, List<MultipartFile> fileList) throws
+    public FeedAnswerDto modifyQuestionAnswer(String content, int feedId,
+        List<MultipartFile> fileList, ArrayList<String> imageUrlList) throws
         IOException {
 
         // 답변 수정
@@ -172,8 +175,11 @@ public class FeedServiceImpl implements FeedService {
 
         if (fileList != null) {
             // 새로 입력 받은 이미지 DB에 저장
-            for (MultipartFile file : fileList) {
-                FeedImageDto feedImageDto = convertFile.convertFile(file);
+            for (int i = 0; i < fileList.size(); i++) {
+                MultipartFile file = fileList.get(i);
+                String imageUrl = imageUrlList.get(i);
+
+                FeedImageDto feedImageDto = convertFile.convertFile(file, imageUrl);
 
                 FeedImage registFeedImage = new FeedImage();
 
