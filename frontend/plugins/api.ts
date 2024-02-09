@@ -22,11 +22,10 @@ interface IApiInstance {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const config = useRuntimeConfig();
+
   const fetchOptions: FetchOptions = {
-    baseURL: 'https://api-dev.oomool.site/',
-    // process.env.NUXT_PUBLIC_OOMOOL_API_URL,
-    // nuxtApp.config.base_url
-    // https://api-dev.oomool.site/
+    baseURL: config.public.oomoolApiUrl,
   };
 
   /** create a new instance of $fetcher with custom option */

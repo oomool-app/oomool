@@ -128,9 +128,6 @@ const getRoomList = async (): Promise<void> => {
 
       const response = await $api.users.getRoomList(userId);
       rooms.value = response.data;
-    } else {
-      // 사용자 정보가 없을 경우 로그인 페이지로 리다이렉트
-      await router.push('/login');
     }
   } catch (error) {
     console.error('Error while fetching room list:', error);
@@ -149,9 +146,6 @@ const getTempRoomList = async (): Promise<void> => {
 
       const response = await $api.users.getTempRoomList(userId);
       temprooms.value = response.data.temp_room;
-    } else {
-      // 사용자 정보가 없을 경우 로그인 페이지로 리다이렉트
-      await router.push('/login');
     }
   } catch (error) {
     console.error('Error while fetching room list:', error);
