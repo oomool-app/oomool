@@ -25,6 +25,7 @@ import lombok.ToString;
 public class RoomFeedDto {
     private int userId; // 작성자 id
     private String content; // 피드 답변 기록
+    private int feedId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt; // 답변 생성 일자
     private List<FeedImageDto> feedImageDtoList; // 피드 이미지
