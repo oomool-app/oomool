@@ -51,7 +51,7 @@
           </AlertDialogContent>
         </AlertDialog>
 
-        <label for="upload-image w-full">
+        <label for="upload-image">
           <div class="w-full">
             <img v-show="isUploaded" id="preview" class="w-full mt-3" />
             <img
