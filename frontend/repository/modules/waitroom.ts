@@ -8,6 +8,7 @@ import {
   type IGetUpdateSettingResponse,
   type IUpdateSettingInput,
   type IGetLongPollingResponse,
+  type IGetDeleteWaitRoomResponse,
 } from './interface/waitroom.interface';
 
 class MakeModule extends HttpFactory {
@@ -56,11 +57,23 @@ class MakeModule extends HttpFactory {
     );
   }
 
-  // LongPulling
+  // Pulling
   async getStartCheck(inviteCode: string): Promise<IGetLongPollingResponse> {
     return await this.getCall<IGetLongPollingResponse>(
       'GET',
       `${this.RESOURCE}/${inviteCode}/check`,
+    );
+  }
+
+  // 대기방 삭제
+  async deleteWaitRoom(
+    inviteCode: string,
+    id: number,
+  ): Promise<IGetDeleteWaitRoomResponse> {
+    return await this.otherCall<IGetDeleteWaitRoomResponse>(
+      'DELETE',
+      `${this.RESOURCE}/${inviteCode}?id=${id}`,
+      {},
     );
   }
 }

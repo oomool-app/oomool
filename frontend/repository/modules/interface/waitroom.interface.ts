@@ -105,3 +105,8 @@ export interface IGetLongPollingResponse {
   };
   stauts: string;
 }
+
+export interface IGetDeleteWaitRoomResponse {
+  data: string;
+  status: string;
+}
