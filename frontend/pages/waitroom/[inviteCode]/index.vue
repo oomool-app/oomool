@@ -20,6 +20,9 @@
             <li>
               <NuxtLink to="/" @click="check">퇴장하기</NuxtLink>
             </li>
+            <li v-if="auth">
+              <a @click="deleteRoom">방 삭제하기</a>
+            </li>
           </ul>
         </PopoverContent>
       </Popover>
@@ -73,7 +76,7 @@
             :user="user"
             :master="getWaitRoomData?.data.master_id"
           ></WaitingUser>
-          <div class="flex justify-center items-center">x</div>
+          <button class="flex justify-center items-center">x</button>
         </div>
         <Dialog class="flex justify-center items-center text-lg py-2">
           <DialogTrigger>
@@ -163,9 +166,16 @@ const route = useRoute();
 const router = useRouter();
 const auth = ref<boolean>(false);
 const getWaitRoomData = ref<IGetWaitRoomResponse>();
-const userInfo = ref();
+const userInfo = ref<User | null>();
 const scrollHeight = ref<number>(0);
 const polling = ref(true);
+
+interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
 onMounted(async (): Promise<void> => {
   const userStore = useUserStore();
   userInfo.value = userStore.getStoredUser();
@@ -178,9 +188,7 @@ const startCheck = async (): Promise<void> => {
   while (polling.value) {
     try {
       await checkpolling();
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }
 };
 
@@ -203,6 +211,9 @@ const getData = async (): Promise<void> => {
   const input = route.params.inviteCode;
   if (typeof input === 'string') {
     getWaitRoomData.value = await $api.make.getWaitRoom(input);
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
     if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
       auth.value = true;
     }
@@ -260,6 +271,19 @@ const createRoom = async (): Promise<void> => {
   } catch (error) {
     alert('잘못된 접근');
   }
+};
+
+const deleteRoom = async (): Promise<void> => {
+  try {
+    const inviteCode = route.params.inviteCode;
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
+    if (typeof inviteCode === 'string') {
+      await $api.make.deleteWaitRoom(inviteCode, userInfo.value.id);
+    }
+    await router.push('/');
+  } catch (error) {}
 };
 </script>
 <style scoped>
