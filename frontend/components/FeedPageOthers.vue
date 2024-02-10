@@ -20,6 +20,7 @@
         class="p-3 border border-gray-400 rounded-r-xl rounded-bl-xl bg-[#F1EBFC]"
       >
         <img
+          v-if="props.feeds.feed_image_dto_list[0] !== undefined"
           class="w-full h-auto rounded-lg mb-2"
           :src="$props.feeds.feed_image_dto_list[0].url"
           alt=""

@@ -8,6 +8,7 @@
         class="chat-box p-3 border border-purple-500 rounded-l-xl rounded-br-xl bg-[#d8c7f9]"
       >
         <img
+          v-if="props.feeds.feed_image_dto_list[0] !== undefined"
           class="rounded-lg mb-4 w-full h-auto"
           alt=""
           :src="$props.feeds.feed_image_dto_list[0].url"
