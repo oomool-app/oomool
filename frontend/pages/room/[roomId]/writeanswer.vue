@@ -19,7 +19,18 @@
         class="h-10 px-4 py-2"
         @input="previewImage"
       />
-      <div class="flex flex-col justify-center items-center mt-4">
+      <div class="flex justify-center items-start mt-4">
+        <label for="upload-image">
+          <div>
+            <img v-show="isUploaded" id="preview" class="w-56 mt-3" />
+            <img
+              v-if="!isUploaded"
+              class="w-56 h-56 inline-block rounded-xl"
+              src="/img/photoGhost.png"
+              alt="사진 등록 이미지"
+            />
+          </div>
+        </label>
         <AlertDialog>
           <AlertDialogTrigger>
             <svg
@@ -50,18 +61,6 @@
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
-        <label for="upload-image">
-          <div>
-            <img v-show="isUploaded" id="preview" class="w-56 mt-3" />
-            <img
-              v-if="!isUploaded"
-              class="w-56 h-56 inline-block rounded-xl"
-              src="/img/photoGhost.png"
-              alt="사진 등록 이미지"
-            />
-          </div>
-        </label>
       </div>
       <div class="flex justify-end"></div>
     </div>
