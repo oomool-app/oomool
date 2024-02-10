@@ -4,7 +4,7 @@ import { getToken, type Messaging } from 'firebase/messaging';
 
 interface UseFCM {
   token: Ref<string>;
-  fetchToken: () => Promise<void>;
+  fetchToken: () => Promise<string>;
 }
 
 const useFCM = (): UseFCM => {
@@ -12,16 +12,14 @@ const useFCM = (): UseFCM => {
   const token = ref<string>('');
   const { $fcm }: { $fcm: Messaging } = useNuxtApp();
 
-  const fetchToken = async (): Promise<void> => {
-    await getToken($fcm, {
+  const fetchToken = async (): Promise<string> => {
+    const currentToken = await getToken($fcm, {
       vapidKey: config.public.vapidKey,
-    })
-      .then((currentToken) => {
-        token.value = currentToken;
-      })
-      .catch((err) => {
-        console.error('An error occurred while retrieving token. ', err);
-      });
+    });
+
+    token.value = currentToken;
+
+    return currentToken;
   };
 
   return { token, fetchToken };
