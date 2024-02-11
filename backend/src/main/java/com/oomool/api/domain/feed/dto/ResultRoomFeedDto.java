@@ -15,7 +15,6 @@ import lombok.ToString;
  * 문답방 피드 전체 조회 Controller 응답 DTO
  */
 @Getter
-@Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
