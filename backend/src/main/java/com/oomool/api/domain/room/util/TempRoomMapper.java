@@ -2,6 +2,7 @@ package com.oomool.api.domain.room.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -43,13 +44,15 @@ public class TempRoomMapper {
     /**
      *
      * */
-    public TempRoomDto mapToTempRoomDto(Map<String, Object> tempRoomSetting, List<PlayerDto> playerDtoList) {
+    public TempRoomDto mapToTempRoomDto(Map<String, Object> tempRoomSetting, List<PlayerDto> playerDtoList,
+        List<UserDto> banUserDtoList) {
         return TempRoomDto.builder()
             .inviteCode((String)tempRoomSetting.get("inviteCode"))
             .createdAt(CustomDateUtil.parseDateTime((String)tempRoomSetting.get("createdAt")))
             .masterId(Integer.parseInt((String)tempRoomSetting.get("masterId")))
             .setting(mapToSettingOptionDto(tempRoomSetting))
             .players(playerDtoList)
+            .banList(banUserDtoList)
             .build();
     }
 
@@ -122,6 +125,10 @@ public class TempRoomMapper {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<UserDto> objectToUserDtoList(Set<Object> userJsonList) {
+        return userJsonList.stream().map(this::objectToUserDto).collect(Collectors.toList());
     }
 
 }

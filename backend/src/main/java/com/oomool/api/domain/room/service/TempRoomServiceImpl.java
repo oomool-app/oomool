@@ -13,6 +13,7 @@ import com.oomool.api.domain.room.dto.TempRoomBanRequestDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
+import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.global.config.redis.RedisService;
 import com.oomool.api.global.exception.BaseException;
 import com.oomool.api.global.exception.StatusCode;
@@ -102,8 +103,13 @@ public class TempRoomServiceImpl implements TempRoomService {
             redisService.getHashOperationByInteger(TempRoomPrefix.PLAYERS + inviteCode)
         );
 
+        // 3. 강퇴 유저 정보 조회
+        List<UserDto> banUserDtoList = tempRoomMapper.objectToUserDtoList(
+            redisService.getSetOperation(TempRoomPrefix.BAN_LIST + inviteCode)
+        );
+
         // 대기방 전체 결과 조회
-        return tempRoomMapper.mapToTempRoomDto(settingOptionMap, playerDtoList);
+        return tempRoomMapper.mapToTempRoomDto(settingOptionMap, playerDtoList, banUserDtoList);
     }
 
     @Override
@@ -129,6 +135,7 @@ public class TempRoomServiceImpl implements TempRoomService {
         // invite Code에 대한 정보를 삭제한다.
         redisService.deleteKey(TempRoomPrefix.SETTING_OPTION + inviteCode);
         redisService.deleteKey(TempRoomPrefix.PLAYERS + inviteCode);
+        redisService.deleteKey(TempRoomPrefix.BAN_LIST + inviteCode);
         return inviteCode + " 대기방 삭제를 완료했습니다.";
     }
 
@@ -191,7 +198,7 @@ public class TempRoomServiceImpl implements TempRoomService {
             throw new BaseException(StatusCode.NOT_MASTER_AUTH_TEMPROOM, "방장이 아닙니다.");
         }
         // 강퇴인원을 추가한다. (강퇴 인원은 roomPlayers : -1 로 저장한다.)
-        redisService.saveValueOperation(TempRoomPrefix.BAN_LIST + inviteCode,
+        redisService.saveSetOperation(TempRoomPrefix.BAN_LIST + inviteCode,
             tempRoomMapper.userDtoToString(requestBanDto.banUser()));
         // 플레이어 리스트에서 제외한다.
         redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, requestBanDto.banUser().getId());
