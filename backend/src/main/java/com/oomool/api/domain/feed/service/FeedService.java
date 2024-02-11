@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
+import com.oomool.api.domain.feed.dto.ResultManittoDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 
 public interface FeedService {
@@ -25,7 +26,11 @@ public interface FeedService {
      * 피드 답변을 수정합니다
      */
     FeedAnswerDto modifyQuestionAnswer(String content, int feedId,
-        List<MultipartFile> fileList, ArrayList<String> imageUrlList) throws
+        List<MultipartFile> fileList, ArrayList<String> imageUrlList, List<String> urlList) throws
         IOException;
 
+    /**
+     * 나의 마니또의 모든 피드
+     */
+    ResultManittoDto getManittoFeed(String roomUid, int userId);
 }

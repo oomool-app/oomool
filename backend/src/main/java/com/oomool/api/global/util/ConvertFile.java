@@ -29,8 +29,6 @@ public class ConvertFile {
         // DB에 파일 저장
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
 
-        log.info("uploadPath : {}", uploadPath);
-
         File folder = new File(uploadPath);
 
         if (!folder.exists()) {
@@ -56,6 +54,7 @@ public class ConvertFile {
 
             return feedImageDto;
         }
+
         return new FeedImageDto();
     }
 }
