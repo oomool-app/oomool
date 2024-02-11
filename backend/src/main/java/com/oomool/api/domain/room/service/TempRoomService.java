@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
+import com.oomool.api.domain.room.dto.TempRoomBanRequestDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
 
 public interface TempRoomService {
@@ -63,6 +64,14 @@ public interface TempRoomService {
      * */
     SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto);
+
+    /**
+     * 방장은 대기방의 인원 중 일부를 강퇴 시킬 수 있다.
+     *
+     * @param inviteCode 초대코드
+     * @param requestBanDto 입력받는 banDto
+     * */
+    String addBanList(String inviteCode, TempRoomBanRequestDto requestBanDto);
 
     /**
      * // 비즈니스
