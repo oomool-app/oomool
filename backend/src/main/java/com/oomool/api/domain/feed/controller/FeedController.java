@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
 import com.oomool.api.domain.feed.dto.ImageResponseDto;
+import com.oomool.api.domain.feed.dto.ResultManittoDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.service.FeedService;
 import com.oomool.api.domain.feed.service.ImgBbImageUploadApi;
@@ -53,7 +54,6 @@ public class FeedController {
 
     /**
      * 피드 질문 답변 등록
-
      */
     @Operation(summary = "오늘 질문 답변", description = "사용자가 오늘 질문에 대해 답변합니다.")
     @PostMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
@@ -67,6 +67,7 @@ public class FeedController {
         // 피드 답변 등록하기
         FeedAnswerDto feedAnswerDto = feedService.saveQuestionAnswer(Integer.parseInt(roomQuestionId),
             content, fileList, Integer.parseInt(authorId), imageUrlList);
+
         return ResponseHandler.generateResponse(HttpStatus.CREATED, feedAnswerDto);
     }
 
@@ -77,12 +78,27 @@ public class FeedController {
     @PatchMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
     public ResponseEntity<?> modifyQuestionAnswer(@RequestParam("content") String content,
         @RequestParam("feed_id") String feedId,
+        @RequestParam(value = "url", required = false) List<String> urlList,
         @RequestPart(value = "file_list", required = false) List<MultipartFile> fileList) throws IOException {
 
         ArrayList<String> imageUrlList = getImageUrlList(fileList);
 
-        feedService.modifyQuestionAnswer(content, Integer.parseInt(feedId), fileList, imageUrlList);
-        return ResponseHandler.generateResponse(HttpStatus.OK, "데일리 피드 질문 답변 수정 성공!");
+        FeedAnswerDto feedAnswerDto = feedService.modifyQuestionAnswer(content, Integer.parseInt(feedId), fileList,
+            imageUrlList, urlList);
+        return ResponseHandler.generateResponse(HttpStatus.OK, feedAnswerDto);
+    }
+
+    /**
+     * @return 나의 마니또의 모든 피드 결과
+     */
+    @Operation(summary = "나의 마니또 모든 피드 조회", description = "나의 마니또의 모든 피드 내역을 조회합니다.")
+    @GetMapping("/{roomUid}/{userId}/result")
+    public ResponseEntity<?> getResultManittoFeed(@PathVariable("roomUid") String roomUid,
+        @PathVariable("userId") int userId) {
+
+        ResultManittoDto resultManittoDto = feedService.getManittoFeed(roomUid, userId);
+
+        return ResponseHandler.generateResponse(HttpStatus.OK, resultManittoDto);
     }
 
     /**
@@ -104,6 +120,7 @@ public class FeedController {
 
         return imageUrlList;
     }
+
 }
 
 
