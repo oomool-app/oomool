@@ -12,4 +12,6 @@ public interface FeedRepository extends JpaRepository<Feed, Integer> {
     Feed findById(int feedId);
 
     List<Feed> findByRoomQuestionId(int roomQuestionId);
+
+    Feed findByRoomQuestionIdAndAuthorUserId(int roomQuestionId, int userId);
 }

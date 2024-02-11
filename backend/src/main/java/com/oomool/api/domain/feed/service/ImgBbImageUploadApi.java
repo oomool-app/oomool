@@ -31,8 +31,6 @@ public class ImgBbImageUploadApi {
 
         ImageResponseDto imageResponseDto = new ImageResponseDto();
 
-        log.info("file : {}", file);
-
         // file이 null로 넘어왔을 때 빈 image 데이터를 넘김으로써 불필요한 이미지 API 요청을 방지한다.
         if (file == null) {
             return imageResponseDto;

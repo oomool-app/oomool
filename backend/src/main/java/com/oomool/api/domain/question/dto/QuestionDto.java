@@ -1,20 +1,16 @@
 package com.oomool.api.domain.question.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
-@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class QuestionDto {
     private String question;
     private int level;
 
-    @Builder
-    public QuestionDto(String question, int level) {
-        this.question = question;
-        this.level = level;
-    }
 }
