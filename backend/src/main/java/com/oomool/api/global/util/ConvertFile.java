@@ -2,22 +2,16 @@ package com.oomool.api.global.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedImageDto;
-import com.oomool.api.domain.feed.entity.Feed;
-import com.oomool.api.domain.feed.entity.FeedImage;
-import com.oomool.api.domain.feed.repository.FeedImageRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 /**
