@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
+import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.global.util.CustomDateUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -100,6 +101,24 @@ public class TempRoomMapper {
         try {
             playerJson = objectMapper.writeValueAsString(playerDto);
             return playerJson;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String userDtoToString(UserDto userDto) {
+        String userJson;
+        try {
+            userJson = objectMapper.writeValueAsString(userDto);
+            return userJson;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public UserDto objectToUserDto(Object userJson) {
+        try {
+            return objectMapper.readValue((String)userJson, UserDto.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
