@@ -9,18 +9,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.oomool.api.domain.feed.dto.FeedAnswerDto;
 import com.oomool.api.domain.feed.dto.FeedImageDto;
+import com.oomool.api.domain.feed.dto.ResultManittoDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.dto.RoomFeedDto;
+import com.oomool.api.domain.feed.dto.RoomManittoDto;
 import com.oomool.api.domain.feed.entity.Feed;
 import com.oomool.api.domain.feed.entity.FeedImage;
 import com.oomool.api.domain.feed.repository.FeedImageRepository;
 import com.oomool.api.domain.feed.repository.FeedRepository;
 import com.oomool.api.domain.player.dto.ManittiDto;
+import com.oomool.api.domain.player.dto.ManittoDto;
 import com.oomool.api.domain.player.entity.Player;
+import com.oomool.api.domain.player.repository.PlayerRepository;
 import com.oomool.api.domain.player.service.PlayerService;
 import com.oomool.api.domain.question.dto.QuestionDto;
 import com.oomool.api.domain.question.dto.RoomQuestionFeedDto;
 import com.oomool.api.domain.question.entity.RoomQuestion;
+import com.oomool.api.domain.question.repository.RoomQuestionReposiotry;
 import com.oomool.api.domain.question.service.QuestionService;
 import com.oomool.api.domain.question.service.RoomQuestionService;
 import com.oomool.api.global.util.ConvertFile;
@@ -38,10 +43,12 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class FeedServiceImpl implements FeedService {
     private final RoomQuestionService roomQuestionService;
+    private final RoomQuestionReposiotry roomQuestionReposiotry;
     private final FeedRepository feedRepository;
     private final FeedImageService feedImageService;
     private final QuestionService questionService;
     private final PlayerService playerService;
+    private final PlayerRepository playerRepository;
     private final FeedImageRepository feedImageRepository;
     private final ConvertFile convertFile;
 
@@ -60,7 +67,7 @@ public class FeedServiceImpl implements FeedService {
         List<RoomFeedDto> roomFeedDtoList = new ArrayList<>();
 
         for (Feed feed : feedList) {
-            // 피드 id에 해당하는 이미지 모두 가져와서 저장
+            // 피드 id에 해당하는 이미지 모두 가져온다
             int feedId = feed.getId();
             List<FeedImageDto> feedImageDtoList = feedImageService.getFeedImages(feedId);
 
@@ -127,14 +134,7 @@ public class FeedServiceImpl implements FeedService {
                 // 파일을 local에 저장하고 DTO에 담아서 반환해준다.
                 FeedImageDto feedImageDto = convertFile.convertFile(file, imageUrl);
 
-                // DB에 파일 저장
-                FeedImage registFeedImage = new FeedImage();
-                registFeedImage.setSaveFolder(feedImageDto.getFolderName());
-                registFeedImage.setOriginalName(feedImageDto.getOriginalName());
-                registFeedImage.setSaveName(feedImageDto.getFileName());
-                registFeedImage.setFeed(feed);
-                registFeedImage.setUrl(feedImageDto.getUrl());
-                feedImageRepository.save(registFeedImage);
+                saveFeedImage(feed, feedImageDto);
 
                 // Dto에 파일 저장
                 feedImageDtoList.add(feedImageDto);
@@ -160,7 +160,7 @@ public class FeedServiceImpl implements FeedService {
      */
     @Transactional
     public FeedAnswerDto modifyQuestionAnswer(String content, int feedId,
-        List<MultipartFile> fileList, ArrayList<String> imageUrlList) throws
+        List<MultipartFile> fileList, ArrayList<String> imageUrlList, List<String> urlList) throws
         IOException {
 
         // 답변 수정
@@ -181,16 +181,28 @@ public class FeedServiceImpl implements FeedService {
 
                 FeedImageDto feedImageDto = convertFile.convertFile(file, imageUrl);
 
-                FeedImage registFeedImage = new FeedImage();
+                saveFeedImage(feed, feedImageDto);
 
-                registFeedImage.setFeed(feed);
-                registFeedImage.setOriginalName(feedImageDto.getOriginalName());
-                registFeedImage.setSaveName(feedImageDto.getFileName());
-                registFeedImage.setSaveFolder(feedImageDto.getFolderName());
-                registFeedImage.setUrl(feedImageDto.getUrl());
+                feedImageDtoList.add(feedImageDto);
+            }
+        }
+        /**
+         * 기존에 있던 url에 변경 사항이 없다면 다시 DB에 저장
+         */
+        if (urlList != null) {
+            for (String url : urlList) {
+                FeedImage feedImage = FeedImage
+                    .builder()
+                    .url(url)
+                    .feed(feed)
+                    .build();
 
-                // save 안하면 변경 감지 안되던데 이유가..? 그래서 save 처리해줌!
-                feedImageRepository.save(registFeedImage);
+                FeedImageDto feedImageDto = FeedImageDto
+                    .builder()
+                    .url(url)
+                    .build();
+
+                feedImageRepository.save(feedImage);
                 feedImageDtoList.add(feedImageDto);
             }
         }
@@ -198,8 +210,91 @@ public class FeedServiceImpl implements FeedService {
         return FeedAnswerDto
             .builder()
             .feedId(feedId)
-            .feedImageDtoList(feedImageDtoList)
             .content(content)
+            .feedImageDtoList(feedImageDtoList)
             .build();
     }
+
+    /**
+     * @return 마니또의 모든 피드 결과
+     */
+    @Override
+    public ResultManittoDto getManittoFeed(String roomUid, int userId) {
+        List<RoomQuestion> roomQuestionList = roomQuestionReposiotry.findByRoomRoomUid(roomUid);
+
+        // 마니또 정보 가져오기
+        Player player = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
+
+        int manittoId = player.getUser().getId();
+
+        ManittoDto manittoDto = ManittoDto
+            .builder()
+            .nickname(player.getNickname())
+            .avatarColor(player.getAvatarColor())
+            .url(player.getAvatar().getUrl())
+            .build();
+        List<RoomManittoDto> resultManittoDtoList = new ArrayList<>();
+
+        for (int i = 0; i < roomQuestionList.size(); i++) {
+            RoomQuestion roomQuestion = roomQuestionList.get(i);
+
+            // 질문 level, 질문 내용
+            QuestionDto questionDto = QuestionDto
+                .builder()
+                .question(roomQuestion.getQuestion().getQuestion())
+                .level(roomQuestion.getQuestion().getLevel())
+                .build();
+
+            // 플레이어 피드 정보 가져오기
+            Feed feed = feedRepository.findByRoomQuestionIdAndAuthorUserId(roomQuestion.getId(), manittoId);
+
+            if (feed == null) {
+                continue;
+            }
+
+            // 피드 이미지 가져오기
+            List<FeedImageDto> feedImageDtoList = feedImageService.getFeedImages(feed.getId());
+
+            // 작성한 피드에 대한 정보(질문, 피드, 피드 이미지)
+            RoomManittoDto roomManittoDto = RoomManittoDto
+                .builder()
+                .roomQuestionId(roomQuestion.getId())
+                .userId(manittoId)
+                .content(feed.getContent())
+                .feedId(feed.getId())
+                .createdAt(feed.getCreatedAt())
+                .feedImageDtoList(feedImageDtoList)
+                .questionDto(questionDto)
+                .build();
+
+            resultManittoDtoList.add(roomManittoDto);
+        }
+
+        // 마니또 정보 + 피드 정보
+        ResultManittoDto resultManittoDto = ResultManittoDto
+            .builder()
+            .manittoDto(manittoDto)
+            .resultManittoList(resultManittoDtoList)
+            .build();
+
+        return resultManittoDto;
+    }
+
+    /**
+     * DB 이미지 저장 메서드
+     */
+    public void saveFeedImage(Feed feed, FeedImageDto feedImageDto) {
+        // DB에 파일 저장
+        FeedImage registFeedImage = FeedImage
+            .builder()
+            .saveFolder(feedImageDto.getFolderName())
+            .originalName(feedImageDto.getOriginalName())
+            .saveName(feedImageDto.getFileName())
+            .feed(feed)
+            .url(feedImageDto.getUrl())
+            .build();
+
+        feedImageRepository.save(registFeedImage);
+    }
 }
+
