@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
+import com.oomool.api.domain.room.dto.TempRoomBanRequestDto;
 import com.oomool.api.domain.room.dto.TempRoomRequestDto;
 import com.oomool.api.domain.room.service.TempRoomService;
 import com.oomool.api.domain.user.service.UserService;
@@ -93,6 +94,13 @@ public class TempRoomController {
         return ResponseHandler.generateResponse(HttpStatus.OK,
             Map.of("setting", tempRoomService.modifyTempRoomSettingOption(inviteCode, settingOptionDto))
         );
+    }
+
+    @Operation(summary = "대기방 회원 강퇴", description = "대기방에서 유저를 강퇴시킵니다.")
+    @PostMapping("/{inviteCode}/players/ban")
+    public ResponseEntity<?> addBanList(@PathVariable("inviteCode") String inviteCode, @RequestBody
+        TempRoomBanRequestDto banRequestDto) {
+        return ResponseHandler.generateResponse(HttpStatus.OK, tempRoomService.addBanList(inviteCode, banRequestDto));
     }
 
     // Temp Start Call
