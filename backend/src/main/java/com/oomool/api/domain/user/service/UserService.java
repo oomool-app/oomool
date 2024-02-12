@@ -51,13 +51,23 @@ public class UserService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
 
-        UserDto userDto = UserDto.builder()
+        return UserDto.builder()
             .id(user.getId())
             .email(user.getEmail())
             .username(user.getUsername())
             .build();
+    }
 
-        return userDto;
+    /**
+     * User Id로 조회 후 UserDto로 반환해주는 메서드
+     * */
+    public UserDto searchByUserId(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+        return UserDto.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .build();
     }
 
     /**
