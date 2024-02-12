@@ -16,7 +16,6 @@ public class CustomDateUtil {
 
     // String to LocalDateTime
     public static LocalDateTime parseDateTime(String dateTimeString) {
-        log.error("CustomDetailUtil parseDateTime :: {}", dateTimeString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
         return LocalDateTime.parse(dateTimeString, formatter);
     }
