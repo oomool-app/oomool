@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +20,7 @@ import com.oomool.api.domain.feed.dto.ResultManittoDto;
 import com.oomool.api.domain.feed.dto.ResultRoomFeedDto;
 import com.oomool.api.domain.feed.service.FeedService;
 import com.oomool.api.domain.feed.service.ImgBbImageUploadApi;
-import com.oomool.api.global.util.ResponseHandler;
+import com.oomool.api.global.dto.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,12 +42,12 @@ public class FeedController {
      */
     @Operation(summary = "문답방 질문의 모든 피드", description = "문답방 질문의 모든 피드를 반환합니다.")
     @GetMapping("/{roomUid}/{sequence}")
-    public ResponseEntity<?> getRoomsFeed(@PathVariable("roomUid") String roomUid,
+    public ApiResponse<?> getRoomsFeed(@PathVariable("roomUid") String roomUid,
         @PathVariable("sequence") int sequence) {
 
         ResultRoomFeedDto resultRoomFeedDto = feedService.getRoomsFeedList(roomUid, sequence);
 
-        return ResponseHandler.generateResponse(HttpStatus.OK, resultRoomFeedDto);
+        return ApiResponse.success(resultRoomFeedDto);
     }
 
     /**
@@ -57,7 +55,7 @@ public class FeedController {
      */
     @Operation(summary = "오늘 질문 답변", description = "사용자가 오늘 질문에 대해 답변합니다.")
     @PostMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
-    public ResponseEntity<?> saveQuestionAnswer(@RequestParam("content") String content,
+    public ApiResponse<?> saveQuestionAnswer(@RequestParam("content") String content,
         @RequestParam("author_id") String authorId,
         @RequestParam("room_question_id") String roomQuestionId,
         @RequestPart(value = "file_list", required = false) List<MultipartFile> fileList) throws IOException {
@@ -68,7 +66,7 @@ public class FeedController {
         FeedAnswerDto feedAnswerDto = feedService.saveQuestionAnswer(Integer.parseInt(roomQuestionId),
             content, fileList, Integer.parseInt(authorId), imageUrlList);
 
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, feedAnswerDto);
+        return ApiResponse.success(feedAnswerDto);
     }
 
     /**
@@ -76,7 +74,7 @@ public class FeedController {
      */
     @Operation(summary = "피드 질문 답변을 수정", description = "등록한 질문을 수정합니다.")
     @PatchMapping(value = "/daily", produces = "application/json", consumes = "multipart/form-data")
-    public ResponseEntity<?> modifyQuestionAnswer(@RequestParam("content") String content,
+    public ApiResponse<?> modifyQuestionAnswer(@RequestParam("content") String content,
         @RequestParam("feed_id") String feedId,
         @RequestParam(value = "url", required = false) List<String> urlList,
         @RequestPart(value = "file_list", required = false) List<MultipartFile> fileList) throws IOException {
@@ -85,7 +83,7 @@ public class FeedController {
 
         FeedAnswerDto feedAnswerDto = feedService.modifyQuestionAnswer(content, Integer.parseInt(feedId), fileList,
             imageUrlList, urlList);
-        return ResponseHandler.generateResponse(HttpStatus.OK, feedAnswerDto);
+        return ApiResponse.success(feedAnswerDto);
     }
 
     /**
@@ -93,12 +91,12 @@ public class FeedController {
      */
     @Operation(summary = "나의 마니또 모든 피드 조회", description = "나의 마니또의 모든 피드 내역을 조회합니다.")
     @GetMapping("/{roomUid}/{userId}/result")
-    public ResponseEntity<?> getResultManittoFeed(@PathVariable("roomUid") String roomUid,
+    public ApiResponse<?> getResultManittoFeed(@PathVariable("roomUid") String roomUid,
         @PathVariable("userId") int userId) {
 
         ResultManittoDto resultManittoDto = feedService.getManittoFeed(roomUid, userId);
 
-        return ResponseHandler.generateResponse(HttpStatus.OK, resultManittoDto);
+        return ApiResponse.success(resultManittoDto);
     }
 
     /**
