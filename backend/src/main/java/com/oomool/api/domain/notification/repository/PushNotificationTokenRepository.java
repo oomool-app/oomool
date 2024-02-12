@@ -11,7 +11,5 @@ import com.oomool.api.domain.user.entity.User;
 public interface PushNotificationTokenRepository extends JpaRepository<PushNotificationToken, Integer> {
     List<PushNotificationToken> findAllByUser(User user);
 
-    Optional<PushNotificationToken> findByUserAndToken(User user, String token);
-
     Optional<PushNotificationToken> findByToken(String token);
 }
