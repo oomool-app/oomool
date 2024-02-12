@@ -106,9 +106,10 @@ import {
   type IGetRoomListInput,
   type IGetTempRoomListInput,
 } from '../repository/modules/interface/users.interface';
+import type { ISaveTokenInput } from '~/repository/modules/interface/pushNotifications.interface';
 
 useBodyColor('#61339B');
-
+const { token, fetchToken } = useFCM();
 const userStore = useUserStore();
 const router = useRouter();
 const { $api } = useNuxtApp();
@@ -216,12 +217,29 @@ onMounted(async () => {
   if (isSupported()) {
     if (Notification.permission === 'default') {
       await router.push({ path: '/notification' });
+      return;
+    }
+    if (Notification.permission === 'granted' && token.value === '') {
+      await fetchToken().then(saveToken);
     }
   }
   await getRoomList();
   await getTempRoomList();
   await select1();
 });
+
+const saveToken = async (): Promise<void> => {
+  const storedUser = userStore.getStoredUser(); // storedUser를 피니아를 통해 불러옴
+  if (storedUser != null) {
+    const tokens: ISaveTokenInput = {
+      user_id: storedUser.id,
+      token: token.value,
+    };
+    console.log(tokens);
+    const response = await $api.pushNotifications.saveToken(tokens);
+    console.log(response.data);
+  }
+};
 </script>
 
 <style scoped lang="scss">
