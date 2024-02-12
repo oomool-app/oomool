@@ -9,14 +9,20 @@
       >
         <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
-            class="flex bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
+            class="flex flex-col bg-white h-24 shadow-inner rounded-xl items-center relative px-8"
           >
-            대기 방입니다.
+            <h1 class="z-10 pt-9 font-extrabold text-gray-600">
+              대기방입니다.
+            </h1>
+            <img
+              src="/img/defaultGhost2.png"
+              class="w-12 h-auto absolute bottom-2 right-2 opacity-30 z-0"
+            />
           </div>
         </CardHeader>
-        <CardContent class="px-3 pt-0">
+        <CardContent class="pl-3 pt-0 pr-0 pb-7 flex flex-row relative">
           <div class="text-white text-xl not-italic h-3">
-            {{ props.temprooms.setting.title }}
+            {{ props.temprooms?.setting?.title }}
           </div>
         </CardContent>
       </div>

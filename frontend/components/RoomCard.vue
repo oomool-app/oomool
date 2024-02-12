@@ -44,7 +44,7 @@
             class="flex flex-col bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
           >
             아직 게임이 시작되지 않았어요
-            <div v-if="dayBeforeStart >= 1">
+            <div v-if="dayBeforeStart >= 1" class="flex flex-row">
               <h1 class="text-primary pr-2">{{ dayBeforeStart }}</h1>
               일 후에 시작됩니다.
             </div>
@@ -68,18 +68,22 @@
       >
         <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
-            class="flex bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
+            class="flex flex-col bg-white h-24 shadow-inner rounded-xl items-center relative px-8"
           >
-            종료된 방입니다.
+            <h1 class="z-10 pt-9 font-extrabold text-gray-600">
+              종료된 방입니다.
+            </h1>
+            <img
+              src="/img/endGhost.png"
+              class="w-12 h-auto absolute bottom-2 right-2 opacity-30 z-0"
+            />
           </div>
         </CardHeader>
-        <div class="h-20">
-          <CardContent class="px-3 pt-0">
-            <div class="text-white text-xl not-italic h-3">
-              {{ props.rooms?.setting?.title }}
-            </div>
-          </CardContent>
-        </div>
+        <CardContent class="pl-3 pt-0 pr-0 pb-7 flex flex-row relative">
+          <div class="text-white text-xl not-italic h-3">
+            {{ props.rooms?.setting?.title }}
+          </div>
+        </CardContent>
       </div>
     </Card>
   </div>
@@ -113,7 +117,7 @@ const endDateIsAfterToday = ref(false);
 const dayBeforeStart = ref(0);
 const dayBeforeEnd = ref(0);
 
-const getTime = (): void => {
+const getTime = async (): Promise<void> => {
   // 현재 시각 불러오기
   const today: Date = new Date();
 
@@ -146,8 +150,11 @@ const getTime = (): void => {
   dayBeforeEnd.value = Math.ceil(timeBeforeEnd / (1000 * 60 * 60 * 24));
 };
 
-onBeforeMount(() => {
-  // 페이지가 마운트될 때 getTime 함수 실행
-  getTime();
+onBeforeUpdate(async () => {
+  await getTime();
+});
+
+onMounted(async () => {
+  await getTime();
 });
 </script>
