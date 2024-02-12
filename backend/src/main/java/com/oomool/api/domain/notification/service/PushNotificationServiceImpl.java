@@ -1,6 +1,7 @@
 package com.oomool.api.domain.notification.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -37,8 +38,17 @@ public class PushNotificationServiceImpl implements PushNotificationService {
             .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 
         // 기존 토큰이 존재한다면(기기 로그인 변경 등 issue 발생 시) 삭제 후 재등록
-        pushNotificationTokenRepository.findByToken(token)
-            .ifPresent(pushNotificationTokenRepository::delete);
+        Optional<PushNotificationToken> optionalToken = pushNotificationTokenRepository.findByToken(token);
+
+        if (optionalToken.isPresent()) {
+            PushNotificationToken exist = optionalToken.get();
+            if (exist.getUser().getId() == userId) {
+                // 토큰이 존재하고, 토큰의 사용자 ID가 입력된 사용자 ID와 일치하므로 메서드를 종료
+                return;
+            }
+            // 토큰이 존재하고, 토큰의 사용자 ID가 입력된 사용자 ID와 일치하지 않으므로 토큰을 삭제
+            pushNotificationTokenRepository.delete(exist);
+        }
 
         PushNotificationToken pushNotificationToken = PushNotificationToken.builder()
             .user(user)
