@@ -4,6 +4,8 @@ import {
   type IGetAllFeedsByRoomUidAndSequenceResponse,
   type IWriteFeedAnswerResponse,
   type IModifyFeedAnswerResponse,
+  type IGetAllMyManittoFeedAnswersInput,
+  type IIGetAllMyManittoFeedAnswersResponse,
 } from './interface/feeds.interface';
 
 class FeedsModule extends HttpFactory {
@@ -34,6 +36,16 @@ class FeedsModule extends HttpFactory {
       'PATCH',
       `${this.RESOURCE}/daily`,
       data,
+    );
+  }
+
+  // 내 마니또가 작성한 피드 전체 조회
+  async getAllMyManittoFeedAnswers(
+    data: IGetAllMyManittoFeedAnswersInput,
+  ): Promise<IIGetAllMyManittoFeedAnswersResponse> {
+    return await this.getCall<IIGetAllMyManittoFeedAnswersResponse>(
+      'GET',
+      `${this.RESOURCE}/${data.roomUid}/${data.userId}/result`,
     );
   }
 }
