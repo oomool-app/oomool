@@ -169,6 +169,7 @@ const previewImage = (e: any): void => {
     };
     const file: Blob = e.target.files[0];
     formData.append('file_list', file);
+    formData.delete('url');
     reader.readAsDataURL(input.files[0]);
     input.value = '';
   } else {
@@ -208,12 +209,16 @@ const getMyFeedAnswer = async (): Promise<void> => {
   if (mine.length > 0) {
     content.value = mine[0].content;
     feedId.value = mine[0].feed_id;
-    if (mine[0].feed_image_dto_list.length > 0) {
+    if (
+      mine[0].feed_image_dto_list !== undefined &&
+      mine[0].feed_image_dto_list.length > 0
+    ) {
       isUploaded.value = true;
       const previewElement = document.getElementById(
         'preview',
       ) as HTMLImageElement;
       previewElement.src = mine[0].feed_image_dto_list[0].url;
+      formData.append('url', mine[0].feed_image_dto_list[0].url);
     }
   }
 };

@@ -33,9 +33,12 @@
             :pause-autoplay-on-hover="true"
             class="mb-4 w-full"
           >
-            <Slide v-for="item in questions" :key="item.sequence">
+            <Slide v-for="(item, index) in result" :key="item.feed_id">
               <div class="w-3/4 carousel__item">
-                <ResultFinalCard :result="item"></ResultFinalCard>
+                <ResultFinalCard
+                  :result="item"
+                  :index="index"
+                ></ResultFinalCard>
               </div>
             </Slide>
             <template #addons>
@@ -102,6 +105,7 @@ const getAllQuestions = async (): Promise<void> => {
   try {
     const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
     questions.value = response.data.room_question_list;
+    console.log(questions.value);
   } catch (error) {
     console.log(error);
   }
@@ -132,10 +136,29 @@ const getMyManitto = async (): Promise<void> => {
     console.error(error);
   }
 };
+
+const result = ref();
+// 내 마니또 전체 답변 조회
+const getAllMyManittoFeedAnswers = async (): Promise<void> => {
+  try {
+    const userId = userStore.getStoredUser()?.id;
+    if (userId !== null && userId !== undefined) {
+      const response = await $api.feeds.getAllMyManittoFeedAnswers({
+        roomUid,
+        userId,
+      });
+      result.value = response.data.result_manitto_list;
+      console.log(result.value);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 onMounted(async () => {
   await getAllQuestions();
   await getRoomDetail();
   await getMyManitto();
+  await getAllMyManittoFeedAnswers();
 });
 </script>
 <style scoped>
