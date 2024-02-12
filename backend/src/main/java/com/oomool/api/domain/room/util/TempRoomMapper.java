@@ -2,7 +2,6 @@ package com.oomool.api.domain.room.util;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -127,8 +126,8 @@ public class TempRoomMapper {
         }
     }
 
-    public List<UserDto> objectToUserDtoList(Set<Object> userJsonList) {
-        return userJsonList.stream().map(this::objectToUserDto).collect(Collectors.toList());
+    public List<UserDto> objectToUserDtoList(Map<Integer, Object> userJsonMap) {
+        return userJsonMap.values().stream().map(this::objectToUserDto).collect(Collectors.toList());
     }
 
 }
