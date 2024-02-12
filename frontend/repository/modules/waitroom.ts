@@ -8,6 +8,9 @@ import {
   type IGetUpdateSettingResponse,
   type IUpdateSettingInput,
   type IGetLongPollingResponse,
+  type IGetDeleteWaitRoomResponse,
+  type IGetDeleteWaitUserResponse,
+  type IPostBanUserInput,
 } from './interface/waitroom.interface';
 
 class MakeModule extends HttpFactory {
@@ -56,11 +59,47 @@ class MakeModule extends HttpFactory {
     );
   }
 
-  // LongPulling
+  // Pulling
   async getStartCheck(inviteCode: string): Promise<IGetLongPollingResponse> {
     return await this.getCall<IGetLongPollingResponse>(
       'GET',
       `${this.RESOURCE}/${inviteCode}/check`,
+    );
+  }
+
+  // 대기방 삭제
+  async deleteWaitRoom(
+    inviteCode: string,
+    id: number,
+  ): Promise<IGetDeleteWaitRoomResponse> {
+    return await this.otherCall<IGetDeleteWaitRoomResponse>(
+      'DELETE',
+      `${this.RESOURCE}/${inviteCode}?id=${id}`,
+      {},
+    );
+  }
+
+  // 플레이어 퇴장
+  async deleteWaitUser(
+    inviteCode: string,
+    userId: number,
+  ): Promise<IGetDeleteWaitUserResponse> {
+    return await this.otherCall<IGetDeleteWaitUserResponse>(
+      'DELETE',
+      `${this.RESOURCE}/${inviteCode}/${userId}`,
+      {},
+    );
+  }
+
+  // 플레이어 강퇴
+  async deleteBanUser(
+    inviteCode: string,
+    banUser: IPostBanUserInput,
+  ): Promise<IGetDeleteWaitUserResponse> {
+    return await this.otherCall<IGetDeleteWaitUserResponse>(
+      'POST',
+      `${this.RESOURCE}/${inviteCode}/players/ban`,
+      banUser,
     );
   }
 }

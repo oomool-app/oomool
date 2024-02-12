@@ -17,8 +17,11 @@
                 >방설정하기</NuxtLink
               >
             </li>
-            <li>
-              <NuxtLink to="/" @click="check">퇴장하기</NuxtLink>
+            <li v-if="auth">
+              <a @click="deleteRoom">방 삭제하기</a>
+            </li>
+            <li v-else>
+              <NuxtLink @click="roomOut">퇴장하기</NuxtLink>
             </li>
           </ul>
         </PopoverContent>
@@ -73,7 +76,14 @@
             :user="user"
             :master="getWaitRoomData?.data.master_id"
           ></WaitingUser>
-          <div class="flex justify-center items-center">x</div>
+          <button
+            v-if="auth && user.user_id !== getWaitRoomData?.data.master_id"
+            :value="user.user_id"
+            class="flex justify-center items-center"
+            @click="kickUser"
+          >
+            x
+          </button>
         </div>
         <Dialog class="flex justify-center items-center text-lg py-2">
           <DialogTrigger>
@@ -152,7 +162,10 @@
 
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next';
-import { type IGetWaitRoomResponse } from '~/repository/modules/interface/waitroom.interface';
+import {
+  type IGetWaitRoomResponse,
+  type IPostBanUserInput,
+} from '~/repository/modules/interface/waitroom.interface';
 import {
   type ICreateRoomUidInput,
   type IGetRoomUidResponse,
@@ -163,14 +176,20 @@ const route = useRoute();
 const router = useRouter();
 const auth = ref<boolean>(false);
 const getWaitRoomData = ref<IGetWaitRoomResponse>();
-const userInfo = ref();
+const userInfo = ref<User | null>();
 const scrollHeight = ref<number>(0);
 const polling = ref(true);
+
+interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
 onMounted(async (): Promise<void> => {
   const userStore = useUserStore();
   userInfo.value = userStore.getStoredUser();
   scrollHeight.value = window.innerHeight * 0.5;
-  await getData();
   await startCheck();
 });
 
@@ -178,9 +197,7 @@ const startCheck = async (): Promise<void> => {
   while (polling.value) {
     try {
       await checkpolling();
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }
 };
 
@@ -191,7 +208,16 @@ const checkpolling = async (): Promise<void> => {
   }
   const data = await $api.make.getStartCheck(inviteCode);
   if (data.data.startCheck === 'false') {
+    await getData();
     await new Promise((resolve) => setTimeout(resolve, 3000));
+    if (
+      getWaitRoomData.value?.data.ban_list !== undefined &&
+      banCheck(getWaitRoomData.value?.data.ban_list)
+    ) {
+      polling.value = false;
+      alert('해당 방에서 강퇴되었습니다.');
+      await router.replace('/');
+    }
   } else {
     polling.value = false;
     alert(`${getWaitRoomData.value?.data.setting.title}방이 시작되었습니다!`);
@@ -203,10 +229,28 @@ const getData = async (): Promise<void> => {
   const input = route.params.inviteCode;
   if (typeof input === 'string') {
     getWaitRoomData.value = await $api.make.getWaitRoom(input);
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
     if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
       auth.value = true;
     }
   }
+};
+
+interface waitUser {
+  id: number;
+  email: string;
+  username: string;
+}
+
+const banCheck = (banList: waitUser[]): boolean => {
+  for (let i = 0; i < banList.length; i++) {
+    if (banList[i].id === userInfo.value?.id) {
+      return true;
+    }
+  }
+  return false;
 };
 
 const check = (): void => {
@@ -260,6 +304,54 @@ const createRoom = async (): Promise<void> => {
   } catch (error) {
     alert('잘못된 접근');
   }
+};
+
+const deleteRoom = async (): Promise<void> => {
+  try {
+    const inviteCode = route.params.inviteCode;
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
+    if (typeof inviteCode === 'string') {
+      await $api.make.deleteWaitRoom(inviteCode, userInfo.value.id);
+    }
+    polling.value = false;
+    await router.push('/');
+  } catch (error) {}
+};
+
+const kickUser = async (e: any): Promise<void> => {
+  try {
+    const userStore = useUserStore();
+    userInfo.value = userStore.getStoredUser();
+    const inviteCode = route.params.inviteCode;
+    const targetValue = Number(e.target.value);
+    const input = ref<IPostBanUserInput>();
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
+    input.value = {
+      user_id: userInfo.value.id,
+      ban_user_id: targetValue,
+    };
+    if (typeof inviteCode === 'string' && typeof targetValue === 'number') {
+      await $api.make.deleteBanUser(inviteCode, input.value);
+    }
+  } catch (error) {}
+};
+
+const roomOut = async (): Promise<void> => {
+  try {
+    const inviteCode = route.params.inviteCode;
+    if (userInfo.value === undefined || userInfo.value === null) {
+      return;
+    }
+    if (typeof inviteCode === 'string') {
+      await $api.make.deleteWaitUser(inviteCode, userInfo.value.id);
+    }
+    polling.value = false;
+    await router.replace('/');
+  } catch (error) {}
 };
 </script>
 <style scoped>
