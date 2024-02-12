@@ -222,6 +222,10 @@ public class FeedServiceImpl implements FeedService {
     public ResultManittoDto getManittoFeed(String roomUid, int userId) {
         List<RoomQuestion> roomQuestionList = roomQuestionReposiotry.findByRoomRoomUid(roomUid);
 
+        // 그 roomUid를 보면 sequence가 자동으로 생성이 되니까
+        // 그 sequence 정보들을 따로 넘겨주면 에라겠지?
+        //
+
         // 마니또 정보 가져오기
         Player player = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
 
@@ -248,7 +252,19 @@ public class FeedServiceImpl implements FeedService {
             // 플레이어 피드 정보 가져오기
             Feed feed = feedRepository.findByRoomQuestionIdAndAuthorUserId(roomQuestion.getId(), manittoId);
 
+            RoomManittoDto roomManittoDto = new RoomManittoDto();
+
+            /**
+             * 마니또가 피드를 작성하지 않았을 때 질문 정보만 넘긴다.
+             */
             if (feed == null) {
+                roomManittoDto = RoomManittoDto
+                    .builder()
+                    .roomQuestionId(roomQuestion.getId())
+                    .questionDto(questionDto)
+                    .build();
+
+                resultManittoDtoList.add(roomManittoDto);
                 continue;
             }
 
@@ -256,7 +272,7 @@ public class FeedServiceImpl implements FeedService {
             List<FeedImageDto> feedImageDtoList = feedImageService.getFeedImages(feed.getId());
 
             // 작성한 피드에 대한 정보(질문, 피드, 피드 이미지)
-            RoomManittoDto roomManittoDto = RoomManittoDto
+            roomManittoDto = RoomManittoDto
                 .builder()
                 .roomQuestionId(roomQuestion.getId())
                 .userId(manittoId)
