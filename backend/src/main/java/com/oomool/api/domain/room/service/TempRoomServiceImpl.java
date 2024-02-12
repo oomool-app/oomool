@@ -14,6 +14,7 @@ import com.oomool.api.domain.room.dto.TempRoomDto;
 import com.oomool.api.domain.room.util.TempRoomMapper;
 import com.oomool.api.domain.room.util.UniqueCodeGenerator;
 import com.oomool.api.domain.user.dto.UserDto;
+import com.oomool.api.domain.user.service.UserService;
 import com.oomool.api.global.config.redis.RedisService;
 import com.oomool.api.global.exception.BaseException;
 import com.oomool.api.global.exception.StatusCode;
@@ -27,6 +28,7 @@ public class TempRoomServiceImpl implements TempRoomService {
 
     private final RedisService redisService;
     private final TempRoomMapper tempRoomMapper;
+    private final UserService userService;
 
     @Override
     public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) {
@@ -194,15 +196,16 @@ public class TempRoomServiceImpl implements TempRoomService {
     public String addBanList(String inviteCode, TempRoomBanRequestDto requestBanDto) {
 
         // 방장 검증 - 방장일경우만 Ban 추가할 권한 존재
-        if (!validateTempRoomMaster(inviteCode, requestBanDto.user().getId())) {
+        if (!validateTempRoomMaster(inviteCode, requestBanDto.userId())) {
             throw new BaseException(StatusCode.NOT_MASTER_AUTH_TEMPROOM, "방장이 아닙니다.");
         }
-        // 강퇴인원을 추가한다. (강퇴 인원은 roomPlayers : -1 로 저장한다.)
+        // 강퇴인원을 추가한다.
+        UserDto banUserDto = userService.searchByUserId(requestBanDto.banUserId());
         redisService.saveSetOperation(TempRoomPrefix.BAN_LIST + inviteCode,
-            tempRoomMapper.userDtoToString(requestBanDto.banUser()));
+            tempRoomMapper.userDtoToString(banUserDto));
         // 플레이어 리스트에서 제외한다.
-        redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, requestBanDto.banUser().getId());
-        return requestBanDto.banUser().getUsername() + "님이 강제 퇴장되었습니다.";
+        redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, requestBanDto.banUserId());
+        return banUserDto.getUsername() + "님이 강제 퇴장되었습니다.";
     }
 
     @Override
