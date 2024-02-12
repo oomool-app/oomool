@@ -9,6 +9,8 @@ import {
   type IUpdateSettingInput,
   type IGetLongPollingResponse,
   type IGetDeleteWaitRoomResponse,
+  type IGetDeleteWaitUserResponse,
+  type IPostBanUserInput,
 } from './interface/waitroom.interface';
 
 class MakeModule extends HttpFactory {
@@ -74,6 +76,30 @@ class MakeModule extends HttpFactory {
       'DELETE',
       `${this.RESOURCE}/${inviteCode}?id=${id}`,
       {},
+    );
+  }
+
+  // 플레이어 퇴장
+  async deleteWaitUser(
+    inviteCode: string,
+    userId: number,
+  ): Promise<IGetDeleteWaitUserResponse> {
+    return await this.otherCall<IGetDeleteWaitUserResponse>(
+      'DELETE',
+      `${this.RESOURCE}/${inviteCode}/${userId}`,
+      {},
+    );
+  }
+
+  // 플레이어 강퇴
+  async deleteBanUser(
+    inviteCode: string,
+    banUser: IPostBanUserInput,
+  ): Promise<IGetDeleteWaitUserResponse> {
+    return await this.otherCall<IGetDeleteWaitUserResponse>(
+      'POST',
+      `${this.RESOURCE}/${inviteCode}/players/ban`,
+      banUser,
     );
   }
 }
