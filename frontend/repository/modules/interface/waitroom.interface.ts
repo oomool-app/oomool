@@ -72,10 +72,16 @@ export interface IGetWaitRoomResponse {
         player_avatar_url: string;
       },
     ];
-    ban_list: string;
+    ban_list: User[];
     created_at: string;
   };
   status: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  username: string;
 }
 
 export interface IGetUpdateSettingResponse {
@@ -104,4 +110,19 @@ export interface IGetLongPollingResponse {
     startCheck: string;
   };
   stauts: string;
+}
+
+export interface IGetDeleteWaitRoomResponse {
+  data: string;
+  status: string;
+}
+
+export interface IGetDeleteWaitUserResponse {
+  data: string;
+  status: string;
+}
+
+export interface IPostBanUserInput {
+  user_id: number;
+  ban_user_id: number;
 }
