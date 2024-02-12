@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.oomool.api.domain.auth.entity.SocialLogin;
+import com.oomool.api.domain.auth.repository.OAuthRepository;
 import com.oomool.api.domain.player.entity.Player;
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
 import com.oomool.api.domain.question.util.RoomQuestionMapper;
@@ -17,6 +19,7 @@ import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.domain.room.util.GameRoomMapper;
 import com.oomool.api.domain.room.util.TempRoomMapper;
+import com.oomool.api.domain.user.dto.MypageDto;
 import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.domain.user.entity.User;
 import com.oomool.api.domain.user.repository.UserRepository;
@@ -32,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final OAuthRepository oAuthRepository;
 
     private final TempRoomMapper tempRoomMapper;
     private final GameRoomMapper gameRoomMapper;
@@ -68,6 +72,42 @@ public class UserService {
             .email(user.getEmail())
             .username(user.getUsername())
             .build();
+    }
+
+    /**
+     * userId로 유저 정보 반환
+     */
+    public MypageDto searchUserInfo(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+        return MypageDto
+            .builder()
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .build();
+    }
+
+    /**
+     * 유저 정보 수정(닉네임)
+     */
+    public void modifyUsername(int userId, String username) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+        user.setUsername(username);
+        userRepository.save(user);
+    }
+
+    /**
+     * 회원 탈퇴
+     * 유저 정보, 소셜 정보
+     */
+    public void deleteUser(int userId) {
+        // 해당 유저의 소셜 정보도 DB에서 제거한다.
+        SocialLogin socialLogin = oAuthRepository.findByUserId(userId)
+            .orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+        oAuthRepository.delete(socialLogin);
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new BaseException(StatusCode.NOT_FOUNT_USER));
+        userRepository.delete(user);
     }
 
     /**
