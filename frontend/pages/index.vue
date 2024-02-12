@@ -183,6 +183,7 @@ const select1 = async (): Promise<void> => {
 };
 
 const select2 = async (): Promise<void> => {
+  sortByCreatedatTemp();
   selected1.value = false;
   selected2.value = true;
   selected3.value = false;
@@ -192,17 +193,24 @@ const select3 = async (): Promise<void> => {
   await getRoomList();
   if (rooms.value != null) {
     rooms.value = notProgressRooms(rooms.value);
-    // 생성일 기준 정렬
-    sortByCreatedat();
   }
   selected1.value = false;
   selected2.value = false;
   selected3.value = true;
 };
 
-// 생성일 기준 정렬
+// 생성일 기준 방 정렬
 const sortByCreatedat = (): void => {
   rooms.value.sort(
+    (a: any, b: any) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime(),
+  );
+};
+
+// 생성일 기준 대기방 정렬
+const sortByCreatedatTemp = (): void => {
+  temprooms.value.sort(
     (a: any, b: any) =>
       new Date(b.created_at as string).getTime() -
       new Date(a.created_at as string).getTime(),

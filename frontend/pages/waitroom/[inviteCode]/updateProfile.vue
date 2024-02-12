@@ -74,6 +74,8 @@ const avatarurls: string[] = [
   '/img/sangwooGhost.png',
   '/img/rabbitGhost.png',
   '/img/musicGhost.png',
+  '/img/alienGhost.png',
+  '/img/glassesGhost.png',
 ];
 
 // 인덱스 랜덤 생성

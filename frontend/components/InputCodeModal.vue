@@ -58,18 +58,23 @@
             />
           </DialogDescription>
         </DialogHeader>
-        <Button
-          @click="
-            $router.push({ path: `waitroom/${inviteCode}/updateProfile` })
-          "
-        >
-          방 입장하기
-        </Button>
+        <Button @click="inputCode"> 방 입장하기 </Button>
       </DialogContent>
     </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const inviteCode = ref('');
+
+// 방 입장하기 누르면 실행될 함수
+const inputCode = async (): Promise<void> => {
+  if (inviteCode.value === '') {
+    alert('초대 코드를 입력해주세요.');
+  } else {
+    await router.push({ path: `waitroom/${inviteCode.value}/updateProfile` });
+  }
+};
 </script>
