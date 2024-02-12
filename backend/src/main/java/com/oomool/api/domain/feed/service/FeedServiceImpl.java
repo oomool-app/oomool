@@ -222,10 +222,6 @@ public class FeedServiceImpl implements FeedService {
     public ResultManittoDto getManittoFeed(String roomUid, int userId) {
         List<RoomQuestion> roomQuestionList = roomQuestionReposiotry.findByRoomRoomUid(roomUid);
 
-        // 그 roomUid를 보면 sequence가 자동으로 생성이 되니까
-        // 그 sequence 정보들을 따로 넘겨주면 에라겠지?
-        //
-
         // 마니또 정보 가져오기
         Player player = playerRepository.findByRoomRoomUidAndManittiId(roomUid, userId);
 
