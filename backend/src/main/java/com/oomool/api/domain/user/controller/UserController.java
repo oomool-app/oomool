@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oomool.api.domain.user.dto.MypageDto;
 import com.oomool.api.domain.user.dto.UserDto;
 import com.oomool.api.domain.user.service.UserService;
 import com.oomool.api.global.util.ResponseHandler;
@@ -65,4 +68,24 @@ public class UserController {
         return ResponseHandler.generateResponse(HttpStatus.OK, gameRoomList);
     }
 
+    @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("userId") Integer userId) {
+        MypageDto mypageDto = userService.searchUserInfo(userId);
+        return ResponseHandler.generateResponse(HttpStatus.OK, mypageDto);
+    }
+
+    @Operation(summary = "회원 닉네임 수정", description = "회원 닉네임을 수정합니다.")
+    @PatchMapping("/{userId}")
+    public ResponseEntity<?> modifyUserNickname(@PathVariable("userId") Integer userId, @RequestBody String nickname) {
+        userService.modifyUsername(userId, nickname);
+        return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("nickname", nickname));
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "회원이 탈퇴합니다.")
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
+        userService.deleteUser(userId);
+        return ResponseHandler.generateResponse(HttpStatus.OK, Map.of("message", "회원 탈퇴에 성공했습니다."));
+    }
 }
