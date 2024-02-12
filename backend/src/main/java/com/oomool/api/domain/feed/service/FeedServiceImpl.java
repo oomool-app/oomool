@@ -17,6 +17,11 @@ import com.oomool.api.domain.feed.entity.Feed;
 import com.oomool.api.domain.feed.entity.FeedImage;
 import com.oomool.api.domain.feed.repository.FeedImageRepository;
 import com.oomool.api.domain.feed.repository.FeedRepository;
+import com.oomool.api.domain.notification.constant.NotificationType;
+import com.oomool.api.domain.notification.dto.NotificationSaveRequestDto;
+import com.oomool.api.domain.notification.dto.PushNotificationDto;
+import com.oomool.api.domain.notification.service.NotificationService;
+import com.oomool.api.domain.notification.service.PushNotificationService;
 import com.oomool.api.domain.player.dto.ManittiDto;
 import com.oomool.api.domain.player.dto.ManittoDto;
 import com.oomool.api.domain.player.entity.Player;
@@ -28,9 +33,11 @@ import com.oomool.api.domain.question.entity.RoomQuestion;
 import com.oomool.api.domain.question.repository.RoomQuestionReposiotry;
 import com.oomool.api.domain.question.service.QuestionService;
 import com.oomool.api.domain.question.service.RoomQuestionService;
+import com.oomool.api.domain.room.entity.GameRoom;
 import com.oomool.api.global.util.ConvertFile;
 import com.oomool.api.global.util.CurrentTime;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -51,6 +58,8 @@ public class FeedServiceImpl implements FeedService {
     private final PlayerRepository playerRepository;
     private final FeedImageRepository feedImageRepository;
     private final ConvertFile convertFile;
+    private final NotificationService notificationService;
+    private final PushNotificationService pushNotificationService;
 
     /**
      * 문답방의 모든 피드를 가져온다
@@ -103,7 +112,8 @@ public class FeedServiceImpl implements FeedService {
     }
 
     /**
-     * 질문에 대합 답변 내용 저장(답변 내용, 이미지 파일)
+     * 1. 질문에 대합 답변 내용 저장(답변 내용, 이미지 파일)
+     * 2. 답변한 내용을 Notification에 저장하고 마니띠에게 알림 전달.
      */
     public FeedAnswerDto saveQuestionAnswer(int roomQuestionId, String content,
         List<MultipartFile> fileList, int authorId, ArrayList<String> imageUrlList) throws IOException {
@@ -113,6 +123,10 @@ public class FeedServiceImpl implements FeedService {
         String roomUid = roomQuestion.getRoom().getRoomUid();
 
         Player player = playerService.getPlayerInfo(roomUid, authorId);
+
+        GameRoom gameRoom = roomQuestion.getRoom();
+
+        int manittiId = player.getManittiId();
 
         // 피드 저장
         Feed registFeed = Feed.builder()
@@ -139,6 +153,25 @@ public class FeedServiceImpl implements FeedService {
                 // Dto에 파일 저장
                 feedImageDtoList.add(feedImageDto);
             }
+        }
+
+        // Notification에 답변 저장
+        // Notification에는 피드 답변 내용을 저장
+        NotificationSaveRequestDto notificationSaveRequestDto = new NotificationSaveRequestDto(manittiId,
+            NotificationType.SYSTEM, gameRoom.getRoomUid(), gameRoom.getTitle(), content);
+
+        notificationService.saveNotification(notificationSaveRequestDto);
+
+        // 마니띠에게 push 알림 보내기
+        // 알림에는 내 마니또가 답변을 등록했어요!를 저장 
+        PushNotificationDto pushNotificationDto = new PushNotificationDto(manittiId, gameRoom.getTitle(),
+            "내 마니또가 답변을 등록했어요!");
+
+        // send notification
+        try {
+            pushNotificationService.sendPushNotificationByUser(pushNotificationDto);
+        } catch (EntityNotFoundException e) {
+            log.info("토큰이 존재하지 않습니다!!");
         }
 
         return FeedAnswerDto
