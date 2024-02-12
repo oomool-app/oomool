@@ -3,7 +3,6 @@ package com.oomool.api.domain.room.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +42,6 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final AvatarServiceImpl avatarService;
     private final PlayerMapper playerMapper;
     private final RedisService redisService;
-
-    // TODO :: 임시 연관관계 추가
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public Map<String, Object> createGameRoom(String inviteCode) throws Exception {
