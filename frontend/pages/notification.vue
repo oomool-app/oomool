@@ -52,22 +52,15 @@
 </template>
 
 <script setup lang="ts">
-import { type ISaveTokenInput } from '../repository/modules/interface/pushNotifications.interface';
-import { useUserStore } from '~/stores/userStore';
-import { onMounted } from 'vue'; // onMounted 추가
 const router = useRouter();
-const { token, fetchToken } = useFCM();
-const { $api } = useNuxtApp();
-const userStore = useUserStore();
-
 const requestNotificationPermission = async (): Promise<void> => {
   Notification.requestPermission()
     .then(async (permission) => {
       if (permission === 'granted') {
         console.log('Notification permission granted.');
-        return await getMessageToken()
-          .then(saveToken)
-          .then(async () => await router.push('/'));
+        // 메인페이지로 이동
+        await router.push('/');
+        return;
       }
       console.log('Notification permission denied.');
       // 메인페이지로 이동
@@ -80,33 +73,4 @@ const requestNotificationPermission = async (): Promise<void> => {
       );
     });
 };
-
-const getMessageToken = async (): Promise<string> => {
-  return await fetchToken().then(() => {
-    return token.value;
-  });
-};
-
-const saveToken = async (): Promise<void> => {
-  console.log('saving fcm token...');
-  const storedUser = userStore.getStoredUser(); // storedUser를 피니아를 통해 불러옴
-  if (storedUser != null) {
-    const tokens: ISaveTokenInput = {
-      user_id: storedUser.id,
-      token: token.value,
-    };
-    console.log(`token: ${token.value}`);
-    const response = await $api.pushNotifications.saveToken(tokens);
-    console.log(response.data);
-  }
-};
-
-const noPermission = async (): Promise<void> => {
-  await router.push('/');
-};
-
-onMounted(async () => {
-  // onMounted에서 storedUser를 불러옴
-  const storedUser = userStore.getStoredUser();
-});
 </script>
