@@ -71,8 +71,8 @@ public class TempRoomServiceImpl implements TempRoomService {
             throw new BaseException(StatusCode.DUPLICATION_INVITE_CODE);
         }
         // 강퇴 이력이 있는 사용자는 참여 불가
-        if (redisService.hasKey(TempRoomPrefix.BAN_LIST + inviteCode)) {
-            throw new BaseException(StatusCode.FORBIDDEN, "이미 강퇴 당한 방입니다.");
+        if (redisService.hasKey(TempRoomPrefix.BAN_LIST + inviteCode, playerDto.getUserId())) {
+            throw new BaseException(StatusCode.CANNOT_ACCESS_TEMP_ROOM);
         }
 
         // 1. User 기준으로 inviteCode 를 관리하는 Redis에 저장한다.
@@ -107,7 +107,7 @@ public class TempRoomServiceImpl implements TempRoomService {
 
         // 3. 강퇴 유저 정보 조회
         List<UserDto> banUserDtoList = tempRoomMapper.objectToUserDtoList(
-            redisService.getSetOperation(TempRoomPrefix.BAN_LIST + inviteCode)
+            redisService.getHashOperationByInteger(TempRoomPrefix.BAN_LIST + inviteCode)
         );
 
         // 대기방 전체 결과 조회
@@ -201,10 +201,11 @@ public class TempRoomServiceImpl implements TempRoomService {
         }
         // 강퇴인원을 추가한다.
         UserDto banUserDto = userService.searchByUserId(requestBanDto.banUserId());
-        redisService.saveSetOperation(TempRoomPrefix.BAN_LIST + inviteCode,
+        redisService.saveHashOperation(TempRoomPrefix.BAN_LIST + inviteCode, requestBanDto.banUserId(),
             tempRoomMapper.userDtoToString(banUserDto));
         // 플레이어 리스트에서 제외한다.
         redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, requestBanDto.banUserId());
+        redisService.deleteSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + requestBanDto.banUserId(), inviteCode);
         return banUserDto.getUsername() + "님이 강제 퇴장되었습니다.";
     }
 

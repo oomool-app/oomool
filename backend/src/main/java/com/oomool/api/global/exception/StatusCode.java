@@ -35,6 +35,7 @@ public enum StatusCode {
     DUPLICATION_INVITE_CODE(403, "이미 참여하고 있는 대기방 입니다."),
     NOT_COMPLETE_SETTING_OPTION(403, "설정 옵션이 지정되지 않았습니다."),
     NOT_FOUND_TEMP_ROOM(404, "참여하고 있는 대기방을 찾을 수 없습니다."),
+    CANNOT_ACCESS_TEMP_ROOM(403, "이미 강제퇴장 당한 방입니다."),
 
     /**
      * 문답방

@@ -30,6 +30,19 @@ public class RedisService {
     }
 
     /**
+     * Hash Operation <p>
+     * prefix Key가 존재하는지 검증 <p>
+     *
+     * @param prefix redis Key
+     * @param key integer key
+     * @return true / false
+     * */
+    public boolean hasKey(String prefix, int key) {
+        HashOperations<String, Integer, Object> hashOps = redisTemplate.opsForHash();
+        return Boolean.TRUE.equals(hashOps.hasKey(prefix, key));
+    }
+
+    /**
      * Hash Operation<String, String, Object><p>
      * Key 값이 String 인 Hash Operation<p>
      * Map의 모든 값을 일괄적으로 저장한다.
