@@ -113,7 +113,7 @@
           v-if="!isCompleted"
           class="p-5 mt-5 mb-10 rounded-lg bg-gradient-to-r from-[#61339b] to-[#a8bdf9] border-primary border-2 text-white text-center font-semibold"
         >
-          아직 답변이 등록되지 않았어요..
+          내 마니또 답변이 아직 등록 안됐어요..
         </div>
       </div>
       <div class="members-container mb-6">
