@@ -74,21 +74,31 @@
         </div>
       </div>
 
-      <div class="flex flex-col justify-center pl-6 pr-6 pb-10 gap-3 z-0">
-        <div v-if="selected1" class="gap-3 space-y-8 pt-3">
+      <div class="flex flex-col justify-center pl-6 pr-6 pb-20 gap-3 z-0">
+        <div v-if="selected1 && rooms?.length > 0" class="gap-3 space-y-8 pt-3">
           <div v-for="room in rooms" :key="room.title">
             <RoomCard :rooms="room"></RoomCard>
           </div>
         </div>
-        <div v-else-if="selected2" class="gap-3 space-y-8 pt-3">
+        <div
+          v-else-if="selected2 && temprooms?.length > 0"
+          class="gap-3 space-y-8 pt-3"
+        >
           <div v-for="temproom in temprooms" :key="temproom.invite_code">
             <TempRoomCard :temprooms="temproom"></TempRoomCard>
           </div>
         </div>
-        <div v-else-if="selected3" class="gap-3 space-y-8 pt-3">
+        <div
+          v-else-if="selected3 && rooms?.length > 0"
+          class="gap-3 space-y-8 pt-3"
+        >
           <div v-for="room in rooms" :key="room.title">
             <RoomCard :rooms="room"></RoomCard>
           </div>
+        </div>
+        <div v-else-if="rooms?.length === 0 || temprooms?.length === 0">
+          <img src="/img/roomEmptyGhost.png" class="px-16 py-7" />
+          <h1 class="text-center text-xl">방이 없어요</h1>
         </div>
       </div>
     </div>
