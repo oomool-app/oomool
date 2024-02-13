@@ -22,5 +22,5 @@ export interface ICheckUnreadNotificationInput {
 }
 
 export interface ICheckUnreadNotificationResponse {
-  data: boolean;
+  data: string;
 }
