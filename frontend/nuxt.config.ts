@@ -42,6 +42,22 @@ export default defineNuxtConfig({
     },
   },
   pwa: {
+    workbox: {
+      runtimeCaching: [
+        {
+          // 이미지 캐싱 설정
+          urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'images',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 24 * 60 * 60 * 30, // 30 days
+            },
+          },
+        },
+      ],
+    },
     strategies: 'injectManifest',
     injectRegister: null,
     registerType: 'autoUpdate',
