@@ -222,6 +222,9 @@ const isSupported = (): boolean => {
 };
 
 onMounted(async () => {
+  await getRoomList();
+  await getTempRoomList();
+  await select1();
   if (isSupported()) {
     if (Notification.permission === 'default') {
       await router.push({ path: '/notification' });
@@ -231,9 +234,6 @@ onMounted(async () => {
       await fetchToken().then(saveToken);
     }
   }
-  await getRoomList();
-  await getTempRoomList();
-  await select1();
 });
 
 const saveToken = async (): Promise<void> => {
