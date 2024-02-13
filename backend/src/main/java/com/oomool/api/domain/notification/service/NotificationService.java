@@ -26,7 +26,9 @@ import com.oomool.api.domain.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -122,9 +124,11 @@ public class NotificationService {
             .collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 0 0,15 * * ?")
+    @Scheduled(cron = "0 10 * * * ?")
     @Transactional
     public void scheduledNotification() {
+        log.info("Scheduled Notification started");
+
         // 모든 게임방 중 현재 일자가 startDate와 endDate 사이에 있는 게임방을 조회
         List<GameRoom> gameRooms = gameRoomRepository.findAllByStartDateGreaterThanAndEndDateLessThan(
             LocalDate.now(), LocalDate.now()
