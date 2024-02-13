@@ -3,6 +3,7 @@ package com.oomool.api.domain.room.controller;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
@@ -109,6 +111,13 @@ public class TempRoomController {
     public ResponseEntity<?> callStartPoint(@PathVariable("inviteCode") String inviteCode) {
         return ResponseHandler.generateResponse(HttpStatus.OK,
             Map.of("startCheck", tempRoomService.startCheck(inviteCode)));
+    }
+
+    // Temp Start Connect Call
+    @Operation(summary = "[테스트] 대기방에서 플레이어 입장을 확인합니다.", description = "SSE 테스트")
+    @GetMapping(path = "/{inviteCode}/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter connect(@PathVariable("inviteCode") String inviteCode) {
+        return tempRoomService.connection(inviteCode);
     }
 
 }

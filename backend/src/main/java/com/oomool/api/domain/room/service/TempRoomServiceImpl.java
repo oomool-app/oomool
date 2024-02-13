@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.constant.TempRoomPrefix;
@@ -29,6 +30,7 @@ public class TempRoomServiceImpl implements TempRoomService {
     private final RedisService redisService;
     private final TempRoomMapper tempRoomMapper;
     private final UserService userService;
+    private final EmitterService emitterService;
 
     @Override
     public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) {
@@ -50,6 +52,7 @@ public class TempRoomServiceImpl implements TempRoomService {
             TempRoomPrefix.SETTING_OPTION + inviteCode);
         // [임시 - StartCheck] - 대기방에서 시작 여부를 체킹
         redisService.saveValueOperation(TempRoomPrefix.START_CHECK + inviteCode, "false");
+        emitterService.notify(inviteCode, "false");
 
         return Map.of(
             "invite_code", settingOptionMap.get("inviteCode"),
@@ -222,6 +225,11 @@ public class TempRoomServiceImpl implements TempRoomService {
     public String startCheck(String inviteCode) {
         // 임시
         return redisService.getValueOperation(TempRoomPrefix.START_CHECK + inviteCode);
+    }
+
+    @Override
+    public SseEmitter connection(String inviteCode) {
+        return emitterService.subscribe(inviteCode); // 최초구독
     }
 
 }
