@@ -10,6 +10,14 @@ export interface IGetMakeRoomResponse {
       question_type: string;
       max_member: number;
     };
+    players: {
+      user_id: number;
+      user_email: string;
+      player_nickname: string;
+      player_background: string;
+      player_avatar_url: string;
+    };
+    ban_list: [];
   };
   status: string;
 }
