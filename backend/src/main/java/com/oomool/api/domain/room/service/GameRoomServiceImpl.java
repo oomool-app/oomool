@@ -45,6 +45,7 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final EmitterService emitterService;
 
     @Override
+    @Transactional
     public Map<String, Object> createGameRoom(String inviteCode) throws Exception {
 
         String roomUid = UniqueCodeGenerator.generateRandomString(8);                               // 방 UUID 생성
