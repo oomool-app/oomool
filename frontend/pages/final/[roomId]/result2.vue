@@ -202,21 +202,16 @@ const saveImage = async (): Promise<void> => {
     for (let i = 0; i < el.length; i++) {
       const element = el[i] as HTMLElement;
       htmlToImage
-        .toJpeg(element, {
-          width: 10000,
-          backgroundColor: 'white', // 배경색을 흰색으로 설정
-          skipFonts: true, // 기본값은 true입니다. false로 변경
+        .toPng(element, {
+          backgroundColor: 'white',
+          skipFonts: true,
         })
         .then(function (dataUrl) {
-          const link = document.createElement('a');
-          link.download = `내 마니또 ${manittoName.value}의 답변.jpeg`;
-          link.href = dataUrl;
-          link.click();
+          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
         })
         .catch(function (error) {
           console.error(error);
         });
-      // download(dataUrl, `마니또 ${manittoName.value}의 답변.jpg`);
     }
   }
 };
