@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM azul/zulu-openjdk-alpine:17
 ENV TZ Asia/Seoul
 EXPOSE 8080
 ADD ./build/libs/api-0.0.1-SNAPSHOT.jar app.jar
