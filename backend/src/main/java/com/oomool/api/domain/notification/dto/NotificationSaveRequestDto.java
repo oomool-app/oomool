@@ -3,7 +3,9 @@ package com.oomool.api.domain.notification.dto;
 import com.oomool.api.domain.notification.constant.NotificationType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
+@Builder
 @Schema(description = "알림 저장 요청 DTO")
 public record NotificationSaveRequestDto(
 
