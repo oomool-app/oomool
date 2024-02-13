@@ -126,15 +126,16 @@ public class NotificationService {
             .collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 30 * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void scheduledNotification() {
         log.info("Scheduled Notification started");
 
         LocalDate now = LocalDate.now();
 
+
         // 모든 게임방 중 현재 일자가 startDate와 endDate 사이에 있는 게임방을 조회
-        List<GameRoom> gameRooms = gameRoomRepository.findAllByStartDateGreaterThanAndEndDateLessThan(
+        List<GameRoom> gameRooms = gameRoomRepository.findAllByStartDateLessThanAndEndDateGreaterThan(
             now, now
         );
 

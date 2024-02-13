@@ -90,7 +90,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         List<PushNotificationToken> tokens = pushNotificationTokenRepository.findAllByUser(user);
 
         if (tokens.isEmpty()) {
-            throw new EntityNotFoundException("해당 유저의 푸시 알림 토큰이 존재하지 않습니다.");
+            return;
         }
 
         for (PushNotificationToken token : tokens) {
