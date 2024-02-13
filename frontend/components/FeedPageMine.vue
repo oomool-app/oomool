@@ -38,7 +38,10 @@ const props = defineProps<{
   roomUid: string;
 }>();
 const imgUrl = ref();
-if (props.feeds.feed_image_dto_list !== undefined) {
+if (
+  props.feeds.feed_image_dto_list !== undefined &&
+  props.feeds.feed_image_dto_list.length > 0
+) {
   imgUrl.value = props.feeds.feed_image_dto_list[0].url;
 }
 </script>
