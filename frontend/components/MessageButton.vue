@@ -23,7 +23,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <div v-show="!MessageNotRead">
+      <div v-if="MessageNotRead">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -70,7 +70,7 @@ const checkUnreadNotifications = async (): Promise<void> => {
   }
 };
 
-onBeforeMount(async () => {
+onBeforeUpdate(async () => {
   await checkUnreadNotifications();
 });
 </script>
