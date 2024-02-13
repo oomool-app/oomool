@@ -26,7 +26,7 @@
       <div id="check" class="text-red-600 text-sm mt-2"></div>
     </div>
     <div class="flex justify-center items-end pb-6">
-      <NuxtLink class="w-full rounded-full" to="type">
+      <NuxtLink class="w-full rounded-full" to="type" replace>
         <Button class="w-full rounded-full text-lg" @click="check">다음</Button>
       </NuxtLink>
     </div>
@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 const store = useMakeRoomStore();
-const reg = /[^\w\sㄱ-힣()0-9]/;
 const changeInput = (event: any): void => {
   store.name = event.target.value;
 };
@@ -45,12 +44,8 @@ const check = (e: any): void => {
     return;
   }
   element.innerText = '';
-  if (
-    reg.test(store.name) ||
-    store.name.trim() === '' ||
-    store.name.trim().length >= 10
-  ) {
-    element.innerText = '특수문자, 공백을 제외하고 10자이내로 입력해주세요!';
+  if (store.name.trim() === '' || store.name.trim().length >= 10) {
+    element.innerText = '방의 이름을 10자이내로 입력해주세요!';
     e.preventDefault();
   }
 };
