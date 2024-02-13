@@ -42,6 +42,7 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final AvatarServiceImpl avatarService;
     private final PlayerMapper playerMapper;
     private final RedisService redisService;
+    private final EmitterService emitterService;
 
     @Override
     @Transactional
@@ -67,6 +68,7 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         // [임시 - StartCheck] - 대기방에서 시작 여부를 체킹
         redisService.saveValueOperation(TempRoomPrefix.START_CHECK + inviteCode, roomUid);
+        emitterService.notify(inviteCode, roomUid);
 
         // Player Entity 객체로 변환
         for (PlayerDto playerDto : playerDtoList) {
