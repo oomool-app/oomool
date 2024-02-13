@@ -13,8 +13,7 @@
       </div>
     </div>
     <div class="flex items-center text-xl font-extrabold">
-      <div v-if="props.master === props.user.user_id">방장</div>
-      <div>
+      <div class="mr-1">
         {{ props.user.player_nickname }}
       </div>
       <Popover class="flex justify-center items-center text-gray-500">
@@ -22,9 +21,13 @@
           <InfoIcon />
         </PopoverTrigger>
         <PopoverContent>
-          <div>
-            <p>{{ props.user.user_id }}</p>
-            <p>{{ props.user.user_email }}</p>
+          <div class="flex">
+            <div class="flex justify-center items-center">
+              <img src="/img/kakao.png" class="h-4 mr-2" alt="master" />
+            </div>
+            <div class="flex justify-center items-center">
+              {{ props.user.user_email }}
+            </div>
           </div>
         </PopoverContent>
       </Popover>

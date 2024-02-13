@@ -3,7 +3,9 @@
     class="box h-screen grid grid-rows-[4rem,3rem,3rem,3.5rem,auto] bg-primary"
   >
     <div class="flex justify-between items-center px-6 pt-6">
-      <BackButton color="white" @click="check"></BackButton>
+      <NuxtLink to="/" replace @click="check">
+        <DefaultBackButton color="white"></DefaultBackButton>
+      </NuxtLink>
       <Popover>
         <PopoverTrigger class="text-white">
           <SettingButton color="white"></SettingButton>
@@ -78,13 +80,19 @@
             :user="user"
             :master="getWaitRoomData?.data.master_id"
           ></WaitingUser>
+          <div
+            v-if="user.user_id === getWaitRoomData?.data.master_id"
+            class="flex justify-center items-center"
+          >
+            <img src="/img/master.png" class="h-8" alt="master" />
+          </div>
           <button
             v-if="auth && user.user_id !== getWaitRoomData?.data.master_id"
             :value="user.user_id"
             class="flex justify-center items-center"
             @click="kickUser"
           >
-            x
+            <XIcon></XIcon>
           </button>
         </div>
         <Dialog class="flex justify-center items-center text-lg py-2">
@@ -308,7 +316,6 @@ const createRoom = async (): Promise<void> => {
     }
     await router.replace('/');
   } catch (error) {
-    console.log(error);
     alert('잘못된 접근');
   }
 };
@@ -329,6 +336,10 @@ const deleteRoom = async (): Promise<void> => {
 
 const kickUser = async (e: any): Promise<void> => {
   try {
+    const check = confirm('정말로 강퇴하시겠습니까?');
+    if (!check) {
+      return;
+    }
     const userStore = useUserStore();
     userInfo.value = userStore.getStoredUser();
     const inviteCode = route.params.inviteCode;

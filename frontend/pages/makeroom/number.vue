@@ -1,9 +1,9 @@
 <template>
   <div class="box grid grid-rows-[6rem,2rem,6rem,5rem] h-screen p-6">
     <div class="grid grid-cols-3">
-      <div class="flex items-center">
-        <BackButton color="black"></BackButton>
-      </div>
+      <NuxtLink class="flex items-center" to="type" replace>
+        <DefaultBackButton color="black"></DefaultBackButton>
+      </NuxtLink>
       <div class="flex items-center justify-center text-2xl font-extrabold">
         방 만들기
       </div>
