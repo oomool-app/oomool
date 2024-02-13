@@ -5,7 +5,7 @@
       <img src="/img/logo.png" class="pl-4 w-40 h-auto" />
 
       <!--알림-->
-      <MessageButton as-child></MessageButton>
+      <MessageButton as-child class="pr-3"></MessageButton>
     </div>
 
     <!--방 만들기, 방 참여하기 버튼 -->
@@ -18,13 +18,9 @@
 
     <!-- 방 목록-->
     <div
-      class="bottom-container flex flex-col gap-5 w-375 h-803 pt-3 bg-white rounded-t-lg"
+      class="bottom-container flex flex-col gap-5 pt-3 bg-white rounded-t-lg"
     >
-      <h1
-        class="text-2xl font-bold p-4 sticky top-0 bg-white h-12 rounded-t-lg z-40"
-      >
-        나의 방 목록
-      </h1>
+      <h1 class="text-2xl font-bold p-4 h-12 rounded-t-lg">나의 방 목록</h1>
 
       <!--방 유형 선택 버튼-->
       <div class="flex flex-row">
