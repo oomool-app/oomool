@@ -1,16 +1,21 @@
 package com.oomool.api.domain.notification.service;
 
+import java.time.LocalDate;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.oomool.api.domain.notification.constant.ReadState;
 import com.oomool.api.domain.notification.dto.NotificationSaveRequestDto;
 import com.oomool.api.domain.notification.dto.NotificationSearchRequestDto;
 import com.oomool.api.domain.notification.dto.NotificationSearchResponseDto;
+import com.oomool.api.domain.notification.dto.PushNotificationDto;
 import com.oomool.api.domain.notification.entity.Notification;
 import com.oomool.api.domain.notification.repository.NotificationRepository;
 import com.oomool.api.domain.notification.util.NotificationMapper;
@@ -28,6 +33,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final GameRoomRepository gameRoomRepository;
+    private final PushNotificationServiceImpl pushNotificationService;
 
     /**
      * 알림 조회
@@ -114,5 +120,47 @@ public class NotificationService {
         return notifications.stream()
             .map(NotificationSearchResponseDto::of)
             .collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 0,15 * * ?")
+    @Transactional
+    public void scheduledNotification() {
+        // 모든 게임방 중 현재 일자가 startDate와 endDate 사이에 있는 게임방을 조회
+        List<GameRoom> gameRooms = gameRoomRepository.findAllByStartDateGreaterThanAndEndDateLessThan(
+            LocalDate.now(), LocalDate.now()
+        );
+
+        // gameRooms에 있는 모든 User를 users set에 담는다.
+        Set<User> users = new HashSet<>();
+        for (GameRoom gameRoom : gameRooms) {
+            gameRoom.getPlayers().forEach(player -> {
+                User user = player.getUser();
+
+                NotificationSaveRequestDto requestDto = NotificationSaveRequestDto.builder()
+                    .userId(user.getId())
+                    .title(gameRoom.getTitle())
+                    .body("새로운 질문이 등록되었어요!")
+                    .build();
+
+                saveNotification(requestDto);
+
+                users.add(user);
+            });
+        }
+
+        // 모든 user에게 푸시 알림을 보낸다.
+        sendPushNotificationToUsers(users);
+    }
+
+    private void sendPushNotificationToUsers(Set<User> users) {
+        for (User user : users) {
+            PushNotificationDto pushNotificationDto = PushNotificationDto.builder()
+                .userId(user.getId())
+                .title("새로운 질문이 등록되었어요!")
+                .body("알림을 눌러 지금 바로 확인해보세요!")
+                .build();
+
+            pushNotificationService.sendPushNotificationByUser(pushNotificationDto);
+        }
     }
 }
