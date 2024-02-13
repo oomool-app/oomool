@@ -80,7 +80,7 @@ const move = async (): Promise<void> => {
       },
     };
     const data = await $api.make.createWaitRoom(input.value);
-    await router.push(`/waitroom/${data.data.invite_code}/updateProfile`);
+    await router.replace(`/waitroom/${data.data.invite_code}/updateProfile`);
   } catch (error: any) {
     alert('잘못된 접근입니다. 다시 시도해주세요!');
   }
