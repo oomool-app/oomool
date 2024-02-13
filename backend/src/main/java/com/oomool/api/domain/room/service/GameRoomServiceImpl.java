@@ -44,6 +44,7 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final RedisService redisService;
 
     @Override
+    @Transactional
     public Map<String, Object> createGameRoom(String inviteCode) throws Exception {
 
         String roomUid = UniqueCodeGenerator.generateRandomString(8);                               // 방 UUID 생성
