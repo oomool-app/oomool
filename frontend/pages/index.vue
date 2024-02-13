@@ -183,7 +183,9 @@ const select1 = async (): Promise<void> => {
 };
 
 const select2 = async (): Promise<void> => {
-  sortByCreatedatTemp();
+  if (temprooms.value != null) {
+    sortByCreatedatTemp();
+  }
   selected1.value = false;
   selected2.value = true;
   selected3.value = false;
