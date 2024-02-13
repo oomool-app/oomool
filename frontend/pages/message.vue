@@ -9,17 +9,17 @@
     </div>
 
     <div
-      class="body-container max-w-md text-gray-900 divide-y divide-gray-400 dark:text-white dark:divide-gray-700"
+      class="body-container max-w-md text-gray-900 dark:text-white dark:divide-gray-700"
     >
-      <div v-if="unread !== undefined">
+      <div v-if="unread !== undefined" class="divide-y divide-gray-400">
         <div v-for="message in unread" :key="message.title">
           <MessageCard
             :messages="message"
-            class="pt-3 pb-3 h-20 bg-[#F1EBFC]'"
+            class="pt-3 pb-3 h-20 bg-[#F1EBFC]"
           ></MessageCard>
         </div>
       </div>
-      <div v-if="read !== undefined">
+      <div v-if="read !== undefined" class="divide-y divide-gray-400">
         <div v-for="message in read" :key="message.title">
           <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
         </div>
@@ -56,10 +56,21 @@ const getAllNotifications = async (): Promise<void> => {
       const response = await $api.notifications.getAllNotifications(userId);
       read.value = response.data.read;
       unread.value = response.data.unread;
+      sortByCreateat();
     }
   } catch (error) {
     console.error('Error while fetching room list:', error);
   }
+};
+
+// 안 읽은 알림은 어차피 제일 최신임
+// 그래서 읽은 알림 생성 기준으로 정렬하고 출력해주면 됨
+const sortByCreateat = (): void => {
+  read.value.sort(
+    (a: any, b: any) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime(),
+  );
 };
 
 onMounted(async () => {
