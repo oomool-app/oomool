@@ -72,7 +72,7 @@
     <div class="col-span-6">
       <div class="text-lg font-semibold">{{ props.messages.title }}</div>
       <div class="mb-1 text-gray-500 text-sm w-64 dark:text-gray-400">
-        {{ props.messages.title }}
+        {{ props.messages.body }}
       </div>
     </div>
     <div class="col-span-2 text-sm pr-3">
@@ -89,6 +89,7 @@ const props = defineProps<{
   messages: NotificationMessage;
 }>();
 
+// 알림이 생성되고 시간이 얼마나 지났는지
 const timeFromCreate =
   new Date().getTime() - new Date(props.messages.created_at).getTime();
 const minFromCreate = Math.floor(timeFromCreate / 1000 / 60);
