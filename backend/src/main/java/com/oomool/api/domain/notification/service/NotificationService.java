@@ -1,5 +1,7 @@
 package com.oomool.api.domain.notification.service;
 
+import static com.oomool.api.domain.notification.constant.NotificationType.*;
+
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -124,7 +126,7 @@ public class NotificationService {
             .collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 10 * * * ?")
+    @Scheduled(cron = "0 20 * * * ?")
     @Transactional
     public void scheduledNotification() {
         log.info("Scheduled Notification started");
@@ -142,6 +144,8 @@ public class NotificationService {
 
                 NotificationSaveRequestDto requestDto = NotificationSaveRequestDto.builder()
                     .userId(user.getId())
+                    .type(SYSTEM)
+                    .roomUid(gameRoom.getRoomUid())
                     .title(gameRoom.getTitle())
                     .body("새로운 질문이 등록되었어요!")
                     .build();
