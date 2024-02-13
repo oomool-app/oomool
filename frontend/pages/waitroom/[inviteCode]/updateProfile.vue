@@ -6,7 +6,7 @@
       <!--프로필 이미지 미리보기-->
       <div class="flex pb-10 pt-10 justify-center items-start gap-2.5">
         <div
-          class="relative flex h-32 w-32 px-0 py-2.5 justify-center rounded-full border-solid border-2 border-[#6D6D6D]"
+          class="relative flex h-32 w-32 px-1 py-3 justify-center rounded-full border-solid border-2 border-[#6D6D6D]"
           :style="{ backgroundColor: randomColor }"
         >
           <img :src="randomAvatar" alt="프로필 아바타" />
@@ -120,7 +120,6 @@ const getWaitroomInfo = async (): Promise<void> => {
     if (typeof inviteCode === 'string') {
       const response = await $api.make.getWaitRoom(inviteCode);
       waitroom.value = response.data;
-      console.log(waitroom.value);
     }
   } catch (error) {
     console.error('Error while fetching waitroom:', error);
@@ -130,6 +129,12 @@ const getWaitroomInfo = async (): Promise<void> => {
 // 방 참여하기
 const join = async (): Promise<void> => {
   try {
+    await getWaitroomInfo();
+    if (waitroom.value.players.length === waitroom.value.setting.max_member) {
+      alert('게임 참여 인원이 초과되었습니다.');
+      await router.push('/');
+      return;
+    }
     // 링크에서 갖고 있는 초대코드
     const input = ref<IJoinWaitRoomInput>();
     const inviteCode = route.params.inviteCode;
@@ -144,7 +149,7 @@ const join = async (): Promise<void> => {
 
     if (typeof inviteCode === 'string') {
       await $api.make.joinWaitRoom(input.value, inviteCode);
-      await router.push(`/waitroom/${inviteCode}`);
+      await router.replace(`/waitroom/${inviteCode}`);
     }
   } catch (error: any) {
     alert('잘못된 접근!!');
@@ -192,7 +197,7 @@ const setting = async (): Promise<void> => {
   await join();
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await getWaitroomInfo();
 });
 </script>
