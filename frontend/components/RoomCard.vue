@@ -44,7 +44,7 @@
             class="flex flex-col bg-white text-[#6D6D6D] font-bold px-3 py-10 w-70 h-24 shadow-inner rounded-xl justify-center items-center"
           >
             아직 게임이 시작되지 않았어요
-            <div v-if="dayBeforeStart >= 1" class="flex flex-row">
+            <div v-if="dayBeforeStart > 1" class="flex flex-row">
               <h1 class="text-primary pr-2">{{ dayBeforeStart }}</h1>
               일 후에 시작됩니다.
             </div>
