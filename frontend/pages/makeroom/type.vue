@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="flex justify-center items-end pb-6">
-      <NuxtLink class="w-full rounded-full" to="number">
+      <NuxtLink class="w-full rounded-full" to="number" replace>
         <Button class="w-full rounded-full text-lg" @click="check">다음</Button>
       </NuxtLink>
     </div>
