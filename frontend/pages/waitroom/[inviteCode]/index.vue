@@ -9,7 +9,7 @@
           <SettingButton color="white"></SettingButton>
         </PopoverTrigger>
         <PopoverContent>
-          <ul>
+          <ul v-if="auth">
             <li>
               <NuxtLink
                 :to="`${route.params.inviteCode}/updateRoom`"
@@ -17,10 +17,12 @@
                 >방설정하기</NuxtLink
               >
             </li>
-            <li v-if="auth">
+            <li>
               <a @click="deleteRoom">방 삭제하기</a>
             </li>
-            <li v-else>
+          </ul>
+          <ul v-else>
+            <li>
               <NuxtLink @click="roomOut">퇴장하기</NuxtLink>
             </li>
           </ul>
@@ -197,7 +199,11 @@ const startCheck = async (): Promise<void> => {
   while (polling.value) {
     try {
       await checkpolling();
-    } catch (e) {}
+    } catch (e) {
+      alert('방이 삭제되었습니다.');
+      polling.value = false;
+      await router.replace('/');
+    }
   }
 };
 
@@ -220,8 +226,10 @@ const checkpolling = async (): Promise<void> => {
     }
   } else {
     polling.value = false;
-    alert(`${getWaitRoomData.value?.data.setting.title}방이 시작되었습니다!`);
-    await router.push('/');
+    if (!auth.value) {
+      alert(`${getWaitRoomData.value?.data.setting.title}방이 시작되었습니다!`);
+    }
+    await router.replace('/');
   }
 };
 
@@ -290,18 +298,17 @@ const createRoom = async (): Promise<void> => {
       };
     }
     const roomData = ref<IGetRoomUidResponse>();
-    const temp = ref<string>();
     const roomId = ref<IRegistQuestionToRoomInput>();
     if (input.value !== undefined) {
       roomData.value = await $api.rooms.createRoom(input.value);
-      temp.value = roomData.value.data.roomUid;
       roomId.value = {
-        roomUid: temp.value,
+        roomUid: roomData.value.data.roomUid,
       };
       await $api.question.registQuestionToRoom(roomId.value);
     }
-    await router.push('/');
+    await router.replace('/');
   } catch (error) {
+    console.log(error);
     alert('잘못된 접근');
   }
 };
@@ -316,7 +323,7 @@ const deleteRoom = async (): Promise<void> => {
       await $api.make.deleteWaitRoom(inviteCode, userInfo.value.id);
     }
     polling.value = false;
-    await router.push('/');
+    await router.replace('/');
   } catch (error) {}
 };
 
