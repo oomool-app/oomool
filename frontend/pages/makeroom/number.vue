@@ -25,7 +25,7 @@
       ></MakeRoomNumber>
     </div>
     <div class="flex justify-center items-end pb-6">
-      <NuxtLink class="w-full rounded-full" to="date">
+      <NuxtLink class="w-full rounded-full" to="date" replace>
         <Button class="w-full rounded-full text-lg">다음</Button>
       </NuxtLink>
     </div>
