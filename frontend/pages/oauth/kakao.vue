@@ -6,7 +6,9 @@
 const route = useRoute();
 const userStore = useUserStore();
 const router = useRouter();
-const token = useCookie('accessToken');
+const token = useCookie('accessToken', {
+  maxAge: 60 * 30,
+});
 
 onBeforeMount(async () => {
   token.value = route.query.token as string;
