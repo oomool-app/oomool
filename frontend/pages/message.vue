@@ -26,7 +26,7 @@
       </div>
     </div>
     <div
-      v-if="read?.length === 0 || unread?.length === 0"
+      v-if="read?.length === 0 && unread?.length === 0"
       class="flex flex-col items-center m-6 mt-10"
     >
       <p class="m-12 font-semibold">아직 알림이 없어요</p>
