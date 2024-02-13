@@ -1,5 +1,5 @@
 <template>
-  <Nuxt-link to="/message">
+  <div @click="$router.push({ path: `/message` })">
     <div class="relative">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <div v-if="MessageNotRead">
+      <div v-if="MessageNotRead == 'true'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -36,25 +36,22 @@
         </svg>
       </div>
     </div>
-  </Nuxt-link>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore';
 import { type ICheckUnreadNotificationInput } from '../repository/modules/interface/notifications.interface';
 
-useBodyColor('#61339B');
-
 const userStore = useUserStore();
 const { $api } = useNuxtApp();
 
 // 메시지 읽음 여부 가져올 변수
-const MessageNotRead = ref(false);
+const MessageNotRead = ref('');
 
 const checkUnreadNotifications = async (): Promise<void> => {
   try {
     const storedUser = userStore.getStoredUser();
-
     if (storedUser != null) {
       const userId: ICheckUnreadNotificationInput = {
         userId: storedUser.id,
@@ -63,7 +60,6 @@ const checkUnreadNotifications = async (): Promise<void> => {
       const response =
         await $api.notifications.checkUnreadNotifications(userId);
       MessageNotRead.value = response.data;
-      console.log(MessageNotRead.value);
     }
   } catch (error) {
     console.error('Error while fetching room list:', error);
@@ -71,6 +67,10 @@ const checkUnreadNotifications = async (): Promise<void> => {
 };
 
 onBeforeUpdate(async () => {
+  await checkUnreadNotifications();
+});
+
+onMounted(async () => {
   await checkUnreadNotifications();
 });
 </script>

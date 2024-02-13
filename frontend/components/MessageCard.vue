@@ -13,7 +13,7 @@
     @click="$router.push({ path: `room/${messages.room_uid}` })"
   >
     <!--아이콘-->
-    <div class="self-center pl-3 pr-3">
+    <div class="flex-none self-center pl-3 pr-6">
       <div v-if="props.messages.type == 'system'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@
           />
         </svg>
       </div>
-      <div v-else-if="props.messages.type == '답변 등록'">
+      <div v-else-if="props.messages.type == 'write_feed'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -69,16 +69,17 @@
       </div>
     </div>
 
-    <div class="col-span-6">
+    <div class="flex-1">
       <div class="text-lg font-semibold">{{ props.messages.title }}</div>
-      <div class="mb-1 text-gray-500 text-sm w-64 dark:text-gray-400">
+      <div class="mb-1 text-gray-500 text-sm w-56 dark:text-gray-400 pt-1">
         {{ props.messages.body }}
       </div>
     </div>
-    <div class="col-span-2 text-sm pr-3">
+    <div class="text-sm pr-3">
       <div v-if="dayFromCreate >= 1">{{ dayFromCreate }}일 전</div>
       <div v-else-if="hourFromCreate >= 1">{{ hourFromCreate }}시간 전</div>
-      <div v-else>{{ minFromCreate }}분 전</div>
+      <div v-else-if="minFromCreate >= 1">{{ minFromCreate }}분 전</div>
+      <div v-else>방금</div>
     </div>
   </div>
 </template>
