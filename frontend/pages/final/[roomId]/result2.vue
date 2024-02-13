@@ -195,20 +195,28 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
   }
 };
 
-const saveImage = (): void => {
+const saveImage = async (): Promise<void> => {
   const el: HTMLCollectionOf<Element> =
     document.getElementsByClassName('image');
   if (el !== null) {
     for (let i = 0; i < el.length; i++) {
       const element = el[i] as HTMLElement;
       htmlToImage
-        .toPng(element, { width: 10000, skipFonts: true })
+        .toJpeg(element, {
+          width: 10000,
+          backgroundColor: 'white', // 배경색을 흰색으로 설정
+          skipFonts: true, // 기본값은 true입니다. false로 변경
+        })
         .then(function (dataUrl) {
-          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+          const link = document.createElement('a');
+          link.download = `내 마니또 ${manittoName.value}의 답변.jpeg`;
+          link.href = dataUrl;
+          link.click();
         })
         .catch(function (error) {
           console.error(error);
         });
+      // download(dataUrl, `마니또 ${manittoName.value}의 답변.jpg`);
     }
   }
 };
