@@ -46,25 +46,65 @@
               <Navigation />
             </template>
           </Carousel>
+          <AlertDialog>
+            <AlertDialogTrigger as-child>
+              <Button class="w-1/2 m-4 rounded-xl"
+                >이미지로 저장하기 &nbsp;&nbsp;
 
-          <Button class="w-1/2 m-4 rounded-xl"
-            >이미지로 저장하기 &nbsp;&nbsp;
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="w-5 h-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </svg>
+              </Button>
+            </AlertDialogTrigger>
 
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="w-5 h-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-              />
-            </svg>
-          </Button>
+            <AlertDialogContent>
+              <AlertDialogTitle class="font-bold text-primary text-xl"
+                >저장미리보기</AlertDialogTitle
+              >
+              <ScrollArea
+                class="h-80 w-full rounded-md border flex-col flex items-center"
+              >
+                <AlertDialogHeader class="flex-col flex items-center">
+                  <AlertDialogDescription>
+                    <div
+                      class="w-full image flex justify-center flex-col items-center"
+                    >
+                      <div
+                        v-for="(item, index) in result"
+                        :key="item.feed_id"
+                        class="flex flex-col items-center mb-2"
+                      >
+                        <div
+                          class="w-3/4 carousel__item overflow-x-hidden overflow-y-auto"
+                        >
+                          <ResultSaveCard
+                            class="h-1/6"
+                            :result="item"
+                            :index="index"
+                          ></ResultSaveCard>
+                        </div>
+                      </div>
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+              </ScrollArea>
+              <AlertDialogFooter class="flex">
+                <AlertDialogCancel>취소</AlertDialogCancel>
+                <AlertDialogAction @click="saveImage">저장</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
@@ -89,6 +129,8 @@
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import { type RoomQuestionList } from '../../../repository/modules/interface/question.interface';
+import * as htmlToImage from 'html-to-image';
+import download from 'downloadjs';
 const { $api } = useNuxtApp();
 const route = useRoute();
 const userStore = useUserStore();
@@ -105,7 +147,6 @@ const getAllQuestions = async (): Promise<void> => {
   try {
     const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
     questions.value = response.data.room_question_list;
-    console.log(questions.value);
   } catch (error) {
     console.log(error);
   }
@@ -148,12 +189,30 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
         userId,
       });
       result.value = response.data.result_manitto_list;
-      console.log(result.value);
     }
   } catch (error) {
     console.error(error);
   }
 };
+
+const saveImage = (): void => {
+  const el: HTMLCollectionOf<Element> =
+    document.getElementsByClassName('image');
+  if (el !== null) {
+    for (let i = 0; i < el.length; i++) {
+      const element = el[i] as HTMLElement;
+      htmlToImage
+        .toPng(element, { width: 10000, skipFonts: true })
+        .then(function (dataUrl) {
+          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+  }
+};
+
 onMounted(async () => {
   await getAllQuestions();
   await getRoomDetail();
