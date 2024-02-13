@@ -126,21 +126,28 @@ public class NotificationService {
             .collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 20 * * * ?")
+    @Scheduled(cron = "0 30 * * * ?")
     @Transactional
     public void scheduledNotification() {
         log.info("Scheduled Notification started");
 
+        LocalDate now = LocalDate.now();
+
         // 모든 게임방 중 현재 일자가 startDate와 endDate 사이에 있는 게임방을 조회
         List<GameRoom> gameRooms = gameRoomRepository.findAllByStartDateGreaterThanAndEndDateLessThan(
-            LocalDate.now(), LocalDate.now()
+            now, now
         );
+
+        log.info("GameRoom Count: {}", gameRooms.size());
 
         // gameRooms에 있는 모든 User를 users set에 담는다.
         Set<User> users = new HashSet<>();
         for (GameRoom gameRoom : gameRooms) {
+            log.info("GameRoom: {}", gameRoom.getRoomUid());
+
             gameRoom.getPlayers().forEach(player -> {
                 User user = player.getUser();
+                log.info("User: {}", user);
 
                 NotificationSaveRequestDto requestDto = NotificationSaveRequestDto.builder()
                     .userId(user.getId())
