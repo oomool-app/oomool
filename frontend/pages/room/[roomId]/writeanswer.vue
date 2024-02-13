@@ -209,15 +209,15 @@ input[type='file']::file-selector-button {
 }
 
 .header {
-  animation: fade-in 0.8s ease-in-out;
+  animation: fade-in 0.5s ease-in-out;
 }
 
 .img-container {
-  animation: fade-in2 1.2s ease-in-out;
+  animation: fade-in2 0.8s ease-in-out;
 }
 
 .input-container {
-  animation: fade-in3 1.2s ease-in-out;
+  animation: fade-in3 1s ease-in-out;
 }
 @keyframes fade-in {
   from {

@@ -8,16 +8,19 @@
         class="chat-box p-3 border border-purple-500 rounded-l-xl rounded-br-xl bg-[#d8c7f9]"
       >
         <img
-          v-if="props.feeds.feed_image_dto_list[0] !== undefined"
+          v-if="
+            props.feeds.feed_image_dto_list !== undefined &&
+            props.feeds.feed_image_dto_list[0] !== undefined
+          "
           class="rounded-lg mb-4 w-full h-auto"
           alt=""
-          :src="$props.feeds.feed_image_dto_list[0].url"
+          :src="imgUrl"
         />
         {{ props.feeds.content }}
       </div>
     </div>
     <div
-      class="rounded-full w-12 h-12 border-2 flex justify-center items-center"
+      class="rounded-full w-12 h-12 border flex justify-center border-black items-center"
       :style="{ 'background-color': props.feeds.manitti_dto.avatar_color }"
     >
       <img
@@ -34,4 +37,8 @@ const props = defineProps<{
   feeds: Feed;
   roomUid: string;
 }>();
+const imgUrl = ref();
+if (props.feeds.feed_image_dto_list !== undefined) {
+  imgUrl.value = props.feeds.feed_image_dto_list[0].url;
+}
 </script>
