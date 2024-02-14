@@ -7,7 +7,7 @@ pipeline {
         REDIS_PASSWORD = credentials('redis-password')
         JWT_SECRET = credentials('jwt-secret')
         IMGBB_SECRET = credentials('imgbb-secret')
-
+        KAKAO_CLIENT = credentials('kakao-client')
     }
 
     parameters {
@@ -118,20 +118,33 @@ pipeline {
             }
             post {
                 success {
-                    sh 'echo "Bulid Docker Image Success"'
+                    sh 'echo "Build Docker Image Success"'
                 }
 
                 failure {
-                    sh 'echo "Bulid Docker Image Fail"'
+                    sh 'echo "Build Docker Image Fail"'
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                sh """
-                docker run --name ${params.IMAGE_NAME} --network ${params.DOCKER_NETWORK} -d -p 8080:8080 ${params.IMAGE_NAME}
-                """
+                sh "echo JWT_SECRET=${env.JWT_SECRET} > env.list"
+                sh "echo REDIS_HOST=${env.REDIS_HOST} >> env.list"
+                sh "echo REDIS_PORT=${env.REDIS_PORT} >> env.list"
+                sh "echo REDIS_USERNAME=${env.REDIS_USERNAME} >> env.list"
+                sh "echo REDIS_PASSWORD=${env.REDIS_PASSWORD} >> env.list"
+                sh "echo IMGBB_SECRET=${env.IMGBB_SECRET} >> env.list"
+                sh "echo DB_NAME=${env.DB_NAME} >> env.list"
+                sh "echo FRONTEND_URL=${env.FRONTEND_URL} >> env.list"
+                sh "echo DB_DRIVER=${env.DB_DRIVER} >> env.list"
+                sh "echo DB_URL=${env.DB_URL} >> env.list"
+                sh "echo DB_USERNAME=${env.DB_USERNAME} >> env.list"
+                sh "echo DB_PASSWORD=${env.DB_PASSWORD} >> env.list"
+                sh "echo KAKAO_CLIENT_ID=${env.KAKAO_CLIENT_USR} >> env.list"
+                sh "echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PWD} >> env.list"
+
+                sh "docker run --name ${params.IMAGE_NAME} --env-file env.list --network ${params.DOCKER_NETWORK} -d -p 8080:8080 ${params.IMAGE_NAME}"
             }
 
             post {
