@@ -195,18 +195,35 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
     console.error(error);
   }
 };
-
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function filter(node: any) {
+  return node.tagName !== 'i';
+}
 const saveImage = async (): Promise<void> => {
   const el = document.getElementById('image');
-  if (el !== null) {
-    const element = el as unknown as HTMLElement;
-    const dataUrl = await htmlToImage.toPng(element, {
-      backgroundColor: 'white',
-      skipFonts: true,
-    });
+  const element = el as unknown as HTMLElement;
 
-    download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
-  }
+  htmlToImage
+    .toSvg(element, { filter, skipFonts: true })
+    .then(function (dataUrl) {
+      /* do something */
+      if (el !== null) {
+        htmlToImage
+          .toPng(element, {
+            backgroundColor: 'white',
+            skipFonts: true,
+          })
+          .then(function (dataUrl) {
+            download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+          })
+          .catch(function (error) {
+            console.error(error);
+          });
+      }
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
 };
 
 onMounted(async () => {
