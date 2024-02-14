@@ -56,7 +56,7 @@
         <p class="text-center mb-4 font-semibold">
           A. {{ props.result.content }}
         </p>
-        <img class="w-full h-auto rounded-lg" :src="`${url}`" alt="" />
+        <NuxtImg class="w-full h-auto rounded-lg" :src="url" loading="lazy" />
       </div>
     </div>
   </div>
@@ -69,7 +69,10 @@ const props = defineProps<{
   index: number;
 }>();
 const url = ref();
-if (props.result.feed_image_dto_list !== undefined) {
-  url.value = props.result.feed_image_dto_list;
+if (
+  props.result.feed_image_dto_list !== undefined &&
+  props.result.feed_image_dto_list?.length > 0
+) {
+  url.value = props.result.feed_image_dto_list[0].url;
 }
 </script>

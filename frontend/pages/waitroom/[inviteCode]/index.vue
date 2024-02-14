@@ -72,7 +72,7 @@
         :style="{ height: scrollHeight + 'px' }"
       >
         <div
-          v-for="user in getWaitRoomData?.data.players"
+          v-for="user in userList"
           :key="user.user_id"
           class="grid grid-cols-[auto,3rem] border-b-2"
         >
@@ -88,8 +88,8 @@
           </div>
           <button
             v-if="auth && user.user_id !== getWaitRoomData?.data.master_id"
-            :value="user.user_id"
             class="flex justify-center items-center"
+            :value="user.user_id"
             @click="kickUser"
           >
             <XIcon></XIcon>
@@ -189,11 +189,26 @@ const getWaitRoomData = ref<IGetWaitRoomResponse>();
 const userInfo = ref<User | null>();
 const scrollHeight = ref<number>(0);
 const polling = ref(true);
+const userList = ref<player[]>();
 
 interface User {
   id: number;
   email: string;
   name: string;
+}
+
+interface waitUser {
+  id: number;
+  email: string;
+  username: string;
+}
+
+interface player {
+  user_id: number;
+  user_email: string;
+  player_nickname: string;
+  player_background_color: string;
+  player_avatar_url: string;
 }
 
 onMounted(async (): Promise<void> => {
@@ -248,17 +263,22 @@ const getData = async (): Promise<void> => {
     if (userInfo.value === undefined || userInfo.value === null) {
       return;
     }
+    userList.value = [...getWaitRoomData.value.data.players];
+    sort(userList.value);
     if (getWaitRoomData.value.data.master_id === userInfo.value.id) {
       auth.value = true;
     }
   }
 };
 
-interface waitUser {
-  id: number;
-  email: string;
-  username: string;
-}
+const sort = (list: player[]): void => {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].user_id === getWaitRoomData.value?.data.master_id) {
+      [list[0], list[i]] = [list[i], list[0]];
+      break;
+    }
+  }
+};
 
 const banCheck = (banList: waitUser[]): boolean => {
   for (let i = 0; i < banList.length; i++) {
@@ -310,7 +330,7 @@ const createRoom = async (): Promise<void> => {
     if (input.value !== undefined) {
       roomData.value = await $api.rooms.createRoom(input.value);
       roomId.value = {
-        roomUid: roomData.value.data.roomUid,
+        room_uid: roomData.value.data.room_uid,
       };
       await $api.question.registQuestionToRoom(roomId.value);
     }
@@ -343,16 +363,15 @@ const kickUser = async (e: any): Promise<void> => {
     const userStore = useUserStore();
     userInfo.value = userStore.getStoredUser();
     const inviteCode = route.params.inviteCode;
-    const targetValue = Number(e.target.value);
     const input = ref<IPostBanUserInput>();
     if (userInfo.value === undefined || userInfo.value === null) {
       return;
     }
     input.value = {
       user_id: userInfo.value.id,
-      ban_user_id: targetValue,
+      ban_user_id: e.currentTarget.value,
     };
-    if (typeof inviteCode === 'string' && typeof targetValue === 'number') {
+    if (typeof inviteCode === 'string') {
       await $api.make.deleteBanUser(inviteCode, input.value);
     }
   } catch (error) {}

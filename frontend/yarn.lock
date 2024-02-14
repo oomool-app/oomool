@@ -1090,6 +1090,11 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.56.0.tgz"
   integrity sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==
 
+"@fastify/accept-negotiator@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/@fastify/accept-negotiator/-/accept-negotiator-1.1.0.tgz"
+  integrity sha512-OIHZrb2ImZ7XG85HXOONLcJWGosv7sIvM2ifAPQVhg9Lv7qdmMBNVaai4QTdyuaqbKM5eO6sLSQOYI7wEQeCJQ==
+
 "@fastify/busboy@^2.0.0":
   version "2.1.0"
   resolved "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.0.tgz"
@@ -1534,6 +1539,30 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
+"@img/sharp-libvips-linux-x64@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.0.1.tgz"
+  integrity sha512-3NR1mxFsaSgMMzz1bAnnKbSAI+lHXVTqAHgc1bgzjHuXjo4hlscpUxc0vFSAPKI3yuzdzcZOkq7nDPrP2F8Jgw==
+
+"@img/sharp-libvips-linuxmusl-x64@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.0.1.tgz"
+  integrity sha512-dcT7inI9DBFK6ovfeWRe3hG30h51cBAP5JXlZfx6pzc/Mnf9HFCQDLtYf4MCBjxaaTfjCCjkBxcy3XzOAo5txw==
+
+"@img/sharp-linux-x64@0.33.2":
+  version "0.33.2"
+  resolved "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.33.2.tgz"
+  integrity sha512-xUT82H5IbXewKkeF5aiooajoO1tQV4PnKfS/OZtb5DDdxS/FCI/uXTVZ35GQ97RZXsycojz/AJ0asoz6p2/H/A==
+  optionalDependencies:
+    "@img/sharp-libvips-linux-x64" "1.0.1"
+
+"@img/sharp-linuxmusl-x64@0.33.2":
+  version "0.33.2"
+  resolved "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.33.2.tgz"
+  integrity sha512-+ZLE3SQmSL+Fn1gmSaM8uFusW5Y3J9VOf+wMGNnTtJUMUxFhv+P4UPaYEYT8tqnyYVaOVGgMN/zsOxn9pSsO2A==
+  optionalDependencies:
+    "@img/sharp-libvips-linuxmusl-x64" "1.0.1"
+
 "@ioredis/commands@^1.1.1":
   version "1.2.0"
   resolved "https://registry.npmjs.org/@ioredis/commands/-/commands-1.2.0.tgz"
@@ -1847,7 +1876,25 @@
     eslint-plugin-vue "^9.17.0"
     typescript "^5.2.2"
 
-"@nuxt/kit@^3.5.0", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.0", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.3", "@nuxt/kit@3.10.0":
+"@nuxt/image@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/@nuxt/image/-/image-1.3.0.tgz"
+  integrity sha512-HoAvBImqRrAwCLhZe7IsRwUWvV0ZVqUKFE/GsT8Jo01NBEd+PXhhu2XgHKV+aasqPXdeaQjhL43CSIwuNEwG1w==
+  dependencies:
+    "@nuxt/kit" "^3.9.2"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    h3 "^1.10.0"
+    image-meta "^0.2.0"
+    node-fetch-native "^1.6.1"
+    ohash "^1.1.3"
+    pathe "^1.1.2"
+    std-env "^3.7.0"
+    ufo "^1.3.2"
+  optionalDependencies:
+    ipx "^3.0.0"
+
+"@nuxt/kit@^3.5.0", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.0", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.2", "@nuxt/kit@^3.9.3", "@nuxt/kit@3.10.0":
   version "3.10.0"
   resolved "https://registry.npmjs.org/@nuxt/kit/-/kit-3.10.0.tgz"
   integrity sha512-SNyZqk57kyEvTdFSYhQCYFCwT/EQO13O9SWtY2ULscdhXd2C5D0SQW9E7OM7O/31Fa+KQ9RnSTA8DnwaOFne2g==
@@ -3751,7 +3798,7 @@ color-convert@^2.0.1:
   dependencies:
     color-name "~1.1.4"
 
-color-name@~1.1.4:
+color-name@^1.0.0, color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
@@ -3761,10 +3808,26 @@ color-name@1.1.3:
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.3.tgz"
   integrity sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==
 
+color-string@^1.9.0:
+  version "1.9.1"
+  resolved "https://registry.npmjs.org/color-string/-/color-string-1.9.1.tgz"
+  integrity sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==
+  dependencies:
+    color-name "^1.0.0"
+    simple-swizzle "^0.2.2"
+
 color-support@^1.1.2:
   version "1.1.3"
   resolved "https://registry.npmjs.org/color-support/-/color-support-1.1.3.tgz"
   integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
+
+color@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.npmjs.org/color/-/color-4.2.3.tgz"
+  integrity sha512-1rXeuUUiGGrykh+CeBdu5Ie7OJwinCgQY0bc7GCRxy5xVHy+moaqkpL/jqQq0MtQOeYcrqEz4abc5f0KtU7W4A==
+  dependencies:
+    color-convert "^2.0.1"
+    color-string "^1.9.0"
 
 colord@^2.9.1, colord@^2.9.3:
   version "2.9.3"
@@ -3777,6 +3840,11 @@ colorette@^2.0.20:
   integrity sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==
 
 commander@^2.20.0:
+  version "2.20.3"
+  resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
+  integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
+
+commander@^2.20.3:
   version "2.20.3"
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -3976,6 +4044,11 @@ cssesc@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz"
   integrity sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==
+
+cssfilter@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.npmjs.org/cssfilter/-/cssfilter-0.0.10.tgz"
+  integrity sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw==
 
 cssnano-preset-default@^6.0.3:
   version "6.0.3"
@@ -4191,7 +4264,7 @@ detect-libc@^1.0.3:
   resolved "https://registry.npmjs.org/detect-libc/-/detect-libc-1.0.3.tgz"
   integrity sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==
 
-detect-libc@^2.0.0:
+detect-libc@^2.0.0, detect-libc@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/detect-libc/-/detect-libc-2.0.2.tgz"
   integrity sha512-UX6sGumvvqSaXgdKGUsgZWqcUyIXZ/vZTrlRT/iobiKhGL0zL4d3osHj3uqllWJK+i+sixDS/3COVEOFbupFyw==
@@ -5825,6 +5898,28 @@ ip@^2.0.0:
   resolved "https://registry.npmjs.org/ip/-/ip-2.0.0.tgz"
   integrity sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==
 
+ipx@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/ipx/-/ipx-3.0.1.tgz"
+  integrity sha512-OqbP9wLqpGXtI/le0sU4exCH5cb7kZS9jaV5xDDM8wZ62VJZBBhEjR0gXwK0agA/GfS4g/GGwY9fFSIFrTb4Gg==
+  dependencies:
+    "@fastify/accept-negotiator" "^1.1.0"
+    citty "^0.1.5"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    destr "^2.0.2"
+    etag "^1.8.1"
+    h3 "^1.10.1"
+    image-meta "^0.2.0"
+    listhen "^1.6.0"
+    ofetch "^1.3.3"
+    pathe "^1.1.2"
+    sharp "^0.33.2"
+    svgo "^3.2.0"
+    ufo "^1.4.0"
+    unstorage "^1.10.1"
+    xss "^1.0.14"
+
 iron-webcrypto@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/iron-webcrypto/-/iron-webcrypto-1.0.0.tgz"
@@ -5843,6 +5938,11 @@ is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.npmjs.org/is-arrayish/-/is-arrayish-0.2.1.tgz"
   integrity sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==
+
+is-arrayish@^0.3.1:
+  version "0.3.2"
+  resolved "https://registry.npmjs.org/is-arrayish/-/is-arrayish-0.3.2.tgz"
+  integrity sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==
 
 is-bigint@^1.0.1:
   version "1.0.4"
@@ -6469,7 +6569,7 @@ lint-staged@^15.2.0:
     string-argv "0.3.2"
     yaml "2.3.4"
 
-listhen@^1.5.5:
+listhen@^1.5.5, listhen@^1.6.0:
   version "1.6.0"
   resolved "https://registry.npmjs.org/listhen/-/listhen-1.6.0.tgz"
   integrity sha512-z0RcEXVX5oTpY1bO02SKoTU/kmZSrFSngNNzHRM6KICR17PTq7ANush6AE6ztGJwJD4RLpBrVHd9GnV51J7s3w==
@@ -8732,6 +8832,35 @@ shadcn-nuxt@^0.8.7:
     "@nuxt/kit" "^3.8.2"
     oxc-parser "^0.2.0"
 
+sharp@^0.33.2:
+  version "0.33.2"
+  resolved "https://registry.npmjs.org/sharp/-/sharp-0.33.2.tgz"
+  integrity sha512-WlYOPyyPDiiM07j/UO+E720ju6gtNtHjEGg5vovUk1Lgxyjm2LFO+37Nt/UI3MMh2l6hxTWQWi7qk3cXJTutcQ==
+  dependencies:
+    color "^4.2.3"
+    detect-libc "^2.0.2"
+    semver "^7.5.4"
+  optionalDependencies:
+    "@img/sharp-darwin-arm64" "0.33.2"
+    "@img/sharp-darwin-x64" "0.33.2"
+    "@img/sharp-libvips-darwin-arm64" "1.0.1"
+    "@img/sharp-libvips-darwin-x64" "1.0.1"
+    "@img/sharp-libvips-linux-arm" "1.0.1"
+    "@img/sharp-libvips-linux-arm64" "1.0.1"
+    "@img/sharp-libvips-linux-s390x" "1.0.1"
+    "@img/sharp-libvips-linux-x64" "1.0.1"
+    "@img/sharp-libvips-linuxmusl-arm64" "1.0.1"
+    "@img/sharp-libvips-linuxmusl-x64" "1.0.1"
+    "@img/sharp-linux-arm" "0.33.2"
+    "@img/sharp-linux-arm64" "0.33.2"
+    "@img/sharp-linux-s390x" "0.33.2"
+    "@img/sharp-linux-x64" "0.33.2"
+    "@img/sharp-linuxmusl-arm64" "0.33.2"
+    "@img/sharp-linuxmusl-x64" "0.33.2"
+    "@img/sharp-wasm32" "0.33.2"
+    "@img/sharp-win32-ia32" "0.33.2"
+    "@img/sharp-win32-x64" "0.33.2"
+
 shebang-command@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz"
@@ -8798,6 +8927,13 @@ simple-git@^3.22.0:
     "@kwsites/file-exists" "^1.1.1"
     "@kwsites/promise-deferred" "^1.1.1"
     debug "^4.3.4"
+
+simple-swizzle@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/simple-swizzle/-/simple-swizzle-0.2.2.tgz"
+  integrity sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==
+  dependencies:
+    is-arrayish "^0.3.1"
 
 sirv@^2.0.4:
   version "2.0.4"
@@ -9709,10 +9845,10 @@ ufo@^0.8.6:
   resolved "https://registry.npmjs.org/ufo/-/ufo-0.8.6.tgz"
   integrity sha512-fk6CmUgwKCfX79EzcDQQpSCMxrHstvbLswFChHS0Vump+kFkw7nJBfTZoC1j0bOGoY9I7R3n2DGek5ajbcYnOw==
 
-ufo@^1.1.2, ufo@^1.2.0, ufo@^1.3.0, ufo@^1.3.1, ufo@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.npmjs.org/ufo/-/ufo-1.3.2.tgz"
-  integrity sha512-o+ORpgGwaYQXgqGDwd+hkS4PuZ3QnmqMMxRuajK/a38L6fTpcE5GPIfrf+L/KemFzfUpeUQc1rRS1iDBozvnFA==
+ufo@^1.1.2, ufo@^1.2.0, ufo@^1.3.0, ufo@^1.3.1, ufo@^1.3.2, ufo@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/ufo/-/ufo-1.4.0.tgz"
+  integrity sha512-Hhy+BhRBleFjpJ2vchUNN40qgkh0366FWJGqVLYBHev0vpHTrXSA0ryT+74UiW6KWsldNurQMKGqCm1M2zBciQ==
 
 ultrahtml@^1.5.2:
   version "1.5.2"
@@ -10575,6 +10711,14 @@ xml-name-validator@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/xml-name-validator/-/xml-name-validator-4.0.0.tgz"
   integrity sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==
+
+xss@^1.0.14:
+  version "1.0.14"
+  resolved "https://registry.npmjs.org/xss/-/xss-1.0.14.tgz"
+  integrity sha512-og7TEJhXvn1a7kzZGQ7ETjdQVS2UfZyTlsEdDOqvQF7GoxNfY+0YLCzBy1kPdsDDx4QuNAonQPddpsn6Xl/7sw==
+  dependencies:
+    commander "^2.20.3"
+    cssfilter "0.0.10"
 
 y18n@^5.0.5:
   version "5.0.8"

@@ -9,7 +9,7 @@ export interface IGetDailyQuestionResponse {
 }
 
 export interface IRegistQuestionToRoomInput {
-  roomUid: string;
+  room_uid: string;
 }
 
 export interface IRegistQuestionToRoomResponse {

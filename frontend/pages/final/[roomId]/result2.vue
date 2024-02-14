@@ -76,7 +76,7 @@
                 class="h-80 w-full rounded-md border flex-col flex items-center"
               >
                 <AlertDialogHeader class="flex-col flex items-center">
-                  <AlertDialogDescription>
+                  <AlertDialogDescription class="pt-10">
                     <div
                       id="image"
                       class="w-full flex justify-center flex-col items-center"
@@ -84,7 +84,7 @@
                       <div
                         v-for="(item, index) in result"
                         :key="item.feed_id"
-                        class="flex flex-col items-center mb-2"
+                        class="flex flex-col items-center"
                       >
                         <div
                           class="w-3/4 carousel__item overflow-x-hidden overflow-y-auto"
@@ -129,7 +129,6 @@
 <script setup lang="ts">
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
-import { type RoomQuestionList } from '../../../repository/modules/interface/question.interface';
 import * as htmlToImage from 'html-to-image';
 import download from 'downloadjs';
 const { $api } = useNuxtApp();
@@ -139,19 +138,9 @@ const roomUid = route.params.roomId as string;
 const roomName = ref();
 const startDate = ref();
 const endDate = ref();
-// 전체 질문 모음
-const questions = ref<RoomQuestionList[]>();
+// const questions = ref<RoomQuestionList[]>();
 const manittoName = ref();
 const manittoAvatar = ref();
-// 방 아이디로 전체 질문 가져오기
-const getAllQuestions = async (): Promise<void> => {
-  try {
-    const response = await $api.question.getAllQuestionsByRoomUid(roomUid);
-    questions.value = response.data.room_question_list;
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 // 방 정보 상세 조회
 const getRoomDetail = async (): Promise<void> => {
@@ -195,22 +184,22 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
     console.error(error);
   }
 };
-
 const saveImage = async (): Promise<void> => {
   const el = document.getElementById('image');
+  const element = el as unknown as HTMLElement;
   if (el !== null) {
-    const element = el as unknown as HTMLElement;
-    const dataUrl = await htmlToImage.toPng(element, {
-      backgroundColor: 'white',
-      skipFonts: true,
-    });
-
-    download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+    try {
+      const dataUrl = await htmlToImage.toPng(element, {
+        backgroundColor: 'white',
+        skipFonts: true,
+      });
+      download(dataUrl, `마니또 ${manittoName.value}의 답변.png`, 'image/png');
+    } catch (error) {
+      console.error(error);
+    }
   }
 };
-
 onMounted(async () => {
-  await getAllQuestions();
   await getRoomDetail();
   await getMyManitto();
   await getAllMyManittoFeedAnswers();

@@ -23,7 +23,7 @@ class QuestionModule extends HttpFactory {
   ): Promise<IRegistQuestionToRoomResponse> {
     return await this.otherCall<IRegistQuestionToRoomResponse>(
       'POST',
-      `${this.RESOURCE}/${roomUid.roomUid}`,
+      `${this.RESOURCE}/${roomUid.room_uid}`,
       roomUid,
     );
   }
