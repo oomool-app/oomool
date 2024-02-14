@@ -78,7 +78,8 @@
                 <AlertDialogHeader class="flex-col flex items-center">
                   <AlertDialogDescription>
                     <div
-                      class="w-full image flex justify-center flex-col items-center"
+                      id="image"
+                      class="w-full flex justify-center flex-col items-center"
                     >
                       <div
                         v-for="(item, index) in result"
@@ -196,23 +197,15 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
 };
 
 const saveImage = async (): Promise<void> => {
-  const el: HTMLCollectionOf<Element> =
-    document.getElementsByClassName('image');
+  const el = document.getElementById('image');
   if (el !== null) {
-    for (let i = 0; i < el.length; i++) {
-      const element = el[i] as HTMLElement;
-      htmlToImage
-        .toPng(element, {
-          backgroundColor: 'white',
-          skipFonts: true,
-        })
-        .then(function (dataUrl) {
-          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-    }
+    const element = el as unknown as HTMLElement;
+    const dataUrl = await htmlToImage.toPng(element, {
+      backgroundColor: 'white',
+      skipFonts: true,
+    });
+
+    download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
   }
 };
 
