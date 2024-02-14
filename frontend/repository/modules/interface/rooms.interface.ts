@@ -18,7 +18,7 @@ export interface IGetRoomDetailResponse {
 
 export interface IGetRoomUidResponse {
   data: {
-    roomUid: string;
+    room_uid: string;
   };
   status: string;
 }
