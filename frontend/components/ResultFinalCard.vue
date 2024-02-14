@@ -17,7 +17,7 @@
     >
       <div
         v-if="
-          $props.result.content === null || props.result.content === undefined
+          props.result.content === null || props.result.content === undefined
         "
       >
         <p class="text-center mt-4 mb-4 font-semibold">
@@ -47,7 +47,7 @@
         />
       </div>
       <div
-        v-else-if="
+        v-if="
           props.result.content !== null &&
           props.result.feed_image_dto_list !== null &&
           props.result.feed_image_dto_list !== undefined
@@ -56,7 +56,7 @@
         <p class="text-center mt-4 mb-4 font-semibold">
           A. {{ props.result.content }}
         </p>
-        <img class="w-full h-auto rounded-lg" :src="`${url}`" alt="" />
+        <img class="w-full h-auto rounded-lg" :src="url" alt="" />
       </div>
     </div>
   </div>
@@ -69,7 +69,10 @@ const props = defineProps<{
   index: number;
 }>();
 const url = ref();
-if (props.result.feed_image_dto_list !== undefined) {
-  url.value = props.result.feed_image_dto_list;
+if (
+  props.result.feed_image_dto_list !== undefined &&
+  props.result.feed_image_dto_list?.length > 0
+) {
+  url.value = props.result.feed_image_dto_list[0].url;
 }
 </script>
