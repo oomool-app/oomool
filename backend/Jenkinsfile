@@ -10,10 +10,6 @@ pipeline {
     }
 
     parameters {
-        string(name: 'GIT_URL'
-                , defaultValue: 'https://lab.ssafy.com/s10-webmobile2-sub2/S10P12A809'
-                , description: 'git url')
-        string(name: 'BRANCH_NAME', defaultValue: 'dev/be', description: 'branch name to clone')
         string(name: 'DOCKER_NETWORK', defaultValue: 'npm-network', description: 'docker network name')
         string(name: 'IMAGE_NAME', defaultValue: 'oomool-dev-be', description: 'docker image name')
         string(name: 'MATTERMOST_ENDPOINT'
@@ -36,23 +32,6 @@ pipeline {
                     env.BACKEND_URL = params.ENV_TYPE == 'prod'
                             ? 'https://api.oomool.site'
                             : 'https://api-dev.oomool.site'
-                }
-            }
-        }
-
-        stage('Checkout') {
-            steps {
-                git branch: "${params.BRANCH_NAME}",
-                        credentialsId: 'oomool-gitlab-user',
-                        url: "${params.GIT_URL}"
-            }
-
-            post {
-                success {
-                    sh 'echo "Repository Cloned Successfully"'
-                }
-                failure {
-                    sh 'echo "Clone Repository Failed"'
                 }
             }
         }
