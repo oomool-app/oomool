@@ -226,18 +226,25 @@ const sortByCreatedatTemp = (): void => {
       new Date(a.created_at as string).getTime(),
   );
 };
+
 // 로그아웃
 const logout = async (): Promise<void> => {
-  try {
-    if (confirm('정말 로그아웃 하시겠습니까?')) {
-      // 사용자 스토어에서 사용자 정보를 제거합니다.
-      userStore.removeUser();
+  if (confirm('정말 로그아웃 하시겠습니까?')) {
+    // 사용자 정보를 제거합니다.
+    localStorage.removeItem('user');
+    userStore.user = null;
 
-      // 로그인 페이지로 이동합니다.
-      await router.push('/login');
+    // 푸시알림 토큰 삭제 API 호출
+    if (token.value !== '') {
+      await $api.pushNotifications.removeFcmToken({ fcmToken: token.value });
     }
-  } catch (error) {
-    console.error('Error while logging out:', error);
+
+    // 쿠키 제거
+    const accessToken = useCookie('accessToken');
+    accessToken.value = null;
+
+    // 로그인 페이지로 이동합니다.
+    await router.push('/login');
   }
 };
 
@@ -267,6 +274,9 @@ const saveToken = async (): Promise<void> => {
       user_id: storedUser.id,
       token: token.value,
     };
+
+    userStore.setFcmToken(token.value);
+
     console.log(tokens);
     const response = await $api.pushNotifications.saveToken(tokens);
     console.log(response.data);
