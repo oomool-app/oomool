@@ -202,30 +202,24 @@ function filter(node: any) {
 const saveImage = async (): Promise<void> => {
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
-
-  htmlToImage
-    .toSvg(element, { filter, skipFonts: true })
-    .then(function (dataUrl) {
-      /* do something */
-      if (el !== null) {
-        htmlToImage
-          .toPng(element, {
-            backgroundColor: 'white',
-            skipFonts: true,
-          })
-          .then(function (dataUrl) {
-            download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
-          })
-          .catch(function (error) {
-            console.error(error);
-          });
-      }
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
+  if (el !== null) {
+    htmlToImage
+      .toPng(element, {
+        backgroundColor: 'white',
+        skipFonts: true,
+      })
+      .then(function (dataUrl) {
+        console.log('변환완료');
+        const imgDownload = (): void => {
+          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+        };
+        setTimeout(imgDownload, 1000);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
 };
-
 onMounted(async () => {
   await getAllQuestions();
   await getRoomDetail();
