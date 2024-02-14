@@ -32,6 +32,9 @@ pipeline {
                     env.BACKEND_URL = params.ENV_TYPE == 'prod'
                             ? 'https://api.oomool.site'
                             : 'https://api-dev.oomool.site'
+                    env.DOCKER_PORT = params.ENV_TYPE == 'prod'
+                            ? '8888'
+                            : '8080'
                 }
             }
         }
@@ -135,7 +138,7 @@ pipeline {
                 --name ${params.IMAGE_NAME} \
                 --env-file env.list \
                 --network ${params.DOCKER_NETWORK} \
-                -d -p 8080:8080 \
+                -d -p ${env.DOCKER_PORT}:8080 \
                 ${params.IMAGE_NAME}
                 """
             }
