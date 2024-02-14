@@ -30,5 +30,11 @@ export const useUserStore = defineStore({
         return null;
       }
     },
+    removeUser(): void {
+      this.user = null;
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('user');
+      }
+    },
   },
 });
