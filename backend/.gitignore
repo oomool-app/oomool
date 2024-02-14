@@ -416,5 +416,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-application-*.yml
+application-local.yml
 admin_sdk.json
