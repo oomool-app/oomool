@@ -4,8 +4,11 @@
       <!--로고-->
       <img src="/img/logo.png" class="pl-4 w-40 h-auto" />
 
-      <!--알림-->
-      <MessageButton class="pr-3"></MessageButton>
+      <!--알림, 로그아웃-->
+      <div class="flex flex-row justify-between w-24 pr-4">
+        <MessageButton class="pl-1 pt-0.5"></MessageButton>
+        <LogoutButton @click="logout"></LogoutButton>
+      </div>
     </div>
 
     <!--방 만들기, 방 참여하기 버튼 -->
@@ -222,6 +225,20 @@ const sortByCreatedatTemp = (): void => {
       new Date(b.created_at as string).getTime() -
       new Date(a.created_at as string).getTime(),
   );
+};
+// 로그아웃
+const logout = async (): Promise<void> => {
+  try {
+    if (confirm('정말 로그아웃 하시겠습니까?')) {
+      // 사용자 스토어에서 사용자 정보를 제거합니다.
+      userStore.removeUser();
+
+      // 로그인 페이지로 이동합니다.
+      await router.push('/login');
+    }
+  } catch (error) {
+    console.error('Error while logging out:', error);
+  }
 };
 
 const isSupported = (): boolean => {
