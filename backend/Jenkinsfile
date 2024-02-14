@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        GIT_URL = 'https://lab.ssafy.com/s10-webmobile2-sub2/S10P12A809'
         DB_PASSWORD = credentials('db-password')
         REDIS_PASSWORD = credentials('redis-password')
         JWT_SECRET = credentials('jwt-secret')
@@ -92,8 +91,8 @@ pipeline {
             steps {
                 sh 'echo "Docker Rm Start"'
                 sh """
-                docker ps -a -q --filter "name=${params.IMAGE_NAME}" \\
-                    | grep -q . && docker stop ${params.IMAGE_NAME} && docker rm ${params.IMAGE_NAME} \\
+                docker ps -a -q --filter "name=${params.IMAGE_NAME}" \
+                    | grep -q . && docker stop ${params.IMAGE_NAME} && docker rm ${params.IMAGE_NAME} \
                     | true
                 docker rmi -f ${params.IMAGE_NAME}
                 """
@@ -129,22 +128,32 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "echo JWT_SECRET=${env.JWT_SECRET} > env.list"
-                sh "echo REDIS_HOST=${env.REDIS_HOST} >> env.list"
-                sh "echo REDIS_PORT=${env.REDIS_PORT} >> env.list"
-                sh "echo REDIS_USERNAME=${env.REDIS_USERNAME} >> env.list"
-                sh "echo REDIS_PASSWORD=${env.REDIS_PASSWORD} >> env.list"
-                sh "echo IMGBB_SECRET=${env.IMGBB_SECRET} >> env.list"
-                sh "echo DB_NAME=${env.DB_NAME} >> env.list"
-                sh "echo FRONTEND_URL=${env.FRONTEND_URL} >> env.list"
-                sh "echo DB_DRIVER=${env.DB_DRIVER} >> env.list"
-                sh "echo DB_URL=${env.DB_URL} >> env.list"
-                sh "echo DB_USERNAME=${env.DB_USERNAME} >> env.list"
-                sh "echo DB_PASSWORD=${env.DB_PASSWORD} >> env.list"
-                sh "echo KAKAO_CLIENT_ID=${env.KAKAO_CLIENT_USR} >> env.list"
-                sh "echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PWD} >> env.list"
+                sh """
+                echo JWT_SECRET=${env.JWT_SECRET} > env.list
+                echo REDIS_HOST=${env.REDIS_HOST} >> env.list
+                echo REDIS_PORT=${env.REDIS_PORT} >> env.list
+                echo REDIS_USERNAME=${env.REDIS_USERNAME} >> env.list
+                echo REDIS_PASSWORD=${env.REDIS_PASSWORD} >> env.list
+                echo IMGBB_SECRET=${env.IMGBB_SECRET} >> env.list
+                echo FRONTEND_URL=${env.FRONTEND_URL} >> env.list
+                echo DB_DRIVER=${env.DB_DRIVER} >> env.list
+                echo DB_URL=${env.DB_URL} >> env.list
+                echo DB_PORT=${env.DB_PORT} >> env.list
+                echo DB_NAME=${env.DB_NAME} >> env.list
+                echo DB_USERNAME=${env.DB_USERNAME} >> env.list
+                echo DB_PASSWORD=${env.DB_PASSWORD} >> env.list
+                echo KAKAO_CLIENT_ID=${env.KAKAO_CLIENT_USR} >> env.list
+                echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PWD} >> env.list
+                """
 
-                sh "docker run --name ${params.IMAGE_NAME} --env-file env.list --network ${params.DOCKER_NETWORK} -d -p 8080:8080 ${params.IMAGE_NAME}"
+                sh """
+                docker run \
+                --name ${params.IMAGE_NAME} \
+                --env-file env.list \
+                --network ${params.DOCKER_NETWORK} \
+                -d -p 8080:8080 \
+                ${params.IMAGE_NAME}
+                """
             }
 
             post {
@@ -162,10 +171,10 @@ pipeline {
     post {
         success {
             script {
-                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
-                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+                def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
                 mattermostSend(color: 'good',
-                        message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                        message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
                         endpoint: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c',
                         channel: 'A809-Alert'
                 )
@@ -173,10 +182,10 @@ pipeline {
         }
         failure {
             script {
-                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
-                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+                def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
                 mattermostSend(color: 'danger',
-                        message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                        message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
                         endpoint: "${params.MATTERMOST_ENDPOINT}",
                         channel: "${params.MATTERMOST_CHANNEL}"
                 )
