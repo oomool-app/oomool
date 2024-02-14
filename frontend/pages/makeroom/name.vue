@@ -54,6 +54,10 @@ const check = (e: any): void => {
     e.preventDefault();
   }
 };
+
+onBeforeMount(() => {
+  store.resetSetting();
+});
 </script>
 <style scoped>
 .box {
