@@ -143,6 +143,7 @@ const endDate = ref();
 const questions = ref<RoomQuestionList[]>();
 const manittoName = ref();
 const manittoAvatar = ref();
+
 // 방 아이디로 전체 질문 가져오기
 const getAllQuestions = async (): Promise<void> => {
   try {
@@ -206,13 +207,17 @@ const saveImage = async (): Promise<void> => {
       })
       .then(function (dataUrl) {
         console.log('변환완료');
-        const imgDownload = (): void => {
-          download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
-          setTimeout(() => {
-            alert('이미지 다운로드 완료!');
-          }, 3000);
-        };
-        imgDownload();
+        const img = new Image();
+        img.src = dataUrl;
+        download(img.src, `마니또 ${manittoName.value}의 답변.png`);
+        // const imgDownload = (): void => {
+        //   download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+        //   setTimeout(() => {
+        //     alert('이미지 다운로드 완료!');
+        //   }, dataUrl.length / 200);
+        //   console.log(dataUrl.length);
+        // };
+        // imgDownload();
       })
       .catch(function (error) {
         console.error(error);
