@@ -29,7 +29,6 @@ import com.oomool.api.global.util.CustomDateUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GameRoomServiceImpl implements GameRoomService {
 

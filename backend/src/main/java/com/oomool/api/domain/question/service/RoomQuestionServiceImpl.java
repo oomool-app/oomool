@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.oomool.api.domain.question.dto.DailyQuestionDto;
 import com.oomool.api.domain.question.dto.RoomQuestionFeedDto;
@@ -27,7 +26,6 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RoomQuestionServiceImpl implements RoomQuestionService {
 
