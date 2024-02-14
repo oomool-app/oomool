@@ -195,10 +195,6 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
     console.error(error);
   }
 };
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function filter(node: any) {
-  return node.tagName !== 'i';
-}
 const saveImage = async (): Promise<void> => {
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
@@ -213,7 +209,7 @@ const saveImage = async (): Promise<void> => {
         const imgDownload = (): void => {
           download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
         };
-        setTimeout(imgDownload, 1000);
+        imgDownload();
       })
       .catch(function (error) {
         console.error(error);

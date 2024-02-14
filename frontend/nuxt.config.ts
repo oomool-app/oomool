@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@pinia/nuxt',
     'nuxt-vuefire',
+    '@nuxt/image',
   ],
   plugins: ['@/plugins/messages.client.ts', '@/plugins/api.ts'],
   shadcn: {
