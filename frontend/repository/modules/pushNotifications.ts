@@ -2,8 +2,6 @@ import HttpFactory from '../factory';
 import {
   type ISaveTokenInput,
   type ISaveTokenResponse,
-  type IRemoveFcmTokenInput,
-  type IRemoveFcmTokenResponse,
 } from './interface/pushNotifications.interface';
 
 class PushNotificationModule extends HttpFactory {
@@ -14,16 +12,6 @@ class PushNotificationModule extends HttpFactory {
       'POST',
       `${this.RESOURCE}/token`,
       tokens,
-    );
-  }
-
-  async removeFcmToken(
-    token: IRemoveFcmTokenInput,
-  ): Promise<IRemoveFcmTokenResponse> {
-    return await this.otherCall<IRemoveFcmTokenResponse>(
-      'DELETE',
-      `${this.RESOURCE}/token/${token.fcmToken}`,
-      token,
     );
   }
 }
