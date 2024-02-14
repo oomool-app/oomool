@@ -68,7 +68,9 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         // [임시 - StartCheck] - 대기방에서 시작 여부를 체킹
         redisService.saveValueOperation(TempRoomPrefix.START_CHECK + inviteCode, roomUid);
-        emitterService.notify(inviteCode, roomUid);
+        emitterService.notify(inviteCode,
+            Map.of("event_type", "createGame",
+                "room_uid", roomUid));
 
         // Player Entity 객체로 변환
         for (PlayerDto playerDto : playerDtoList) {
@@ -89,7 +91,7 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         // 생성된 문답방 코드 return
         return Map.of(
-            "roomUid", roomUid,
+            "room_uid", roomUid,
             "message", inviteCode + " 대기방이 삭제되었습니다."
         );
     }

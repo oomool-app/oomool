@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmitterService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60; // 1HOUR
     private final EmitterRepository emitterRepository;
 
     /**
