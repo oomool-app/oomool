@@ -208,6 +208,9 @@ const saveImage = async (): Promise<void> => {
         console.log('변환완료');
         const imgDownload = (): void => {
           download(dataUrl, `마니또 ${manittoName.value}의 답변.png`);
+          setTimeout(() => {
+            alert('이미지 다운로드 완료!');
+          }, 3000);
         };
         imgDownload();
       })
