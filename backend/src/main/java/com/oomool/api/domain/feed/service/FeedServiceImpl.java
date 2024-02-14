@@ -158,12 +158,12 @@ public class FeedServiceImpl implements FeedService {
         // Notification에 답변 저장
         // Notification에는 피드 답변 내용을 저장
         NotificationSaveRequestDto notificationSaveRequestDto = new NotificationSaveRequestDto(manittiId,
-            NotificationType.SYSTEM, gameRoom.getRoomUid(), gameRoom.getTitle(), content);
+            NotificationType.WRITE_FEED, gameRoom.getRoomUid(), gameRoom.getTitle(), content);
 
         notificationService.saveNotification(notificationSaveRequestDto);
 
         // 마니띠에게 push 알림 보내기
-        // 알림에는 내 마니또가 답변을 등록했어요!를 저장 
+        // 알림에는 내 마니또가 답변을 등록했어요!를 저장
         PushNotificationDto pushNotificationDto = new PushNotificationDto(manittiId, gameRoom.getTitle(),
             "내 마니또가 답변을 등록했어요!");
 
