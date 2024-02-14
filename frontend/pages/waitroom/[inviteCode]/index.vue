@@ -330,7 +330,7 @@ const createRoom = async (): Promise<void> => {
     if (input.value !== undefined) {
       roomData.value = await $api.rooms.createRoom(input.value);
       roomId.value = {
-        roomUid: roomData.value.data.roomUid,
+        room_uid: roomData.value.data.room_uid,
       };
       await $api.question.registQuestionToRoom(roomId.value);
     }
