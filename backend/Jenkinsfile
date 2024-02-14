@@ -33,6 +33,9 @@ pipeline {
                     env.FRONTEND_URL = params.ENV_TYPE == 'prod'
                             ? 'https://oomool.site'
                             : 'https://dev.oomool.site'
+                    env.BACKEND_URL = params.ENV_TYPE == 'prod'
+                            ? 'https://api.oomool.site'
+                            : 'https://api-dev.oomool.site'
                 }
             }
         }
@@ -145,6 +148,7 @@ pipeline {
                 echo KAKAO_CLIENT_ID=${env.KAKAO_CLIENT_USR} >> env.list
                 echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PSW} >> env.list
                 echo FILE_PATH=${env.FILE_PATH} >> env.list
+                echo BACKEND_URL=${env.BACKEND_URL} >> env.list
                 """
 
                 sh """
