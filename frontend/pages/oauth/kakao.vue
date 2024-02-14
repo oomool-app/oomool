@@ -23,6 +23,7 @@ onBeforeMount(async () => {
   const previousPage = sessionStorage.getItem(nowPageKey.value);
   if (previousPage !== null) {
     await router.push(previousPage);
+    sessionStorage.removeItem(nowPageKey.value);
   } else {
     await router.push('/');
   }
