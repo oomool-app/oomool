@@ -197,6 +197,27 @@ const checkNicknameValidity = (): boolean => {
   return true;
 };
 
+const nowPageKey = ref<string>('');
+// 이전 페이지 URL 저장
+const savePreviousPageUrl = (): void => {
+  sessionStorage.setItem(nowPageKey.value, route.fullPath);
+};
+
+// 로그인 체크
+const checkLogin = async (): Promise<void> => {
+  try {
+    const storedUser = userStore.getStoredUser();
+
+    if (storedUser == null) {
+      // 이전 페이지 URL 저장
+      savePreviousPageUrl();
+      await router.push({ path: '/login' });
+    }
+  } catch (error) {
+    console.error('Error while fetching room list:', error);
+  }
+};
+
 const setting = async (): Promise<void> => {
   if (!checkNicknameValidity()) {
     return;
@@ -211,6 +232,7 @@ const setting = async (): Promise<void> => {
 };
 
 onBeforeMount(async () => {
+  await checkLogin();
   await getWaitroomInfo();
 });
 </script>

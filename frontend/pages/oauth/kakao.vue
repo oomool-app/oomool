@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+const nowPageKey = ref<string>('');
 const route = useRoute();
 const userStore = useUserStore();
 const router = useRouter();
@@ -19,7 +20,12 @@ onBeforeMount(async () => {
     name: route.query.username as string,
   });
 
-  await router.push('/');
+  const previousPage = sessionStorage.getItem(nowPageKey.value);
+  if (previousPage !== undefined) {
+    await router.push('previousPage');
+  } else {
+    await router.push('/');
+  }
 });
 
 onErrorCaptured((error) => {
