@@ -33,7 +33,7 @@ pipeline {
                             ? 'https://api.oomool.site'
                             : 'https://api-dev.oomool.site'
                     env.DOCKER_PORT = params.ENV_TYPE == 'prod'
-                            ? '8888'
+                            ? '8008'
                             : '8080'
                 }
             }
