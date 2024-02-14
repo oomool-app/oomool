@@ -164,23 +164,29 @@ const updateSetting = async (e: any): Promise<void> => {
     return;
   }
   if (typeof inviteCode === 'string') {
-    const roomSetting = ref<IUpdateSettingInput>();
+    getWaitRoomData.value = await $api.make.getWaitRoom(inviteCode);
     if (
-      name.value !== undefined &&
-      type.value !== undefined &&
-      number.value !== undefined &&
-      range.value !== undefined
+      name.value === undefined ||
+      type.value === undefined ||
+      number.value === undefined ||
+      range.value === undefined
     ) {
-      roomSetting.value = {
-        title: name.value,
-        start_date: makeStore.formatDate(range.value.start),
-        end_date: makeStore.formatDate(range.value.end),
-        question_type: type.value,
-        max_member: number.value,
-      };
-      await $api.make.updateRoomSetting(inviteCode, roomSetting.value);
-      await router.push(`/waitroom/${inviteCode}`);
+      return;
     }
+    if (getWaitRoomData.value.data.players.length > number.value) {
+      alert('인원수를 현재 인원수보다 적게 설정해주세요!');
+      return;
+    }
+    const roomSetting = ref<IUpdateSettingInput>();
+    roomSetting.value = {
+      title: name.value,
+      start_date: makeStore.formatDate(range.value.start),
+      end_date: makeStore.formatDate(range.value.end),
+      question_type: type.value,
+      max_member: number.value,
+    };
+    await $api.make.updateRoomSetting(inviteCode, roomSetting.value);
+    await router.push(`/waitroom/${inviteCode}`);
   }
 };
 </script>
