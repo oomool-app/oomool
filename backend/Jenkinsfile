@@ -113,7 +113,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'echo " Image Bulid Start"'
-                    sh "docker build . -t ${params.IMAGE_NAME}"
+                    sh "docker build --build-arg SPRING_PROFILES_ACTIVE=${params.ENV_TYPE} -t ${params.IMAGE_NAME} ."
                 }
             }
             post {
@@ -132,7 +132,6 @@ pipeline {
                 sh """
                 docker run \\
                     --name ${params.IMAGE_NAME} \\ 
-                    --build-arg SPRING_PROFILES_ACTIVE=${params.ENV_TYPE} \\
                     --network ${params.DOCKER_NETWORK} \\
                     -d -p 8080:8080 ${params.IMAGE_NAME}
                 """
