@@ -23,7 +23,7 @@ class PushNotificationModule extends HttpFactory {
     return await this.otherCall<IRemoveFcmTokenResponse>(
       'DELETE',
       `${this.RESOURCE}/token/${token.fcmToken}`,
-      token,
+      {},
     );
   }
 }
