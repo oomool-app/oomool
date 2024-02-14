@@ -97,4 +97,9 @@ public interface TempRoomService {
      *
      * */
     SseEmitter connection(String inviteCode);
+
+    /**
+     * publish Event Message
+     * */
+    void publishPlayerEvent(String inviteCode, PlayerDto playerDto, String eventType);
 }
