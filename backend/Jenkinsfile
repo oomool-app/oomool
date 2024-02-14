@@ -1,0 +1,183 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_URL = 'https://lab.ssafy.com/s10-webmobile2-sub2/S10P12A809'
+        DB_PASSWORD = credentials('db-password')
+        REDIS_PASSWORD = credentials('redis-password')
+        JWT_SECRET = credentials('jwt-secret')
+        IMGBB_SECRET = credentials('imgbb-secret')
+
+    }
+
+    parameters {
+        string(name: 'GIT_URL'
+                , defaultValue: 'https://lab.ssafy.com/s10-webmobile2-sub2/S10P12A809'
+                , description: 'git url')
+        string(name: 'BRANCH_NAME', defaultValue: 'dev/be', description: 'branch name to clone')
+        string(name: 'DOCKER_NETWORK', defaultValue: 'npm-network', description: 'docker network name')
+        string(name: 'IMAGE_NAME', defaultValue: 'oomool-dev-be', description: 'docker image name')
+        string(name: 'MATTERMOST_ENDPOINT'
+                , defaultValue: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c'
+                , description: 'mattermost hooks endpoint')
+        string(name: 'MATTERMOST_CHANNEL', defaultValue: 'A809-Alert', description: 'mattermost channel name')
+        choice(name: 'ENV_TYPE', choices: ['dev', 'prod'], description: 'Choose the environment type')
+    }
+
+    stages {
+        stage('Environment Setup') {
+            steps {
+                script {
+                    env.DB_NAME = params.ENV_TYPE == 'prod'
+                            ? 'oomool'
+                            : 'oomool-dev'
+                    env.FRONTEND_URL = params.ENV_TYPE == 'prod'
+                            ? 'https://oomool.site'
+                            : 'https://dev.oomool.site'
+                }
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                git branch: "${params.BRANCH_NAME}",
+                        credentialsId: 'oomool-gitlab-user',
+                        url: "${params.GIT_URL}"
+            }
+
+            post {
+                success {
+                    sh 'echo "Repository Cloned Successfully"'
+                }
+                failure {
+                    sh 'echo "Clone Repository Failed"'
+                }
+            }
+        }
+
+        stage('admin_sdk.json') {
+            steps {
+                configFileProvider([configFile(fileId: 'firebase-admin-sdk', variable: 'properties')]) {
+                    script {
+                        dir('backend/src/main/resources/firebase') {
+                            sh 'cp $properties admin_sdk.json'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    // gralew이 있어야됨. git clone해서 project를 가져옴.
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build'
+
+                    sh 'ls -al ./build'
+                }
+            }
+            post {
+                success {
+                    echo 'gradle build success'
+                }
+
+                failure {
+                    echo 'gradle build failed'
+                }
+            }
+        }
+
+        stage('Docker Rm') {
+            steps {
+                sh 'echo "Docker Rm Start"'
+                sh """
+                docker ps -a -q --filter "name=${params.IMAGE_NAME}" \\
+                    | grep -q . && docker stop ${params.IMAGE_NAME} && docker rm ${params.IMAGE_NAME} \\
+                    | true
+                docker rmi -f ${params.IMAGE_NAME}
+                """
+            }
+
+            post {
+                success {
+                    sh 'echo "Docker Rm Success"'
+                }
+                failure {
+                    sh 'echo "Docker Rm Fail"'
+                }
+            }
+        }
+
+        stage('Dockerizing') {
+            steps {
+                dir('backend') {
+                    sh 'echo " Image Bulid Start"'
+                    sh "docker build . -t ${params.IMAGE_NAME}"
+                }
+            }
+            post {
+                success {
+                    sh 'echo "Bulid Docker Image Success"'
+                }
+
+                failure {
+                    sh 'echo "Bulid Docker Image Fail"'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh """
+                docker run \\
+                    --name ${params.IMAGE_NAME} \\ 
+                    --build-arg SPRING_PROFILES_ACTIVE=${params.ENV_TYPE} \\
+                    --network ${params.DOCKER_NETWORK} \\
+                    -d -p 8080:8080 ${params.IMAGE_NAME}
+                """
+            }
+
+            post {
+                success {
+                    echo 'docker run success'
+                }
+
+                failure {
+                    echo 'docker run failed'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend(color: 'good',
+                        message: """
+                        빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} \\
+                            by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)
+                        """,
+                        endpoint: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c',
+                        channel: 'A809-Alert'
+                )
+            }
+        }
+        failure {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend(color: 'danger',
+                        message: """
+                        빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} \\
+                            by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)
+                        """,
+                        endpoint: "${params.MATTERMOST_ENDPOINT}",
+                        channel: "${params.MATTERMOST_CHANNEL}"
+                )
+            }
+        }
+    }
+}
