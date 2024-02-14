@@ -21,8 +21,8 @@ onBeforeMount(async () => {
   });
 
   const previousPage = sessionStorage.getItem(nowPageKey.value);
-  if (previousPage !== undefined) {
-    await router.push('previousPage');
+  if (previousPage !== null) {
+    await router.push(previousPage);
   } else {
     await router.push('/');
   }
