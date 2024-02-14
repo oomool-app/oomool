@@ -9,7 +9,7 @@
           class="relative flex h-32 w-32 px-1 py-3 justify-center rounded-full border-solid border-2 border-[#6D6D6D]"
           :style="{ backgroundColor: randomColor }"
         >
-          <img :src="randomAvatar" alt="프로필 아바타" />
+          <img :src="randomAvatar" alt="프로필 아바타" class="h-24 w-auto" />
           <RandomButton
             class="absolute right-0 bottom-0"
             @click="changeRandom"
@@ -34,7 +34,7 @@
           required
         />
         <h1 class="pt-1 pb-5 text-xs font-bold flex justify-start text-primary">
-          중복, 공백을 포함한 6글자 이내의 영문, 한글, 숫자
+          공백을 포함한 6글자 이내의 영문, 한글, 숫자
         </h1>
       </div>
     </div>
@@ -156,28 +156,18 @@ const join = async (): Promise<void> => {
   }
 };
 
-// 닉네임 유효성 검사
-const checkNicknameValidity = (): boolean => {
+// 닉네임 중복 검사
+const checkNicknameUnique = (): boolean => {
   if (waitroom.value.players == null || waitroom.value.players === undefined) {
-    return true; // waitroom 정보가 없으면 닉네임 유효성 검사를 통과하도록 처리
+    return true;
   } else {
     const existingUserNicknames: string[] = (waitroom.value?.players ?? []).map(
       (player: any) => player.player_nickname,
     );
 
-    const isNicknameValid: boolean = /^[a-zA-Z0-9가-힣]{1,6}$/.test(
-      nickname.value as string,
-    );
-
     const isNicknameUnique: boolean = !existingUserNicknames.includes(
       String(nickname.value ?? ''),
     );
-    if (!isNicknameValid) {
-      alert(
-        '유효하지 않은 닉네임입니다. 6글자 이내의 영문, 한글, 숫자만 입력 가능합니다.',
-      );
-      return false;
-    }
 
     if (!isNicknameUnique) {
       alert('이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.');
@@ -187,12 +177,35 @@ const checkNicknameValidity = (): boolean => {
   return true;
 };
 
+// 닉네임 유효성 검사
+const checkNicknameValidity = (): boolean => {
+  const isNicknameValid: boolean = /[a-zA-Z0-9가-힣]{1,6}$/.test(
+    nickname.value as string,
+  );
+
+  if (nickname.value === '') {
+    alert('닉네임을 입력해주세요');
+    return false;
+  }
+
+  if (!isNicknameValid) {
+    alert(
+      '유효하지 않은 닉네임입니다. 6글자 이내의 영문, 한글, 숫자만 입력 가능합니다.',
+    );
+    return false;
+  }
+  return true;
+};
+
 const setting = async (): Promise<void> => {
   if (!checkNicknameValidity()) {
-    console.log('유효하지 않습니다');
     return;
   }
-  console.log('유효합니다');
+
+  if (!checkNicknameUnique()) {
+    return;
+  }
+
   userInfo.value = userStore.getStoredUser();
   await join();
 };
