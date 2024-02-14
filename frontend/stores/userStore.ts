@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-const { $api } = useNuxtApp();
 
 interface User {
   id: number;
@@ -11,7 +10,6 @@ export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
     user: null as null | User,
-    fcmToken: '',
   }),
   actions: {
     // 사용자 정보를 설정하고 로컬 스토리지에 저장
@@ -20,9 +18,6 @@ export const useUserStore = defineStore({
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(user));
       }
-    },
-    setFcmToken(token: string): void {
-      this.fcmToken = token;
     },
     // 로컬 스토리지에서 사용자 정보 가져오기
     getStoredUser(): User | null {
@@ -35,26 +30,11 @@ export const useUserStore = defineStore({
         return null;
       }
     },
-    async removeUser(): Promise<void> {
+    removeUser(): void {
       this.user = null;
       if (typeof localStorage !== 'undefined') {
         localStorage.removeItem('user');
       }
-      const accessToken = useCookie('accessToken');
-      accessToken.value = null;
-      console.log(this.fcmToken);
-      // 푸시알림 토큰 삭제 api 호출
-      if (this.fcmToken !== null) {
-        try {
-          await $api.pushNotifications.removeFcmToken({
-            fcmToken: this.fcmToken,
-          });
-        } catch (error) {
-          console.error('Error while removing FCM token:', error);
-        }
-      }
-      this.fcmToken = '';
-      // this.fcmToken null값으로 바꿔
     },
   },
 });
