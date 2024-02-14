@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.constant.TempRoomPrefix;
+import com.oomool.api.domain.room.dto.PlayerEvent;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomBanRequestDto;
 import com.oomool.api.domain.room.dto.TempRoomDto;
@@ -29,6 +31,7 @@ public class TempRoomServiceImpl implements TempRoomService {
     private final RedisService redisService;
     private final TempRoomMapper tempRoomMapper;
     private final UserService userService;
+    private final EmitterService emitterService;
 
     @Override
     public Map<String, Object> createTempRoom(SettingOptionDto settingOptionDto, int masterUserId) {
@@ -87,6 +90,9 @@ public class TempRoomServiceImpl implements TempRoomService {
             TempRoomPrefix.PLAYERS + inviteCode);
         List<PlayerDto> playerDtoList = tempRoomMapper.objectToPlayerDtoList(totalPlayerMap);
 
+        // 4. 플레이어 입장 이벤트
+        publishPlayerEvent(inviteCode, playerDto, "join");
+
         return Map.ofEntries(Map.entry("players", playerDtoList));
     }
 
@@ -134,6 +140,12 @@ public class TempRoomServiceImpl implements TempRoomService {
             playerUserId ->
                 redisService.deleteSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + playerUserId, inviteCode));
 
+        // 방 이벤트
+        emitterService.notify(inviteCode, Map.of(
+            "event_type", "deleteRoom",
+            "message", inviteCode + " 방 삭제가 완료되었습니다."
+        ));
+
         // invite Code에 대한 정보를 삭제한다.
         redisService.deleteKey(TempRoomPrefix.SETTING_OPTION + inviteCode);
         redisService.deleteKey(TempRoomPrefix.PLAYERS + inviteCode);
@@ -149,11 +161,16 @@ public class TempRoomServiceImpl implements TempRoomService {
             throw new BaseException(StatusCode.FORBIDDEN, "플레이어는 방을 퇴장할 수 없습니다.");
         }
 
+        // 방장 퇴장 알림
+        Object playerJson = redisService.getHashOperation(TempRoomPrefix.PLAYERS + inviteCode, userId);
+
         // 1. 유저 기준 참여하고 있는 대기방 초대코드 삭제 (value가 초대코드)
         redisService.deleteSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + userId, inviteCode);
 
         // 2. 방 기준 - 참여 플레이어 삭제
         redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, userId);
+
+        publishPlayerEvent(inviteCode, tempRoomMapper.objectToPlayerDto(playerJson), "exit");
 
         return "퇴장이 완료되었습니다.";
     }
@@ -170,14 +187,14 @@ public class TempRoomServiceImpl implements TempRoomService {
 
         Object updatePlayerJson = redisService.getHashOperation(TempRoomPrefix.PLAYERS + inviteCode,
             requestUpdateProfileDto.getUserId());
+        publishPlayerEvent(inviteCode, tempRoomMapper.objectToPlayerDto(updatePlayerJson), "modify");
+
         return tempRoomMapper.objectToPlayerDto(updatePlayerJson);
     }
 
     @Override
     public SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto) {
-
-        // TODO :: 방장 검증
 
         Map<String, Object> requestUpdateSettingOptionMap = tempRoomMapper.settingRoomDtoToMap(
             requestUpdateSettingOptionDto);
@@ -189,7 +206,13 @@ public class TempRoomServiceImpl implements TempRoomService {
 
         Map<String, Object> updateSettingOptionMap = redisService.getHashOperationByString(
             TempRoomPrefix.SETTING_OPTION + inviteCode);
-        return tempRoomMapper.mapToSettingOptionDto(updateSettingOptionMap);
+        SettingOptionDto updateSettingOptionDto = tempRoomMapper.mapToSettingOptionDto(updateSettingOptionMap);
+
+        emitterService.notify(inviteCode,
+            Map.of("event_type", "modifyRoom",
+                "setting_option", updateSettingOptionDto));
+
+        return updateSettingOptionDto;
     }
 
     @Override
@@ -204,8 +227,13 @@ public class TempRoomServiceImpl implements TempRoomService {
         redisService.saveHashOperation(TempRoomPrefix.BAN_LIST + inviteCode, requestBanDto.banUserId(),
             tempRoomMapper.userDtoToString(banUserDto));
         // 플레이어 리스트에서 제외한다.
+        Object banPlayerJson = redisService.getHashOperation(TempRoomPrefix.PLAYERS + inviteCode,
+            requestBanDto.banUserId());
         redisService.deleteKeyOperation(TempRoomPrefix.PLAYERS + inviteCode, requestBanDto.banUserId());
         redisService.deleteSetOperation(TempRoomPrefix.USER_INVITE_TEMPROOM + requestBanDto.banUserId(), inviteCode);
+
+        publishPlayerEvent(inviteCode, tempRoomMapper.objectToPlayerDto(banPlayerJson), "exit"); // 이벤트는 퇴장처리
+
         return banUserDto.getUsername() + "님이 강제 퇴장되었습니다.";
     }
 
@@ -225,4 +253,22 @@ public class TempRoomServiceImpl implements TempRoomService {
         return redisService.getValueOperation(TempRoomPrefix.START_CHECK + inviteCode);
     }
 
+    @Override
+    public SseEmitter connection(String inviteCode) {
+        // emitter 구독
+        return emitterService.subscribe(inviteCode);
+    }
+
+    /**
+     * publish PlayerEvent
+     * */
+    @Override
+    public void publishPlayerEvent(String inviteCode, PlayerDto playerDto, String eventType) {
+        PlayerEvent playerEvent = PlayerEvent.builder()
+            .eventType(eventType)
+            .player(playerDto)
+            .dateTime(CustomDateUtil.convertDateTimeToString(LocalDateTime.now()))
+            .build();
+        emitterService.notify(inviteCode, playerEvent);
+    }
 }

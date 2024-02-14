@@ -2,6 +2,8 @@ package com.oomool.api.domain.room.service;
 
 import java.util.Map;
 
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import com.oomool.api.domain.player.dto.PlayerDto;
 import com.oomool.api.domain.room.dto.SettingOptionDto;
 import com.oomool.api.domain.room.dto.TempRoomBanRequestDto;
@@ -89,4 +91,15 @@ public interface TempRoomService {
      * @param inviteCode 초대코드
      * */
     String startCheck(String inviteCode);
+
+    /**
+     * SSE Start Connection
+     *
+     * */
+    SseEmitter connection(String inviteCode);
+
+    /**
+     * publish Event Message
+     * */
+    void publishPlayerEvent(String inviteCode, PlayerDto playerDto, String eventType);
 }
