@@ -143,7 +143,7 @@ pipeline {
                 echo DB_USERNAME=${env.DB_USERNAME} >> env.list
                 echo DB_PASSWORD=${env.DB_PASSWORD} >> env.list
                 echo KAKAO_CLIENT_ID=${env.KAKAO_CLIENT_USR} >> env.list
-                echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PWD} >> env.list
+                echo KAKAO_CLIENT_SECRET=${env.KAKAO_CLIENT_PSW} >> env.list
                 echo FILE_PATH=${env.FILE_PATH} >> env.list
                 """
 
