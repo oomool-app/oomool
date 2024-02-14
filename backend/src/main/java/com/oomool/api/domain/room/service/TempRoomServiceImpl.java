@@ -196,8 +196,6 @@ public class TempRoomServiceImpl implements TempRoomService {
     public SettingOptionDto modifyTempRoomSettingOption(String inviteCode,
         SettingOptionDto requestUpdateSettingOptionDto) {
 
-        // TODO :: 방장 검증
-
         Map<String, Object> requestUpdateSettingOptionMap = tempRoomMapper.settingRoomDtoToMap(
             requestUpdateSettingOptionDto);
         requestUpdateSettingOptionMap.forEach((settingKey, settingValue) -> {
@@ -273,5 +271,4 @@ public class TempRoomServiceImpl implements TempRoomService {
             .build();
         emitterService.notify(inviteCode, playerEvent);
     }
-
 }
