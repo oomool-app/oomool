@@ -23,6 +23,11 @@
         autocomplete="off"
         @input="changeInput"
       />
+      <h1
+        class="text-s pb-8 pt-3 pl-2 font-normal text-gray-500 flex justify-start"
+      >
+        10자 이내로 설정해주세요.
+      </h1>
       <div id="check" class="text-red-600 text-sm mt-2"></div>
     </div>
     <div class="flex justify-center items-end pb-6">
