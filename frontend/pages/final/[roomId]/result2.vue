@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div
+      v-if="isDownloaded"
+      class="w-full h-screen fixed flex flex-col justify-center items-center z-10 bg-gray-50 opacity-85"
+    >
+      <img src="/img/load.gif" alt="" />
+      <p class="mt-2 font-bold text-primary">이미지 저장 중입니다.</p>
+    </div>
     <div class="header flex justify-between p-6 pb-2">
       <BackButton color="#61339b"></BackButton>
       <NuxtLink to="/">
@@ -103,10 +110,6 @@
               <AlertDialogFooter class="flex">
                 <AlertDialogCancel>취소</AlertDialogCancel>
                 <AlertDialogAction @click="saveImage">저장</AlertDialogAction>
-                <AlertDialogAction @click="handleDownloadButtonClick"
-                  >테스트용1</AlertDialogAction
-                >
-                <AlertDialogAction @click="test2">테스트용2</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -134,10 +137,10 @@
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import * as htmlToImage from 'html-to-image';
-import download from 'downloadjs';
 import saveAs from 'file-saver';
 const { $api } = useNuxtApp();
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const roomUid = route.params.roomId as string;
 const roomName = ref();
@@ -189,59 +192,12 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
     console.error(error);
   }
 };
+
+const isDownloaded = ref(false);
+
+// 답변 이미지로 저장
 const saveImage = async (): Promise<void> => {
-  const el = document.getElementById('image');
-  const element = el as unknown as HTMLElement;
-  if (el !== null) {
-    try {
-      const dataUrl = await htmlToImage.toPng(element, {
-        quality: 0.5,
-        backgroundColor: 'white',
-        skipFonts: true,
-      });
-      setTimeout(() => {
-        download(
-          dataUrl,
-          `마니또 ${manittoName.value}의 답변.png`,
-          'image/png',
-        );
-      }, dataUrl.length / 250);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-};
-
-const dataUrl = ref('');
-
-const test1 = async (): Promise<string | null> => {
-  const el = document.getElementById('image');
-  const element = el as unknown as HTMLElement;
-  try {
-    dataUrl.value = await htmlToImage.toJpeg(element, {
-      quality: 0.5,
-      backgroundColor: 'white',
-    });
-    return dataUrl.value;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-const handleDownloadButtonClick = async (): Promise<void> => {
-  if (dataUrl.value !== null) {
-    download(
-      dataUrl.value,
-      `마니또 ${manittoName.value}의 답변.jpeg`,
-      'image/jpeg',
-    );
-  } else {
-    // 이미지 생성에 실패한 경우에 대한 처리
-  }
-};
-
-const test2 = async (): Promise<void> => {
+  isDownloaded.value = true;
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
   await htmlToImage
@@ -252,15 +208,16 @@ const test2 = async (): Promise<void> => {
     })
     .then(function (blob) {
       setTimeout(() => {
-        saveAs(blob, '테스트2.png');
-      }, 3000);
+        saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
+        isDownloaded.value = false;
+        router.go(0);
+      }, 1000);
     });
 };
 onMounted(async () => {
   await getRoomDetail();
   await getMyManitto();
   await getAllMyManittoFeedAnswers();
-  await test1();
 });
 </script>
 <style scoped>
