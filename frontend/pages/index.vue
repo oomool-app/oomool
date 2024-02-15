@@ -99,8 +99,8 @@
             <RoomCard :rooms="room"></RoomCard>
           </div>
         </div>
-        <div v-else-if="rooms?.length === 0 || temprooms?.length === 0">
-          <img src="/img/roomEmptyGhost.png" class="px-16 py-7" />
+        <div v-else-if="rooms === undefined || temprooms === undefined">
+          <img id="noroom" src="/img/roomEmptyGhost.png" class="px-16 py-7" />
         </div>
       </div>
     </div>
@@ -300,6 +300,11 @@ body {
 .bottom-container {
   animation: fade-in3 0.6s ease-in-out;
 }
+
+#noroom {
+  animation: fade-in3 0.6s ease-in-out;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -326,6 +331,7 @@ body {
 @keyframes fade-in3 {
   0% {
     opacity: 0;
+    transform: scale(0);
   }
 
   40% {
@@ -334,6 +340,7 @@ body {
 
   100% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 </style>
