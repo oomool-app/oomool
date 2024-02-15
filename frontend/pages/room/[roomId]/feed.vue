@@ -32,7 +32,7 @@
     </div>
     <div
       v-if="!fixHeader"
-      class="fixed top-20 flex justify-around text-center p-4 rounded-b-2xl drop-shadow-2xl bg-[#F1EBFC]"
+      class="w-full fixed top-20 flex justify-around text-center p-4 rounded-b-2xl drop-shadow-2xl bg-[#F1EBFC]"
     >
       <img
         class="w-12 h-14 mr-2"
