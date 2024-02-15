@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  mariadb:
+    container_name: "mariadb"
+    image: mariadb:latest
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    volumes:
+      - "/data/mariadb/conf.d:/etc/mysql/conf.d"
+      - "/data/mariadb/data:/var/lib/mysql"
+    environment:
+      MARIADB_DATABASE: oomool
+      MARIADB_ROOT_PASSWORD: $MARIADB_ROOT_PASSWORD
+    networks:
+      - npm-network
+      
+networks:
+  npm-network:
+    external: true
+    name: npm-network
