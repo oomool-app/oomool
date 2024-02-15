@@ -102,7 +102,7 @@ pipeline {
 
         stage('Dockerizing') {
           steps {
-            dir('backend') {
+            dir('frontend') {
               sh 'echo " Image Bulid Start"'
               sh "docker build -t ${params.IMAGE_NAME} ."
             }
