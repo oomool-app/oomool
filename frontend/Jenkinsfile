@@ -45,16 +45,16 @@ pipeline {
             script {
               dir('frontend') {
                 sh '''
-                  echo NUXT_PUBLIC_OOMOOL_API_URL=$BACKEND_URL
-                  echo NUXT_PUBLIC_OOMOOL_SITE_URL=$FRONTEND_URL
-                  echo NUXT_PUBLIC_FIREBASE_FCM_VAPID_KEY=$FIREBASE_FCM_VAPID_KEY
-                  echo FIREBASE_API_KEY=$FIREBASE_API_KEY
-                  echo FIREBASE_AUTH_DOMAIN=$FIREBASE_AUTH_ADMIN
-                  echo FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
-                  echo FIREBASE_STORAGE_BUCKET=$FIREBASE_STORAGE_BUCKET
-                  echo FIREBASE_MESSAGING_SENDER_ID=$FIREBASE_MESSAGING_SENDER_ID
-                  echo FIREBASE_APP_ID=$FIREBASE_APP_ID
-                  echo FIREBASE_MEASUREMENT_ID=$FIREBASE_MEASUREMENT_ID
+                  echo NUXT_PUBLIC_OOMOOL_API_URL=$BACKEND_URL > .env
+                  echo NUXT_PUBLIC_OOMOOL_SITE_URL=$FRONTEND_URL >> .env
+                  echo NUXT_PUBLIC_FIREBASE_FCM_VAPID_KEY=$FIREBASE_FCM_VAPID_KEY >> .env
+                  echo FIREBASE_API_KEY=$FIREBASE_API_KEY >> .env
+                  echo FIREBASE_AUTH_DOMAIN=$FIREBASE_AUTH_ADMIN >> .env
+                  echo FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID >> .env
+                  echo FIREBASE_STORAGE_BUCKET=$FIREBASE_STORAGE_BUCKET >> .env
+                  echo FIREBASE_MESSAGING_SENDER_ID=$FIREBASE_MESSAGING_SENDER_ID >> .env
+                  echo FIREBASE_APP_ID=$FIREBASE_APP_ID >> .env
+                  echo FIREBASE_MEASUREMENT_ID=$FIREBASE_MEASUREMENT_ID >> .env
                   '''
               }
             }
