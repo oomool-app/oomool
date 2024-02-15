@@ -153,7 +153,6 @@ const isCompletedToGuess = async (): Promise<void> => {
   const roomUid = props.rooms.room_uid;
   const response = await $api.players.getMyManitto({ roomUid, userId });
   correctGuess.value = response.data.guess;
-  console.log(correctGuess.value);
   if (correctGuess.value === 'true' || correctGuess.value === 'false') {
     await router.push({ path: `final/${roomUid}` });
   } else if (correctGuess.value === 'null') {
