@@ -62,10 +62,7 @@
       </div>
 
       <!--종료됨-->
-      <div
-        v-else-if="!endDateIsAfterToday"
-        @click="$router.push({ path: `guess/${rooms.room_uid}` })"
-      >
+      <div v-else-if="!endDateIsAfterToday" @click="isCompletedToGuess">
         <CardHeader class="px-3.5 pt-3.5 pb-4">
           <div
             class="flex flex-col bg-white h-24 shadow-inner rounded-xl items-center relative px-8"
@@ -90,6 +87,8 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
+const { $api } = useNuxtApp();
 interface Room {
   room_uid: string;
   daily_question: {
@@ -116,7 +115,6 @@ const startDateIsBeforeToday = ref(false);
 const endDateIsAfterToday = ref(false);
 const dayBeforeStart = ref(0);
 const dayBeforeEnd = ref(0);
-
 const getTime = async (): Promise<void> => {
   // 현재 시각 불러오기
   const today: Date = new Date();
@@ -148,6 +146,18 @@ const getTime = async (): Promise<void> => {
 
   // 종료까지 몇일 남았는지
   dayBeforeEnd.value = Math.ceil(timeBeforeEnd / (1000 * 60 * 60 * 24));
+};
+const correctGuess = ref();
+const isCompletedToGuess = async (): Promise<void> => {
+  const userId = useUserStore().getStoredUser()?.id;
+  const roomUid = props.rooms.room_uid;
+  const response = await $api.players.getMyManitto({ roomUid, userId });
+  correctGuess.value = response.data.guess;
+  if (correctGuess.value === null) {
+    await router.push({ path: `guess/${roomUid}` });
+  } else {
+    await router.push({ path: `final/${roomUid}` });
+  }
 };
 
 onBeforeUpdate(async () => {

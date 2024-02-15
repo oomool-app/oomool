@@ -19,11 +19,11 @@
     </svg>
 
     <div
-      class="w-20 h-20 mb-4 rounded-full flex justify-center items-center"
+      class="w-20 h-20 mb-4 rounded-full flex justify-center items-center border"
       :style="{ backgroundColor: props.member.player_background_color }"
     >
       <img
-        class="w-12 h-16"
+        class="w-12 h-auto"
         :src="`${props.member.player_avatar_url}`"
         alt="프로필 이미지"
       />
