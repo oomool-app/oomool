@@ -103,7 +103,9 @@
               <AlertDialogFooter class="flex">
                 <AlertDialogCancel>취소</AlertDialogCancel>
                 <AlertDialogAction @click="saveImage">저장</AlertDialogAction>
-                <AlertDialogAction @click="test1">테스트용1</AlertDialogAction>
+                <AlertDialogAction @click="handleDownloadButtonClick"
+                  >테스트용1</AlertDialogAction
+                >
                 <AlertDialogAction @click="test2">테스트용2</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -210,19 +212,33 @@ const saveImage = async (): Promise<void> => {
   }
 };
 
-const test1 = async (): Promise<void> => {
+const dataUrl = ref('');
+
+const test1 = async (): Promise<string | null> => {
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
-  await htmlToImage
-    .toJpeg(element, { quality: 0.5, backgroundColor: 'white' })
-    .then(function (dataUrl) {
-      const link = document.createElement('a');
-      link.download = '테스트1.jpeg';
-      link.href = dataUrl;
-      setTimeout(() => {
-        link.click();
-      }, dataUrl.length / 250);
+  try {
+    dataUrl.value = await htmlToImage.toJpeg(element, {
+      quality: 0.5,
+      backgroundColor: 'white',
     });
+    return dataUrl.value;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+const handleDownloadButtonClick = async (): Promise<void> => {
+  if (dataUrl.value !== null) {
+    download(
+      dataUrl.value,
+      `마니또 ${manittoName.value}의 답변.jpeg`,
+      'image/jpeg',
+    );
+  } else {
+    // 이미지 생성에 실패한 경우에 대한 처리
+  }
 };
 
 const test2 = async (): Promise<void> => {
@@ -244,6 +260,7 @@ onMounted(async () => {
   await getRoomDetail();
   await getMyManitto();
   await getAllMyManittoFeedAnswers();
+  await test1();
 });
 </script>
 <style scoped>
