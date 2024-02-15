@@ -20,34 +20,3 @@
     </a>
   </div>
 </template>
-
-<script setup lang="ts">
-// import { useRouter } from 'vue-router';
-// import { useUserStore } from '~/stores/userStore';
-// const userStore = useUserStore();
-// const router = useRouter();
-// const config = useRuntimeConfig();
-
-// const handleLogin = async (email: string): Promise<void> => {
-//   console.log(email);
-//   const apiEndpoint = `${config.public.oomoolApiUrl}/users/login?email=${email}`;
-
-//   const response = await fetch(apiEndpoint, {
-//     method: 'GET',
-//   });
-
-//   if (response.ok) {
-//     const responseData = await response.json();
-//     console.log('API 응답:', responseData);
-
-//     userStore.setUser({
-//       id: responseData.id,
-//       email: responseData.email,
-//       name: responseData.username,
-//     });
-//     await router.push('/');
-//   } else {
-//     console.error('API 요청 실패');
-//   }
-// };
-</script>
