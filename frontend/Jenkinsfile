@@ -1,0 +1,168 @@
+pipeline {
+    agent any
+
+    environment {
+        FIREBASE_FCM_VAPID_KEY = credentials('firebase-fcm-vapid-key')
+        FIREBASE_API_KEY = credentials('firebase-api-key')
+        FIREBASE_AUTH_DOMAIN = 'oomool.firebaseapp.com'
+        FIREBASE_PROJECT_ID = 'oomool'
+        FIREBASE_STORAGE_BUCKET = 'oomool.appspot.com'
+        FIREBASE_MESSAGING_SENDER_ID = credentials('firebase-messaging-sender-id')
+        FIREBASE_APP_ID = credentials('firebase-app-id')
+        FIREBASE_MEASUREMENT_ID = credentials('firebase-measurement-id')
+    }
+
+    parameters {
+        string(name: 'DOCKER_NETWORK', defaultValue: 'npm-network', description: 'docker network name')
+        string(name: 'IMAGE_NAME', defaultValue: 'oomool-dev-fe', description: 'docker image name')
+        string(name: 'MATTERMOST_ENDPOINT'
+                , defaultValue: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c'
+                , description: 'mattermost hooks endpoint')
+        string(name: 'MATTERMOST_CHANNEL', defaultValue: 'A809-Alert', description: 'mattermost channel name')
+        choice(name: 'ENV_TYPE', choices: ['dev', 'prod'], description: 'Choose the environment type')
+    }
+
+    tools {
+        nodejs 'nodejs'
+    }
+
+    stages {
+        stage('Environment Setup') {
+          steps {
+            script {
+              env.FRONTEND_URL = params.ENV_TYPE == 'prod'
+                                ? 'https://oomool.site'
+                                : 'https://dev.oomool.site'
+              env.BACKEND_URL = params.ENV_TYPE == 'prod'
+                                ? 'https://api.oomool.site'
+                                : 'https://api-dev.oomool.site'
+            }
+          }
+        }
+
+        stage('dotenv') {
+          steps {
+            script {
+              dir('frontend') {
+                sh '''
+                  echo NUXT_PUBLIC_OOMOOL_API_URL=$BACKEND_URL > .env
+                  echo NUXT_PUBLIC_OOMOOL_SITE_URL=$FRONTEND_URL >> .env
+                  echo NUXT_PUBLIC_FIREBASE_FCM_VAPID_KEY=$FIREBASE_FCM_VAPID_KEY >> .env
+                  echo FIREBASE_API_KEY=$FIREBASE_API_KEY >> .env
+                  echo FIREBASE_AUTH_DOMAIN=$FIREBASE_AUTH_ADMIN >> .env
+                  echo FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID >> .env
+                  echo FIREBASE_STORAGE_BUCKET=$FIREBASE_STORAGE_BUCKET >> .env
+                  echo FIREBASE_MESSAGING_SENDER_ID=$FIREBASE_MESSAGING_SENDER_ID >> .env
+                  echo FIREBASE_APP_ID=$FIREBASE_APP_ID >> .env
+                  echo FIREBASE_MEASUREMENT_ID=$FIREBASE_MEASUREMENT_ID >> .env
+                  '''
+              }
+            }
+          }
+        }
+
+        stage('Build') {
+          steps {
+            dir('frontend') {
+              sh 'yarn install --ignore-scripts'
+              sh 'yarn build'
+            }
+          }
+          post {
+            success {
+              echo 'gradle build success'
+            }
+
+            failure {
+              echo 'gradle build failed'
+            }
+          }
+        }
+
+        stage('Docker Rm') {
+          steps {
+            sh 'echo "Docker Rm Start"'
+            sh """
+                    docker ps -a -q --filter "name=${params.IMAGE_NAME}" \
+                        | grep -q . && docker stop ${params.IMAGE_NAME} && docker rm ${params.IMAGE_NAME} \
+                        | true
+                    docker rmi -f ${params.IMAGE_NAME}
+                    """
+          }
+
+          post {
+            success {
+              sh 'echo "Docker Rm Success"'
+            }
+            failure {
+              sh 'echo "Docker Rm Fail"'
+            }
+          }
+        }
+
+        stage('Dockerizing') {
+          steps {
+            dir('frontend') {
+              sh 'echo " Image Bulid Start"'
+              sh "docker build -t ${params.IMAGE_NAME} ."
+            }
+          }
+          post {
+            success {
+              sh 'echo "Build Docker Image Success"'
+            }
+
+            failure {
+              sh 'echo "Build Docker Image Fail"'
+            }
+          }
+        }
+
+        stage('Deploy') {
+          steps {
+            sh """
+              docker run \
+              --name ${params.IMAGE_NAME} \
+              --network ${params.DOCKER_NETWORK} \
+              -d \
+              ${params.IMAGE_NAME}
+              """
+          }
+
+          post {
+            success {
+              echo 'docker run success'
+            }
+
+            failure {
+              echo 'docker run failed'
+            }
+          }
+        }
+    }
+
+    post {
+        success {
+          script {
+            def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+            def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
+            mattermostSend(color: 'good',
+                            message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
+                            endpoint: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c',
+                            channel: 'A809-Alert'
+                    )
+          }
+        }
+    failure {
+          script {
+            def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+            def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
+            mattermostSend(color: 'danger',
+                            message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
+                            endpoint: "${params.MATTERMOST_ENDPOINT}",
+                            channel: "${params.MATTERMOST_CHANNEL}"
+                    )
+          }
+    }
+    }
+}

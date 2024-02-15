@@ -1,5 +1,7 @@
 FROM node:20.11.0-alpine
 
+ENV TZ Asia/Seoul
+
 RUN mkdir /app
 
 WORKDIR /app
