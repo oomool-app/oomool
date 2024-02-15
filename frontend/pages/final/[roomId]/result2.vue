@@ -199,6 +199,26 @@ const saveImage = async (): Promise<void> => {
   isDownloaded.value = true;
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
+  await htmlToImage.toBlob(element, {
+    quality: 0.5,
+    backgroundColor: 'white',
+    skipFonts: true,
+  });
+  await htmlToImage.toBlob(element, {
+    quality: 0.5,
+    backgroundColor: 'white',
+    skipFonts: true,
+  });
+  await htmlToImage.toBlob(element, {
+    quality: 0.5,
+    backgroundColor: 'white',
+    skipFonts: true,
+  });
+  await htmlToImage.toBlob(element, {
+    quality: 0.5,
+    backgroundColor: 'white',
+    skipFonts: true,
+  });
   await htmlToImage
     .toBlob(element, {
       quality: 0.5,
@@ -212,7 +232,7 @@ const saveImage = async (): Promise<void> => {
           saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
           isDownloaded.value = false;
           router.go(0);
-        }, size / 100);
+        }, 1000);
       }
     });
 };
