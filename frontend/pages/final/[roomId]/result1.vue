@@ -8,12 +8,10 @@
       v-else-if="guessIsAlright === 'fail'"
       :manitto="manitto"
     ></ResultFailCard>
-    <div class="mt-8 flex flex-col items-center mr-6">
-      <NuxtLink :to="`/final/${roomUid}/result2`"
-        ><p
-          class="go-to-result text-primary text-center font-semibold text-2xl"
-        >
-          <svg
+    <div class="mt-8 flex flex-col items-center shadow-lg go-to-result">
+      <NuxtLink :to="`/final/${roomUid}/result2`">
+        <Button class="rounded-xl"
+          ><svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -26,8 +24,8 @@
               d="M1.5 9.589v-.745a3 3 0 0 1 1.578-2.642l7.5-4.038a3 3 0 0 1 2.844 0l7.5 4.038A3 3 0 0 1 22.5 8.844v.745l-8.426 4.926-.652-.351a3 3 0 0 0-2.844 0l-.652.351L1.5 9.589Z"
             />
           </svg>
-          마니또 답변 보러가기
-        </p>
+          &nbsp;마니또 답변 보러가기</Button
+        >
       </NuxtLink>
     </div>
   </div>
@@ -57,19 +55,7 @@ onMounted(async () => {
 </script>
 <style scoped>
 .go-to-result {
-  animation:
-    fade-in 3s,
-    to-right 0.8s linear forwards;
-}
-
-@keyframes to-right {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(3.5rem);
-  }
+  animation: fade-in 3s;
 }
 
 @keyframes fade-in {
