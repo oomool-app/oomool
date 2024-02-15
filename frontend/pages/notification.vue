@@ -57,12 +57,10 @@ const requestNotificationPermission = async (): Promise<void> => {
   Notification.requestPermission()
     .then(async (permission) => {
       if (permission === 'granted') {
-        console.log('Notification permission granted.');
         // 메인페이지로 이동
         await router.push('/');
         return;
       }
-      console.log('Notification permission denied.');
       // 메인페이지로 이동
       await router.push('/');
     })

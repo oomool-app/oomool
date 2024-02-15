@@ -21,7 +21,7 @@
 
     <!-- 방 목록-->
     <div
-      class="bottom-container flex flex-col gap-5 pt-3 bg-white rounded-t-lg"
+      class="bottom-container flex flex-col gap-5 pt-3 min-h-lvh bg-white rounded-t-lg"
     >
       <h1 class="text-2xl font-bold p-4 h-12 rounded-t-lg">나의 방 목록</h1>
 
@@ -99,8 +99,8 @@
             <RoomCard :rooms="room"></RoomCard>
           </div>
         </div>
-        <div v-else-if="rooms?.length === 0 || temprooms?.length === 0">
-          <img src="/img/roomEmptyGhost.png" class="px-16 py-7" />
+        <div v-else-if="rooms === undefined || temprooms === undefined">
+          <img id="noroom" src="/img/roomEmptyGhost.png" class="px-16 py-7" />
         </div>
       </div>
     </div>
@@ -277,9 +277,7 @@ const saveToken = async (): Promise<void> => {
 
     userStore.setFcmToken(token.value);
 
-    console.log(tokens);
     const response = await $api.pushNotifications.saveToken(tokens);
-    console.log(response.data);
   }
 };
 </script>
@@ -300,6 +298,11 @@ body {
 .bottom-container {
   animation: fade-in3 0.6s ease-in-out;
 }
+
+#noroom {
+  animation: fade-in4 0.6s ease-in-out;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -334,6 +337,22 @@ body {
 
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes fade-in4 {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>

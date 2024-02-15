@@ -158,7 +158,6 @@ const previewImage = (e: any): void => {
   if (input?.files?.[0] != null) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      console.log(e.target);
       if (e?.target != null && typeof e.target.result === 'string') {
         const previewElement = document.getElementById(
           'preview',
