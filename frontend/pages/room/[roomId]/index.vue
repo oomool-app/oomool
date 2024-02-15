@@ -165,10 +165,8 @@ const getRoomDetail = async (): Promise<void> => {
   for (let i = 0; i < members.value.length; i++) {
     if (members.value[i].user_id === userId) {
       myProfile.value = members.value[i];
-      console.log(myProfile.value);
     }
   }
-  console.log(members.value);
 };
 
 // D-day 계산
@@ -206,7 +204,6 @@ const getMyManitti = async (): Promise<void> => {
     const userId = userStore.getStoredUser()?.id;
     if (userId !== null && userId !== undefined) {
       const response = await $api.players.getMyManitti({ roomUid, userId });
-      console.log(response);
       manittiName.value = response.data.manitti.player_nickname;
       manittiAvatar.value = response.data.manitti.player_avatar_url;
       myNickname.value = response.data.player.player_nickname;
