@@ -181,7 +181,7 @@ const notProgressRooms = (rooms: any): any => {
   );
 };
 
-const selected1: Ref<boolean> = ref(true);
+const selected1: Ref<boolean> = ref(false);
 const selected2: Ref<boolean> = ref(false);
 const selected3: Ref<boolean> = ref(false);
 
