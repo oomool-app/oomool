@@ -13,7 +13,11 @@
       <div
         class="w-10 h-10 rounded-full bg-red-600 flex justify-center items-center"
       >
-        <img class="w-6 h-auto" src="/img/rabbitGhost.png" alt="" />
+        <img
+          class="w-6 h-auto"
+          :src="manitto.player_avatar_url"
+          alt="마니또 이미지"
+        />
       </div>
       <p class="text-xl font-bold text-white">
         {{ props.manitto.player_nickname }}

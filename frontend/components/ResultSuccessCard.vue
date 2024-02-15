@@ -18,7 +18,11 @@
         class="w-10 h-10 rounded-full flex justify-center items-center"
         :style="{ 'background-color': props.manitto.player_background_color }"
       >
-        <img class="w-6 h-auto" :src="props.manitto.player_avatar_url" alt="" />
+        <img
+          class="w-6 h-auto"
+          :src="props.manitto.player_avatar_url"
+          alt="마니또 이미지"
+        />
       </div>
       <p class="text-xl font-bold text-white">
         {{ props.manitto.player_nickname }}
