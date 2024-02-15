@@ -42,7 +42,6 @@ import type Feed from '~/repository/modules/interface/feeds.interface';
 const props = defineProps<{
   feeds: Feed;
 }>();
-console.log(props.feeds.manitti_dto.nickname);
 const createdHour = String(
   new Date(props.feeds.created_at).getHours(),
 ).padStart(2, '0');
