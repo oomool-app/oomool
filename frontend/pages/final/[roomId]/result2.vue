@@ -214,11 +214,6 @@ const saveImage = async (): Promise<void> => {
     backgroundColor: 'white',
     skipFonts: true,
   });
-  await htmlToImage.toBlob(element, {
-    quality: 0.5,
-    backgroundColor: 'white',
-    skipFonts: true,
-  });
   await htmlToImage
     .toBlob(element, {
       quality: 0.5,
@@ -226,14 +221,11 @@ const saveImage = async (): Promise<void> => {
       skipFonts: true,
     })
     .then(function (blob) {
-      const size = blob?.size;
-      if (size !== undefined) {
-        setTimeout(() => {
-          saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
-          isDownloaded.value = false;
-          router.go(0);
-        }, 1000);
-      }
+      setTimeout(() => {
+        saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
+        isDownloaded.value = false;
+        router.go(0);
+      }, 1000);
     });
 };
 onMounted(async () => {
