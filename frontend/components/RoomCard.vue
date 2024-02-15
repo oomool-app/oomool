@@ -127,7 +127,7 @@ const getTime = async (): Promise<void> => {
 
   // 기본이 9시로 설정되어 있으므로 0시로 맞춰줘야 함
   startDate.setHours(0);
-  endDate.setHours(0);
+  endDate.setHours(24);
 
   // 게임 시작일이 지났는지
   startDateIsBeforeToday.value = startDate < today;
