@@ -260,7 +260,6 @@ const isSupported = (): boolean => {
 };
 
 onMounted(async () => {
-  await getRoomList();
   await getTempRoomList();
   await select1();
   if (isSupported()) {
