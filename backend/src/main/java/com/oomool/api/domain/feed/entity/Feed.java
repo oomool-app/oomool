@@ -34,7 +34,7 @@ public class Feed extends BaseTimeEntity {
     @JoinColumn(name = "room_question_id")
     private RoomQuestion roomQuestion;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String content;
 
     // 작성자 = 플레이어 (1 : N 연관관계)
