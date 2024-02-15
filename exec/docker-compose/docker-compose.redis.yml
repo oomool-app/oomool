@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7.2.4-alpine
+    container_name: redis
+    ports:
+      - ${REDIS_BINDING_PORT}:${REDIS_PORT}
+    command:
+      - /bin/sh
+      - -c
+      - redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ${REDIS_DATA_PATH}:/data
+      - ${REDIS_DEFAULT_CONFIG_FILE}:/usr/local/etc/redis/redis.conf
+    restart: always
+    environment:
+      - TZ=${TIME_ZONE}
+    networks:
+      - npm-network
+      
+networks:
+  npm-network:
+    external: true
+    name: npm-network

@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  npm:
+    container_name: npm
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '8881:81'
+      - '443:443'
+    volumes:
+      - /data/npm/data:/data
+      - /data/npm/letsencrypt:/etc/letsencrypt
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - npm-network
+
+networks:
+  npm-network:
+    external: true
+    name: npm-network
