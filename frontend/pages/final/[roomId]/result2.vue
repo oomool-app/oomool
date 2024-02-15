@@ -103,6 +103,8 @@
               <AlertDialogFooter class="flex">
                 <AlertDialogCancel>취소</AlertDialogCancel>
                 <AlertDialogAction @click="saveImage">저장</AlertDialogAction>
+                <AlertDialogAction @click="test1">테스트용1</AlertDialogAction>
+                <AlertDialogAction @click="test2">테스트용2</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -131,6 +133,7 @@ import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import * as htmlToImage from 'html-to-image';
 import download from 'downloadjs';
+import saveAs from 'file-saver';
 const { $api } = useNuxtApp();
 const route = useRoute();
 const userStore = useUserStore();
@@ -190,14 +193,52 @@ const saveImage = async (): Promise<void> => {
   if (el !== null) {
     try {
       const dataUrl = await htmlToImage.toPng(element, {
+        quality: 0.5,
         backgroundColor: 'white',
         skipFonts: true,
       });
-      download(dataUrl, `마니또 ${manittoName.value}의 답변.png`, 'image/png');
+      setTimeout(() => {
+        download(
+          dataUrl,
+          `마니또 ${manittoName.value}의 답변.png`,
+          'image/png',
+        );
+      }, dataUrl.length / 250);
     } catch (error) {
       console.error(error);
     }
   }
+};
+
+const test1 = async (): Promise<void> => {
+  const el = document.getElementById('image');
+  const element = el as unknown as HTMLElement;
+  await htmlToImage
+    .toJpeg(element, { quality: 0.5, backgroundColor: 'white' })
+    .then(function (dataUrl) {
+      const link = document.createElement('a');
+      link.download = '테스트1.jpeg';
+      link.href = dataUrl;
+      setTimeout(() => {
+        link.click();
+      }, dataUrl.length / 250);
+    });
+};
+
+const test2 = async (): Promise<void> => {
+  const el = document.getElementById('image');
+  const element = el as unknown as HTMLElement;
+  await htmlToImage
+    .toBlob(element, {
+      quality: 0.5,
+      backgroundColor: 'white',
+      skipFonts: true,
+    })
+    .then(function (blob) {
+      setTimeout(() => {
+        saveAs(blob, '테스트2.png');
+      }, 3000);
+    });
 };
 onMounted(async () => {
   await getRoomDetail();
