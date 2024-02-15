@@ -205,7 +205,6 @@ const getMyFeedAnswer = async (): Promise<void> => {
   const mine = response.data.room_feed_dto_list.filter((el) => {
     return el.user_id === userId.value;
   });
-  console.log(response);
   if (mine.length > 0) {
     content.value = mine[0].content;
     feedId.value = mine[0].feed_id;

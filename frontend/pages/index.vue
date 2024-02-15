@@ -21,7 +21,7 @@
 
     <!-- 방 목록-->
     <div
-      class="bottom-container flex flex-col gap-5 pt-3 bg-white rounded-t-lg"
+      class="bottom-container flex flex-col gap-5 pt-3 min-h-lvh bg-white rounded-t-lg"
     >
       <h1 class="text-2xl font-bold p-4 h-12 rounded-t-lg">나의 방 목록</h1>
 
@@ -277,9 +277,7 @@ const saveToken = async (): Promise<void> => {
 
     userStore.setFcmToken(token.value);
 
-    console.log(tokens);
     const response = await $api.pushNotifications.saveToken(tokens);
-    console.log(response.data);
   }
 };
 </script>
@@ -302,7 +300,7 @@ body {
 }
 
 #noroom {
-  animation: fade-in3 0.6s ease-in-out;
+  animation: fade-in4 0.6s ease-in-out;
 }
 
 @keyframes fade-in {
@@ -329,6 +327,20 @@ body {
   }
 }
 @keyframes fade-in3 {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in4 {
   0% {
     opacity: 0;
     transform: scale(0);

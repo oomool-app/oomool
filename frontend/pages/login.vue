@@ -68,7 +68,6 @@ const router = useRouter();
 const config = useRuntimeConfig();
 
 const handleLogin = async (email: string): Promise<void> => {
-  console.log(email);
   const apiEndpoint = `${config.public.oomoolApiUrl}/users/login?email=${email}`;
 
   const response = await fetch(apiEndpoint, {
@@ -77,7 +76,6 @@ const handleLogin = async (email: string): Promise<void> => {
 
   if (response.ok) {
     const responseData = await response.json();
-    console.log('API 응답:', responseData);
 
     userStore.setUser({
       id: responseData.id,
