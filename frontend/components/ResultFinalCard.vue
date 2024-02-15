@@ -30,7 +30,7 @@
         />
       </div>
       <div
-        v-if="
+        v-else-if="
           props.result.content !== null &&
           (props.result.feed_image_dto_list === null ||
             props.result.feed_image_dto_list?.length === 0)
@@ -46,13 +46,7 @@
           alt=""
         />
       </div>
-      <div
-        v-if="
-          props.result.content !== null &&
-          props.result.feed_image_dto_list !== null &&
-          props.result.feed_image_dto_list !== undefined
-        "
-      >
+      <div v-else>
         <p class="text-center mt-4 mb-4 font-semibold">
           A. {{ props.result.content }}
         </p>
