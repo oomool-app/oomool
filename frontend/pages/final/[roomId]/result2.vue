@@ -195,38 +195,86 @@ const getAllMyManittoFeedAnswers = async (): Promise<void> => {
 const isDownloaded = ref(false);
 
 // 답변 이미지로 저장
-const saveImage = async (): Promise<void> => {
-  isDownloaded.value = true;
+// const saveImage = async (): Promise<void> => {
+//   isDownloaded.value = true;
+//   const el = document.getElementById('image');
+//   const element = el as unknown as HTMLElement;
+//   await Promise.all([
+//     htmlToImage.toBlob(element, {
+//       quality: 0.5,
+//       backgroundColor: 'white',
+//       skipFonts: true,
+//     }),
+//     htmlToImage.toBlob(element, {
+//       quality: 0.5,
+//       backgroundColor: 'white',
+//       skipFonts: true,
+//     }),
+//     htmlToImage.toBlob(element, {
+//       quality: 0.5,
+//       backgroundColor: 'white',
+//       skipFonts: true,
+//     }),
+//   ]).then((resolve) => {
+//     console.log('image 로드 완료');
+//   });
+
+//   await htmlToImage
+//     .toBlob(element, {
+//       quality: 0.5,
+//       backgroundColor: 'white',
+//       skipFonts: true,
+//     })
+//     .then(function (blob) {
+//       setTimeout(() => {
+//         console.log('GGGG');
+//         saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
+//         console.log('GGGGgggg');
+//         isDownloaded.value = false;
+//         router.go(0);
+//       }, 1000);
+//     });
+// };
+const generateImageBlobs = async (): Promise<Blob[]> => {
   const el = document.getElementById('image');
   const element = el as unknown as HTMLElement;
-  await htmlToImage.toBlob(element, {
-    quality: 0.5,
-    backgroundColor: 'white',
-    skipFonts: true,
+
+  const blobPromises = Array.from({ length: 4 }, async (_, index) => {
+    try {
+      const blob = await htmlToImage.toBlob(element, {
+        quality: 0.5,
+        backgroundColor: 'white',
+        skipFonts: true,
+      });
+      return blob;
+    } catch (error) {
+      console.error(`Error generating image blob ${index + 1}:`, error);
+      return null;
+    }
   });
-  await htmlToImage.toBlob(element, {
-    quality: 0.5,
-    backgroundColor: 'white',
-    skipFonts: true,
-  });
-  await htmlToImage.toBlob(element, {
-    quality: 0.5,
-    backgroundColor: 'white',
-    skipFonts: true,
-  });
-  await htmlToImage
-    .toBlob(element, {
-      quality: 0.5,
-      backgroundColor: 'white',
-      skipFonts: true,
-    })
-    .then(function (blob) {
-      setTimeout(() => {
-        saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
-        isDownloaded.value = false;
-        router.go(0);
-      }, 1000);
-    });
+
+  return await Promise.all(blobPromises).then(
+    (blobs) => blobs.filter((blob) => blob !== null) as Blob[],
+  );
+};
+
+const saveImage = async (): Promise<void> => {
+  try {
+    isDownloaded.value = true;
+
+    const blobs = await generateImageBlobs();
+
+    if (blobs.length > 0) {
+      const lastBlob = blobs[blobs.length - 1];
+      saveAs(lastBlob, `내 마니또 ${manittoName.value}의 답변.png`);
+    }
+
+    isDownloaded.value = false;
+    router.go(0);
+  } catch (error) {
+    console.error('Error saving image:', error);
+    isDownloaded.value = false;
+  }
 };
 onMounted(async () => {
   await getRoomDetail();
