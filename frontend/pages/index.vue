@@ -21,7 +21,7 @@
 
     <!-- 방 목록-->
     <div
-      class="bottom-container flex flex-col gap-5 pt-3 min-h-lvh bg-white rounded-t-lg"
+      class="bottom-container flex flex-col gap-5 pt-3 min-h-svh bg-white rounded-t-lg"
     >
       <h1 class="text-2xl font-bold p-4 h-12 rounded-t-lg">나의 방 목록</h1>
 
@@ -99,8 +99,15 @@
             <RoomCard :rooms="room"></RoomCard>
           </div>
         </div>
-        <div v-else-if="rooms === undefined || temprooms === undefined">
-          <img id="noroom" src="/img/roomEmptyGhost.png" class="px-16 py-7" />
+        <div
+          v-else-if="
+            (selected1 && rooms === undefined) ||
+            (selected2 && temprooms === undefined) ||
+            (selected3 && rooms === undefined)
+          "
+          id="noroom"
+        >
+          <img src="/img/roomEmptyGhost.png" class="px-16 py-7" />
         </div>
       </div>
     </div>
