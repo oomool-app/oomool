@@ -75,15 +75,15 @@
               </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent>
+            <AlertDialogContent class="bg-purple-100">
               <AlertDialogTitle class="font-bold text-primary text-xl"
-                >저장미리보기</AlertDialogTitle
+                >저장 미리보기</AlertDialogTitle
               >
               <ScrollArea
                 class="h-80 w-full rounded-md border flex-col flex items-center"
               >
                 <AlertDialogHeader class="flex-col flex items-center">
-                  <AlertDialogDescription class="pt-10">
+                  <AlertDialogDescription class="pt-10 bg-white">
                     <div
                       id="image"
                       class="w-full flex justify-center flex-col items-center"
@@ -91,7 +91,7 @@
                       <div
                         v-for="(item, index) in result"
                         :key="item.feed_id"
-                        class="flex flex-col items-center"
+                        class="flex flex-col items-center mb-4"
                       >
                         <div
                           class="w-3/4 carousel__item overflow-x-hidden overflow-y-auto"
@@ -146,7 +146,6 @@ const roomUid = route.params.roomId as string;
 const roomName = ref();
 const startDate = ref();
 const endDate = ref();
-// const questions = ref<RoomQuestionList[]>();
 const manittoName = ref();
 const manittoAvatar = ref();
 
@@ -207,11 +206,14 @@ const saveImage = async (): Promise<void> => {
       skipFonts: true,
     })
     .then(function (blob) {
-      setTimeout(() => {
-        saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
-        isDownloaded.value = false;
-        router.go(0);
-      }, 1000);
+      const size = blob?.size;
+      if (size !== undefined) {
+        setTimeout(() => {
+          saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
+          isDownloaded.value = false;
+          router.go(0);
+        }, size / 100);
+      }
     });
 };
 onMounted(async () => {

@@ -35,7 +35,7 @@
       </AlertDialog>
     </div>
     <div class="pl-6 pr-6">
-      <img class="img w-24 h-28 mt-14" src="/img/guessGhost.png" alt="" />
+      <img class="img w-24 h-auto mt-14" src="/img/guessGhost.png" alt="" />
       <div class="que">
         <p class="font-extrabold text-3xl mt-4">
           내 마니또는 <span class="text-primary">누구</span>였을까요?
