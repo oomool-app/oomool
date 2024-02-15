@@ -13,7 +13,7 @@
     @click="$router.push({ path: `room/${messages.room_uid}` })"
   >
     <!--아이콘-->
-    <div class="flex-none self-center pl-3 pr-6">
+    <div class="flex-none self-center pl-3 pr-6 pb-5">
       <div v-if="props.messages.type == 'system'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,11 +71,11 @@
 
     <div class="flex-1">
       <div class="text-lg font-semibold">{{ props.messages.title }}</div>
-      <div class="mb-1 text-gray-500 text-sm w-56 dark:text-gray-400 pt-1">
+      <div class="mb-1 text-gray-500 text-sm w-56 dark:text-gray-400">
         {{ props.messages.body }}
       </div>
     </div>
-    <div class="text-sm pr-3">
+    <div class="text-sm pr-6">
       <div v-if="dayFromCreate >= 1">{{ dayFromCreate }}일 전</div>
       <div v-else-if="hourFromCreate >= 1">{{ hourFromCreate }}시간 전</div>
       <div v-else-if="minFromCreate >= 1">{{ minFromCreate }}분 전</div>

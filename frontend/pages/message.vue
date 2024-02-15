@@ -1,17 +1,15 @@
 <template>
   <div class="mb-6 bg-background">
     <div
-      class="top-container mb-6 text-center flex justify-between items-center p-6 font-bold"
+      class="top-container w-full mb-6 text-center flex justify-between items-center p-6 z-10 font-bold sticky top-0 bg-background"
     >
       <BackButton color="#61339b" />
       <h1 class="text-2xl font-bold text-primary">알림</h1>
       <div class="mr-4"></div>
     </div>
 
-    <div
-      class="body-container max-w-md text-gray-900 dark:text-white dark:divide-gray-700"
-    >
-      <div v-if="unread !== undefined" class="divide-y divide-gray-400">
+    <div class="body-container max-w-md text-gray-900 dark:text-white">
+      <div v-if="unread !== undefined">
         <div v-for="message in unread" :key="message.title">
           <MessageCard
             :messages="message"
@@ -19,7 +17,7 @@
           ></MessageCard>
         </div>
       </div>
-      <div v-if="read !== undefined" class="divide-y divide-gray-400">
+      <div v-if="read !== undefined">
         <div v-for="message in read" :key="message.title">
           <MessageCard :messages="message" class="pt-3 pb-3 h-20"></MessageCard>
         </div>
