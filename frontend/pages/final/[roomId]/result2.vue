@@ -207,15 +207,15 @@ const saveImage = async (): Promise<void> => {
     })
     .then(function (blob) {
       let size = blob?.size;
-      if (size !== undefined && size < 250000) {
-        size = 250000;
+      if (size !== undefined && size < 288000) {
+        size = 288000;
       }
       if (size !== undefined) {
         setTimeout(() => {
           saveAs(blob, `내 마니또 ${manittoName.value}의 답변.png`);
           isDownloaded.value = false;
           router.go(0);
-        }, size / 50);
+        }, size / 36);
       }
     });
 };
