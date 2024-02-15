@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 cleanup() {
     # Reset the trap handler so it's not called twice
     trap - EXIT
@@ -40,7 +37,7 @@ if [ ! -f "${CHECKSTYLE_JAR}" ]; then
     get_checkstyle_jar
 fi
 
-command="git diff-index --cached HEAD 2>&1 | sed 's/^:.*     //' | uniq"
+command="git diff-index --cached HEAD 2>&1 | awk '!/^:.*D/' | sed 's/^:.*     //' | uniq"
 FILES=$(eval $command)
 
 CHECKSTYLE_COMMAND="${JAVA_PATH} -DsuppressionFile=${SUPPRESSION_FILE_PATH} -jar ${CHECKSTYLE_JAR} -c ${CHECKSTYLE_CONFIG}"

@@ -1,0 +1,182 @@
+pipeline {
+    agent any
+
+    environment {
+        DB_PASSWORD = credentials('db-password')
+        REDIS_PASSWORD = credentials('redis-password')
+        JWT_SECRET = credentials('jwt-secret')
+        IMGBB_SECRET = credentials('imgbb-secret')
+        KAKAO_CLIENT = credentials('kakao-client')
+    }
+
+    parameters {
+        string(name: 'DOCKER_NETWORK', defaultValue: 'npm-network', description: 'docker network name')
+        string(name: 'IMAGE_NAME', defaultValue: 'oomool-dev-be', description: 'docker image name')
+        string(name: 'MATTERMOST_ENDPOINT'
+                , defaultValue: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c'
+                , description: 'mattermost hooks endpoint')
+        string(name: 'MATTERMOST_CHANNEL', defaultValue: 'A809-Alert', description: 'mattermost channel name')
+        choice(name: 'ENV_TYPE', choices: ['dev', 'prod'], description: 'Choose the environment type')
+    }
+
+    stages {
+        stage('Environment Setup') {
+            steps {
+                script {
+                    env.DB_NAME = params.ENV_TYPE == 'prod'
+                            ? 'oomool'
+                            : 'oomool-dev'
+                    env.FRONTEND_URL = params.ENV_TYPE == 'prod'
+                            ? 'https://oomool.site'
+                            : 'https://dev.oomool.site'
+                    env.BACKEND_URL = params.ENV_TYPE == 'prod'
+                            ? 'https://api.oomool.site'
+                            : 'https://api-dev.oomool.site'
+                    env.DOCKER_PORT = params.ENV_TYPE == 'prod'
+                            ? '8008'
+                            : '8080'
+                }
+            }
+        }
+
+        stage('admin_sdk.json') {
+            steps {
+                configFileProvider([configFile(fileId: 'firebase-admin-sdk', variable: 'properties')]) {
+                    script {
+                        dir('backend/src/main/resources/firebase') {
+                            sh 'cp $properties admin_sdk.json'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    // gralew이 있어야됨. git clone해서 project를 가져옴.
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build'
+
+                    sh 'ls -al ./build'
+                }
+            }
+            post {
+                success {
+                    echo 'gradle build success'
+                }
+
+                failure {
+                    echo 'gradle build failed'
+                }
+            }
+        }
+
+        stage('Docker Rm') {
+            steps {
+                sh 'echo "Docker Rm Start"'
+                sh """
+                docker ps -a -q --filter "name=${params.IMAGE_NAME}" \
+                    | grep -q . && docker stop ${params.IMAGE_NAME} && docker rm ${params.IMAGE_NAME} \
+                    | true
+                docker rmi -f ${params.IMAGE_NAME}
+                """
+            }
+
+            post {
+                success {
+                    sh 'echo "Docker Rm Success"'
+                }
+                failure {
+                    sh 'echo "Docker Rm Fail"'
+                }
+            }
+        }
+
+        stage('Dockerizing') {
+            steps {
+                dir('backend') {
+                    sh 'echo " Image Bulid Start"'
+                    sh "docker build --build-arg SPRING_PROFILES_ACTIVE=${params.ENV_TYPE} -t ${params.IMAGE_NAME} ."
+                }
+            }
+            post {
+                success {
+                    sh 'echo "Build Docker Image Success"'
+                }
+
+                failure {
+                    sh 'echo "Build Docker Image Fail"'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                echo JWT_SECRET=$JWT_SECRET > env.list
+                echo REDIS_HOST=$REDIS_HOST >> env.list
+                echo REDIS_PORT=$REDIS_PORT >> env.list
+                echo REDIS_USERNAME=$REDIS_USERNAME >> env.list
+                echo REDIS_PASSWORD=$REDIS_PASSWORD >> env.list
+                echo IMGBB_SECRET=$IMGBB_SECRET >> env.list
+                echo FRONTEND_URL=$FRONTEND_URL >> env.list
+                echo DB_DRIVER=$DB_DRIVER >> env.list
+                echo DB_URL=$DB_URL >> env.list
+                echo DB_PORT=$DB_PORT >> env.list
+                echo DB_NAME=$DB_NAME >> env.list
+                echo DB_USERNAME=$DB_USERNAME >> env.list
+                echo DB_PASSWORD=$DB_PASSWORD >> env.list
+                echo KAKAO_CLIENT_ID=$KAKAO_CLIENT_USR >> env.list
+                echo KAKAO_CLIENT_SECRET=$KAKAO_CLIENT_PSW >> env.list
+                echo FILE_PATH=$FILE_PATH >> env.list
+                echo BACKEND_URL=$BACKEND_URL >> env.list
+                '''
+
+                sh """
+                docker run \
+                --name ${params.IMAGE_NAME} \
+                --env-file env.list \
+                --network ${params.DOCKER_NETWORK} \
+                -d -p ${env.DOCKER_PORT}:8080 \
+                ${params.IMAGE_NAME}
+                """
+            }
+
+            post {
+                success {
+                    echo 'docker run success'
+                }
+
+                failure {
+                    echo 'docker run failed'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+                def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
+                mattermostSend(color: 'good',
+                        message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
+                        endpoint: 'https://meeting.ssafy.com/hooks/xq6urbqcz7ga9ge4sz178dmb1c',
+                        channel: 'A809-Alert'
+                )
+            }
+        }
+        failure {
+            script {
+                def authorId = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+                def authorName = sh(script: 'git show -s --pretty=%ae', returnStdout: true).trim()
+                mattermostSend(color: 'danger',
+                        message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${authorId}(${authorName})\n(<${env.BUILD_URL}|Details>)",
+                        endpoint: "${params.MATTERMOST_ENDPOINT}",
+                        channel: "${params.MATTERMOST_CHANNEL}"
+                )
+            }
+        }
+    }
+}
