@@ -100,7 +100,11 @@
           </div>
         </div>
         <div
-          v-else-if="rooms === undefined || temprooms === undefined"
+          v-else-if="
+            (selected1 && rooms === undefined) ||
+            (selected2 && temprooms === undefined) ||
+            (selected3 && rooms === undefined)
+          "
           id="noroom"
         >
           <img src="/img/roomEmptyGhost.png" class="px-16 py-7" />
