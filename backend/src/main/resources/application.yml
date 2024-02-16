@@ -21,6 +21,10 @@ spring:
       password: ${REDIS_PASSWORD}
   jackson:
     property-naming-strategy: SNAKE_CASE
+  servlet:
+    multipart:
+      maxFileSize: 5MB
+      maxRequestSize: 25MB
   security:
     oauth2:
       client:
