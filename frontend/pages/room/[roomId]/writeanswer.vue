@@ -21,7 +21,7 @@
       />
       <div class="flex justify-center items-start mt-4">
         <label for="upload-image">
-          <div>
+          <div class="w-full">
             <img v-show="isUploaded" id="preview" class="w-56 mt-3" />
             <img
               v-if="!isUploaded"
@@ -35,7 +35,7 @@
           <AlertDialogTrigger>
             <svg
               v-if="isUploaded"
-              class="w-6 h-6 bg-white rounded-full relative left-28 top-7"
+              class="w-6 h-6 bg-white rounded-full"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0.6 2.4 16 16"
               fill="red"
